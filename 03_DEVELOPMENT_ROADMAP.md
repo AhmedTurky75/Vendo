@@ -21,7 +21,7 @@ Establish the core technical foundation, ensuring architecture, security, and au
 ### 🧠 Tech Decisions
 
 * ASP.NET Core WebAPI (clean architecture layers)
-* Angular 17+ standalone structure, no component libraries (only Tailwind)
+* Angular 20+ modular structure, no component libraries (only Tailwind)
 * SQL Server shared DB (EF Core with tenant-aware context)
 * IdentityServer for authentication/authorization
 * GitHub Actions pipeline:
