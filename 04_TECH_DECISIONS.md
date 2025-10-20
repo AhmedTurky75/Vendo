@@ -8,7 +8,7 @@ This document defines all major technical decisions, architectural rules, and en
 
 | Layer     | Technology                                | Purpose                                                                          |
 | --------- | ----------------------------------------- | -------------------------------------------------------------------------------- |
-| Frontend  | **Angular 17+**, TypeScript, Tailwind CSS | Reactive, component-based UI (no UI frameworks like Angular Material or PrimeNG) |
+| Frontend  | **Angular 20+**, TypeScript, Tailwind CSS | Reactive, component-based UI (no UI frameworks like Angular Material or PrimeNG) |
 | Backend   | **ASP.NET Core 9+**                       | REST APIs, microservices, domain logic                                           |
 | Auth      | **IdentityServer**                        | Centralized authentication and authorization (OpenID Connect + OAuth2)           |
 | Database  | **SQL Server** (EF Core)                  | Relational data store with multi-tenant awareness                                |
@@ -21,7 +21,7 @@ This document defines all major technical decisions, architectural rules, and en
 
 ## 2. Architecture
 
-### Clean Architecture Layers
+### Clean Architecture Layers (Backend)
 
 ```
 /src
@@ -29,8 +29,29 @@ This document defines all major technical decisions, architectural rules, and en
  ├── Application     → CQRS Handlers, DTOs, Validators, Contracts
  ├── Infrastructure  → EF Core, Repositories, IdentityServer Integration
  ├── WebAPI          → Controllers, Middleware, Dependency Injection setup
- ├── Frontend        → Angular app (separate project)
 ```
+
+### Frontend Architecture (Separated)
+
+The frontend is architecturally and physically separated from the backend service:
+
+```
+/frontend (Separate repository/folder - NOT under /src)
+ ├── shell-app              → Host application (Module Federation)
+ ├── mfe-products           → Products micro-frontend
+ ├── mfe-orders             → Orders micro-frontend
+ ├── mfe-store              → Store management micro-frontend
+ ├── shared-lib             → Shared components, utilities, types
+ └── config                 → Module Federation configuration
+```
+
+**Key Principles:**
+* Frontend and backend are completely decoupled and independently deployable
+* Communication occurs exclusively through REST API contracts (no shared code/models)
+* Micro Frontend Architecture (MFE) using Webpack Module Federation
+* Each micro-frontend can be developed, tested, and deployed independently
+* Shell application orchestrates and loads remote micro-frontends at runtime
+* Shared authentication state and routing managed by shell application
 
 ### Enforced Rules
 
@@ -115,17 +136,18 @@ This document defines all major technical decisions, architectural rules, and en
 
 * No external UI libraries (e.g., Material, PrimeNG).
 * Tailwind used for all styling.
-* Use **standalone components** and **signal-based state management**.
+* Use **Angular modules** (NgModule-based architecture, NOT standalone components).
+* Use **signal-based state management** for reactive data handling.
 * Directory structure:
 
   ```
   /frontend/src/app
    ├── core          → Services, interceptors, auth guards
-   ├── features      → Modules (products, orders, store)
-   ├── shared        → Reusable components, directives
+   ├── features      → Feature modules (products, orders, store)
+   ├── shared        → Shared module with reusable components, directives, pipes
    ├── state         → NgRx or signals for global store
   ```
-* Each feature folder must have `README.md` describing its purpose.
+* Each feature module must have `README.md` describing its purpose.
 * Unit tests required for all services and components.
 
 ---

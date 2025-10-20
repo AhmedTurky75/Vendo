@@ -145,7 +145,8 @@ refactor/product-service
 
 * Enforce ESLint + Prettier formatting
 * Components ≤ 300 lines; extract logic into services
-* Use standalone components (no shared modules)
+* Use **Angular modules** (NgModule-based architecture, NOT standalone components)
+* Organize code into feature modules and shared modules
 * Keep templates clean — minimal logic, no duplication
 
 ### Markdown & Documentation
