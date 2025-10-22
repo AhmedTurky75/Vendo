@@ -6,15 +6,16 @@ import { UserRole } from '../../../core/models/user.model';
 /**
  * Auth Callback Component
  *
- * This component handles the OAuth2/OIDC callback after the user
- * successfully authenticates with IdentityServer.
+ * With BFF pattern, the OAuth callback is handled by the BFF service.
+ * This component simply checks if the user is authenticated and redirects
+ * them to the appropriate dashboard based on their role.
  *
- * The authorization code is exchanged for tokens, and the user
- * is redirected to the appropriate dashboard based on their role.
+ * BFF handles the OAuth Authorization Code exchange at /signin-oidc
+ * and then redirects back to the Angular app.
  */
 @Component({
   selector: 'app-auth-callback',
-    standalone: false,
+  standalone: false,
   templateUrl: './auth-callback.component.html',
   styleUrls: ['./auth-callback.component.css']
 })
@@ -28,23 +29,24 @@ export class AuthCallbackComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.handleCallback();
+    this.handlePostLogin();
   }
 
-  private handleCallback(): void {
-    this.authService.handleCallback().subscribe({
-      next: (success) => {
-        if (success) {
+  private handlePostLogin(): void {
+    // Wait for auth service to be ready
+    this.authService.isAuthenticationReady$.subscribe(ready => {
+      if (ready) {
+        if (this.authService.isUserAuthenticated()) {
+          // User is authenticated, redirect to role-based dashboard
           this.redirectToRoleDashboard();
         } else {
+          // Not authenticated, redirect to login
           this.errorMessage.set('Authentication failed. Please try again.');
           this.isProcessing.set(false);
+          setTimeout(() => {
+            this.router.navigate(['/login/admin']);
+          }, 2000);
         }
-      },
-      error: (error) => {
-        console.error('OAuth callback error:', error);
-        this.errorMessage.set('An error occurred during authentication.');
-        this.isProcessing.set(false);
       }
     });
   }
@@ -52,6 +54,15 @@ export class AuthCallbackComponent implements OnInit {
   private redirectToRoleDashboard(): void {
     const role = this.authService.getUserRole();
 
+    // Get the stored redirect URL if it exists
+    const redirectUrl = sessionStorage.getItem('redirect_url');
+    if (redirectUrl) {
+      sessionStorage.removeItem('redirect_url');
+      this.router.navigateByUrl(redirectUrl);
+      return;
+    }
+
+    // Default redirects based on role
     switch (role) {
       case UserRole.Admin:
         this.router.navigate(['/admin/dashboard']);
@@ -68,6 +79,6 @@ export class AuthCallbackComponent implements OnInit {
   }
 
   retryLogin(): void {
-    this.router.navigate(['/login/customer']);
+    this.router.navigate(['/login/admin']);
   }
 }

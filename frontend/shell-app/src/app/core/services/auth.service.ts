@@ -1,24 +1,23 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, from, BehaviorSubject } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
-import { OAuthService, OAuthEvent, OAuthErrorEvent } from 'angular-oauth2-oidc';
+import { Observable, BehaviorSubject, catchError, map, of, tap } from 'rxjs';
 import { User, UserRole } from '../models/user.model';
 import { environment } from '../../../environments/environment';
-import { authConfig, getAuthConfigForRole } from '../config/oauth.config';
 
 /**
- * Enhanced AuthService with OAuth2/OIDC support
+ * BFF-based AuthService
  *
- * This service uses angular-oauth2-oidc library to implement
- * Authorization Code Flow with PKCE (Proof Key for Code Exchange).
+ * This service works with the Backend for Frontend (BFF) pattern.
+ * All OAuth/OIDC complexity is handled by the BFF service.
+ * The Angular app only communicates with the BFF via HTTP calls.
  *
  * Key features:
- * - Authorization Code + PKCE flow (most secure for SPAs)
- * - Automatic token refresh using refresh tokens
- * - Silent refresh via hidden iframe
- * - Secure token storage in sessionStorage
+ * - Tokens stored in HTTP-only cookies (managed by BFF)
+ * - No tokens exposed to JavaScript
+ * - Authorization Code + PKCE flow handled by BFF
+ * - Automatic token refresh by BFF
+ * - Anti-CSRF protection
  * - Role-based access control
  * - Multi-tenant support
  */
@@ -26,7 +25,7 @@ import { authConfig, getAuthConfigForRole } from '../config/oauth.config';
   providedIn: 'root'
 })
 export class AuthService {
-  // Signal-based state management as per tech decisions
+  // Signal-based state management
   private currentUserSignal = signal<User | null>(null);
   private isAuthenticatedSignal = signal<boolean>(false);
   private isAuthenticationReadySubject = new BehaviorSubject<boolean>(false);
@@ -35,117 +34,103 @@ export class AuthService {
   readonly isAuthenticated = this.isAuthenticatedSignal.asReadonly();
   readonly isAuthenticationReady$ = this.isAuthenticationReadySubject.asObservable();
 
-  private readonly apiUrl = environment.apiUrl;
+  private readonly bffUrl = environment.bffUrl;
 
   constructor(
     private http: HttpClient,
-    private oauthService: OAuthService,
     private router: Router
   ) {
-    this.configureOAuth();
-    this.setupOAuthEventHandlers();
+    // Check authentication status on service initialization
+    this.checkAuthenticationStatus();
   }
 
   /**
-   * Configure OAuth2/OIDC settings
+   * Check if user is already authenticated by calling BFF user endpoint
    */
-  private configureOAuth(): void {
-    // Use sessionStorage instead of localStorage for better security
-    // SessionStorage is cleared when browser tab is closed
-    this.oauthService.configure(authConfig);
-
-    // Use sessionStorage for tokens (more secure than localStorage)
-    this.oauthService.setStorage(sessionStorage);
-
-    // Load discovery document and try to login automatically
-    this.oauthService.loadDiscoveryDocumentAndTryLogin().then(() => {
-      if (this.oauthService.hasValidAccessToken()) {
-        this.loadUserProfile();
-      } else {
+  private checkAuthenticationStatus(): void {
+    this.getUserFromBff().subscribe({
+      next: (user) => {
+        if (user) {
+          this.currentUserSignal.set(user);
+          this.isAuthenticatedSignal.set(true);
+        }
+        this.isAuthenticationReadySubject.next(true);
+      },
+      error: () => {
         this.isAuthenticationReadySubject.next(true);
       }
-
-      // Setup automatic silent refresh
-      this.oauthService.setupAutomaticSilentRefresh();
-    }).catch(err => {
-      console.error('Error loading discovery document', err);
-      this.isAuthenticationReadySubject.next(true);
     });
   }
 
   /**
-   * Setup OAuth event handlers
+   * Get user information from BFF
+   * BFF validates the HTTP-only cookie and returns user claims
    */
-  private setupOAuthEventHandlers(): void {
-    // Listen to OAuth events
-    this.oauthService.events
-      .subscribe((event: OAuthEvent) => {
-        if (event.type === 'token_received') {
-          this.loadUserProfile();
+  private getUserFromBff(): Observable<User | null> {
+    return this.http.get<any>(`${this.bffUrl}/bff/user`, {
+      withCredentials: true // Important: send cookies
+    }).pipe(
+      map(claims => {
+        if (!claims || claims.length === 0) {
+          return null;
         }
 
-        if (event.type === 'token_expires') {
-          console.log('Token is about to expire');
-        }
+        // BFF returns claims as array of {type, value} objects
+        const claimsMap = this.convertClaimsArrayToMap(claims);
 
-        if (event.type === 'logout') {
-          this.clearUserData();
-        }
-
-        if (event instanceof OAuthErrorEvent) {
-          console.error('OAuth error', event);
-        }
-      });
-  }
-
-  /**
-   * Initialize authentication by redirecting to IdentityServer
-   * @param role User role to customize login experience
-   */
-  login(role?: UserRole): void {
-    // Configure with role-specific settings if provided
-    if (role) {
-      const config = getAuthConfigForRole(role);
-      this.oauthService.configure(config);
-    }
-
-    // Initiate Authorization Code Flow with PKCE
-    this.oauthService.initCodeFlow();
-  }
-
-  /**
-   * Handle OAuth callback after redirect from IdentityServer
-   */
-  handleCallback(): Observable<boolean> {
-    return from(this.oauthService.loadDiscoveryDocumentAndTryLogin()).pipe(
-      map(() => {
-        if (this.oauthService.hasValidAccessToken()) {
-          this.loadUserProfile();
-          return true;
-        }
-        return false;
-      })
+        return {
+          id: claimsMap['sub'] || '',
+          email: claimsMap['email'] || '',
+          role: this.mapClaimToRole(claimsMap['role']),
+          firstName: claimsMap['given_name'] || claimsMap['name']?.split(' ')[0] || '',
+          lastName: claimsMap['family_name'] || claimsMap['name']?.split(' ').slice(1).join(' ') || '',
+          tenantId: claimsMap['tenant_id']
+        };
+      }),
+      catchError(() => of(null))
     );
   }
 
   /**
-   * Logout current user
-   * This will revoke tokens and redirect to IdentityServer logout
+   * Convert BFF claims array to map for easier access
+   * BFF returns claims as: [{type: "sub", value: "123"}, ...]
    */
-  logout(): void {
-    // Revoke refresh token if available (for security)
-    this.oauthService.revokeTokenAndLogout();
-
-    // Clear local user data
-    this.clearUserData();
+  private convertClaimsArrayToMap(claims: any[]): Record<string, any> {
+    const map: Record<string, any> = {};
+    claims.forEach(claim => {
+      map[claim.type] = claim.value;
+    });
+    return map;
   }
 
   /**
-   * Logout without revoking token (local logout only)
+   * Initiate login by redirecting to BFF login endpoint
+   * BFF will redirect to Identity Service for authentication
    */
-  logoutLocally(): void {
-    this.oauthService.logOut(false);
-    this.clearUserData();
+  login(): void {
+    // Redirect to BFF login endpoint
+    // BFF will initiate OAuth Authorization Code + PKCE flow
+    window.location.href = `${this.bffUrl}/bff/login?returnUrl=${encodeURIComponent(window.location.pathname)}`;
+  }
+
+  /**
+   * Logout current user
+   * This calls BFF logout which performs both local and remote logout
+   */
+  logout(): void {
+    this.http.get(`${this.bffUrl}/bff/logout`, {
+      withCredentials: true
+    }).subscribe({
+      next: () => {
+        this.clearUserData();
+        this.router.navigate(['/login']);
+      },
+      error: () => {
+        // Even if logout fails on server, clear local state
+        this.clearUserData();
+        this.router.navigate(['/login']);
+      }
+    });
   }
 
   /**
@@ -154,28 +139,6 @@ export class AuthService {
   private clearUserData(): void {
     this.currentUserSignal.set(null);
     this.isAuthenticatedSignal.set(false);
-  }
-
-  /**
-   * Load user profile from ID token claims
-   */
-  private loadUserProfile(): void {
-    const claims = this.oauthService.getIdentityClaims();
-
-    if (claims) {
-      const user: User = {
-        id: claims['sub'],
-        email: claims['email'],
-        role: this.mapClaimToRole(claims['role']),
-        firstName: claims['given_name'],
-        lastName: claims['family_name'],
-        tenantId: claims['tenant_id']
-      };
-
-      this.currentUserSignal.set(user);
-      this.isAuthenticatedSignal.set(true);
-      this.isAuthenticationReadySubject.next(true);
-    }
   }
 
   /**
@@ -191,41 +154,18 @@ export class AuthService {
   }
 
   /**
-   * Get user info from IdentityServer userinfo endpoint
+   * Refresh user information from BFF
    */
-  getUserInfo(): Observable<any> {
-    return from(this.oauthService.loadUserProfile());
-  }
-
-  /**
-   * Request password reset
-   * Sends reset link to user's email
-   */
-  forgotPassword(email: string): Observable<{ message: string }> {
-    return this.http.post<{ message: string }>(
-      `${this.apiUrl}/account/forgot-password`,
-      { email }
-    );
-  }
-
-  /**
-   * Reset password with token
-   * Token and email are sent from the reset link
-   */
-  resetPassword(email: string, token: string, newPassword: string): Observable<{ message: string }> {
-    return this.http.post<{ message: string }>(
-      `${this.apiUrl}/account/reset-password`,
-      { email, token, newPassword }
-    );
-  }
-
-  /**
-   * Refresh access token using refresh token
-   * This is handled automatically by the library, but can be called manually
-   */
-  refreshToken(): Observable<boolean> {
-    return from(this.oauthService.refreshToken()).pipe(
-      map(() => this.oauthService.hasValidAccessToken())
+  refreshUser(): Observable<User | null> {
+    return this.getUserFromBff().pipe(
+      tap(user => {
+        if (user) {
+          this.currentUserSignal.set(user);
+          this.isAuthenticatedSignal.set(true);
+        } else {
+          this.clearUserData();
+        }
+      })
     );
   }
 
@@ -254,48 +194,6 @@ export class AuthService {
   }
 
   /**
-   * Get access token from OAuthService
-   */
-  getAccessToken(): string | null {
-    return this.oauthService.getAccessToken();
-  }
-
-  /**
-   * Get ID token from OAuthService
-   */
-  getIdToken(): string | null {
-    return this.oauthService.getIdToken();
-  }
-
-  /**
-   * Check if access token is valid
-   */
-  hasValidAccessToken(): boolean {
-    return this.oauthService.hasValidAccessToken();
-  }
-
-  /**
-   * Check if ID token is valid
-   */
-  hasValidIdToken(): boolean {
-    return this.oauthService.hasValidIdToken();
-  }
-
-  /**
-   * Get token expiration time
-   */
-  getAccessTokenExpiration(): number {
-    return this.oauthService.getAccessTokenExpiration();
-  }
-
-  /**
-   * Get identity claims from ID token
-   */
-  getIdentityClaims(): Record<string, any> {
-    return this.oauthService.getIdentityClaims() as Record<string, any>;
-  }
-
-  /**
    * Get user's tenant ID
    */
   getTenantId(): string | null {
@@ -308,5 +206,29 @@ export class AuthService {
    */
   isUserAuthenticated(): boolean {
     return this.isAuthenticatedSignal();
+  }
+
+  /**
+   * Request password reset
+   * Sends reset link to user's email
+   */
+  forgotPassword(email: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(
+      `${this.bffUrl}/api/identity/account/forgot-password`,
+      { email },
+      { withCredentials: true }
+    );
+  }
+
+  /**
+   * Reset password with token
+   * Token and email are sent from the reset link
+   */
+  resetPassword(email: string, token: string, newPassword: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(
+      `${this.bffUrl}/api/identity/account/reset-password`,
+      { email, token, newPassword },
+      { withCredentials: true }
+    );
   }
 }

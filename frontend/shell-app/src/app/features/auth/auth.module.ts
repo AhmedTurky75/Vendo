@@ -5,6 +5,7 @@ import { AuthRoutingModule } from './auth-routing.module';
 import { AdminLoginComponent } from './admin-login/admin-login.component';
 import { MerchantLoginComponent } from './merchant-login/merchant-login.component';
 import { CustomerLoginComponent } from './customer-login/customer-login.component';
+import { LoginComponent } from './login/login.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { AuthCallbackComponent } from './auth-callback/auth-callback.component';
@@ -15,6 +16,7 @@ import { SignoutCallbackComponent } from './signout-callback/signout-callback.co
     AdminLoginComponent,
     MerchantLoginComponent,
     CustomerLoginComponent,
+    LoginComponent,
     ForgotPasswordComponent,
     ResetPasswordComponent,
     AuthCallbackComponent,

@@ -1,0 +1,6 @@
+@Vendo.AdminBFF_HostAddress = http://localhost:5083
+
+GET {{Vendo.AdminBFF_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

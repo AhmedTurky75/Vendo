@@ -2,7 +2,6 @@ import { Component, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
-import { UserRole } from '../../../core/models/user.model';
 
 @Component({
   selector: 'app-admin-login',
@@ -33,18 +32,18 @@ export class AdminLoginComponent {
   }
 
   onSubmit(): void {
-    // Note: With OAuth2/OIDC, the form fields are not used for direct authentication
-    // The user will be redirected to IdentityServer for authentication
-    // This form is kept for UI consistency, but actual auth happens on IdentityServer
+    // Note: With BFF pattern, the form fields are not used for direct authentication
+    // The user will be redirected to BFF -> IdentityServer for authentication
+    // This form is kept for UI consistency, but actual auth happens via BFF OAuth2/OIDC + PKCE
 
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
-    // Redirect to IdentityServer for authentication with PKCE flow
-    this.authService.login(UserRole.Admin);
+    // Redirect to BFF which will initiate OAuth Authorization Code + PKCE flow
+    this.authService.login();
 
-    // Note: The page will redirect, so loading state may not be visible
-    // The user will be brought back to /auth/callback after authentication
+    // Note: The page will redirect to BFF, then IdentityServer
+    // After authentication, user will be redirected back to the app
   }
 
   get email() {

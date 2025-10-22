@@ -1,15 +1,11 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.vendo.com/api',
-  identityUrl: 'https://identity.vendo.com',
 
-  // OAuth2/OIDC Configuration
-  oidc: {
-    issuer: 'https://identity.vendo.com',
-    clientId: 'spa',
-    scope: 'openid profile email roles tenant vendo.api.full_access',
-    responseType: 'code',
-    requireHttps: true, // MUST be true in production
-    showDebugInformation: false
-  }
+  // BFF (Backend for Frontend) URL
+  // All API calls go through the BFF for secure token management
+  bffUrl: 'https://admin-bff.vendo.com',
+
+  // Legacy URLs - kept for backward compatibility but should use BFF
+  apiUrl: 'https://admin-bff.vendo.com/api',
+  identityUrl: 'https://identity.vendo.com'
 };

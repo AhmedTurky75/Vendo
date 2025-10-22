@@ -112,7 +112,13 @@
       "Bash(mkdir -p d:/Projects/Vendo/frontend/shared-lib/projects/common/src/lib/constants)",
       "Bash(mkdir -p d:/Projects/Vendo/frontend/shared-lib/projects/common/src/lib/models)",
       "Bash(npm install:*)",
-      "Bash(timeout 30 ng serve:*)"
+      "Bash(timeout 30 ng serve:*)",
+      "Bash(rm:*)",
+      "Bash(dotnet new:*)",
+      "Bash(dotnet sln:*)",
+      "Bash(dotnet add:*)",
+      "Bash(dotnet add package:*)",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": []

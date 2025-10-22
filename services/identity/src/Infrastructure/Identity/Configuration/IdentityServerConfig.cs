@@ -85,33 +85,6 @@ public static class IdentityServerConfig
                 AllowOfflineAccess = false
             },
 
-            // Resource Owner Password Credentials client (for backward compatibility and mobile apps)
-            // Note: This flow is less secure and should be phased out in favor of Authorization Code + PKCE
-            new Client
-            {
-                ClientId = "client",
-                ClientName = "Client Application (Legacy)",
-                AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
-                ClientSecrets =
-                {
-                    new Secret("secret".Sha256()) // TODO: Move to secure configuration in production
-                },
-                AllowedScopes =
-                {
-                    IdentityServerConstants.StandardScopes.OpenId,
-                    IdentityServerConstants.StandardScopes.Profile,
-                    IdentityServerConstants.StandardScopes.Email,
-                    "vendo.api.full_access",
-                    "roles",
-                    "tenant"
-                },
-                AccessTokenLifetime = 3600, // 1 hour
-                RefreshTokenUsage = TokenUsage.ReUse,
-                RefreshTokenExpiration = TokenExpiration.Sliding,
-                SlidingRefreshTokenLifetime = 1296000, // 15 days
-                AllowOfflineAccess = true
-            },
-
             // Interactive web application - Authorization Code with PKCE (Recommended)
             new Client
             {
@@ -315,6 +288,51 @@ public static class IdentityServerConfig
                 SlidingRefreshTokenLifetime = 604800, // 7 days
                 AllowOfflineAccess = true,
                 RequireConsent = false
+            },
+
+            // Admin BFF - Backend for Frontend for Admin Portal
+            new Client
+            {
+                ClientId = "admin-bff",
+                ClientName = "Admin BFF",
+                AllowedGrantTypes = GrantTypes.Code,
+                RequirePkce = true,
+                RequireClientSecret = false, // Public client
+
+                // BFF redirect URIs
+                RedirectUris = {
+                    "https://localhost:5101/signin-oidc"
+                },
+                PostLogoutRedirectUris = {
+                    "https://localhost:5101/signout-callback-oidc"
+                },
+                FrontChannelLogoutUri = "https://localhost:5101/signout-oidc",
+
+                AllowedCorsOrigins = {
+                    "https://localhost:5101"
+                },
+
+                AllowedScopes =
+                {
+                    IdentityServerConstants.StandardScopes.OpenId,
+                    IdentityServerConstants.StandardScopes.Profile,
+                    IdentityServerConstants.StandardScopes.Email,
+                    "vendo.api.full_access",
+                    "roles",
+                    "tenant"
+                },
+
+                // Admin portal has shorter token lifetime for security
+                AccessTokenLifetime = 1800, // 30 minutes
+                RefreshTokenUsage = TokenUsage.OneTimeOnly,
+                RefreshTokenExpiration = TokenExpiration.Sliding,
+                SlidingRefreshTokenLifetime = 43200, // 12 hours
+                AllowOfflineAccess = true, // For refresh tokens
+                RequireConsent = false,
+
+                // BFF-specific settings
+                AlwaysIncludeUserClaimsInIdToken = true,
+                UpdateAccessTokenClaimsOnRefresh = true
             }
         };
 }

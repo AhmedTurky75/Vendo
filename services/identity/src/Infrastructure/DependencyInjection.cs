@@ -1,12 +1,10 @@
 using Microsoft.Extensions.DependencyInjection;
 using Vendo.Identity.Application.Common.Interfaces;
 using Vendo.Identity.Domain.Repositories;
-using Vendo.Identity.Infrastructure.Identity;
 using Vendo.Identity.Infrastructure.Identity.Configuration;
 using Vendo.Identity.Infrastructure.Identity.ProfileService;
 using Vendo.Identity.Infrastructure.Persistence.Repositories;
 using Vendo.Identity.Infrastructure.Services;
-using Duende.IdentityServer.Validation;
 using Duende.IdentityServer.Services;
 
 namespace Vendo.Identity.Infrastructure;
@@ -39,12 +37,10 @@ public static class DependencyInjection
         .AddInMemoryApiScopes(IdentityServerConfig.ApiScopes)
         .AddInMemoryClients(IdentityServerConfig.Clients)
         .AddProfileService<CustomProfileService>()
-        .AddResourceOwnerValidator<ResourceOwnerPasswordValidator>()
         .AddDeveloperSigningCredential(); // For development only - use proper certificate in production
 
         // Register custom services for IdentityServer
         services.AddTransient<IProfileService, CustomProfileService>();
-        services.AddTransient<IResourceOwnerPasswordValidator, ResourceOwnerPasswordValidator>();
 
         return services;
     }

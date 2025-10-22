@@ -42,7 +42,7 @@ export class MerchantLoginComponent {
     this.errorMessage.set(null);
 
     // Redirect to IdentityServer for authentication with PKCE flow
-    this.authService.login(UserRole.Merchant);
+    this.authService.login();
 
     // Note: The page will redirect, so loading state may not be visible
     // The user will be brought back to /auth/callback after authentication

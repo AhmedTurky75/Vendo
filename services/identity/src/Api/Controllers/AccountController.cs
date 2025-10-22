@@ -8,7 +8,6 @@ using Vendo.Identity.Application.Commands.ForgotPassword;
 using Vendo.Identity.Application.Commands.RegisterUser;
 using Vendo.Identity.Application.Commands.ResetPassword;
 using Vendo.Identity.Application.Commands.UpdateUser;
-using Vendo.Identity.Application.Queries.AuthenticateUser;
 using Vendo.Identity.Application.Queries.GetUser;
 
 namespace Vendo.Identity.Api.Controllers;
@@ -62,55 +61,6 @@ public class AccountController : ControllerBase
 
         _logger.LogInformation("User registered successfully: {Username}", request.Username);
         return CreatedAtAction(nameof(GetProfile), new { }, ApiResponse<Application.DTOs.UserDto>.SuccessResponse(result.Data!));
-    }
-
-    /// <summary>
-    /// Authenticate user with username and password
-    /// </summary>
-    /// <param name="request">Login credentials</param>
-    /// <returns>Authentication result with JWT tokens</returns>
-    /// <remarks>
-    /// DEPRECATED: This endpoint is deprecated and will be removed in a future version.
-    /// Please use the standard IdentityServer OAuth2/OIDC endpoints instead:
-    ///
-    /// - For web/mobile apps: Use Authorization Code flow with PKCE via /connect/authorize
-    /// - For service-to-service: Use Client Credentials flow via /connect/token
-    /// - For legacy apps: Use Resource Owner Password flow via /connect/token
-    ///
-    /// Migration guide: See OAUTH2-MIGRATION-GUIDE.md for detailed instructions.
-    /// </remarks>
-    [HttpPost("login")]
-    [AllowAnonymous]
-    [Obsolete("Use IdentityServer's /connect/token endpoint with proper OAuth2/OIDC flows. This endpoint is maintained for backward compatibility only.")]
-    [ProducesResponseType(typeof(ApiResponse<Application.DTOs.AuthenticationResultDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ApiResponse<Application.DTOs.AuthenticationResultDto>), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Login([FromBody] LoginRequest request)
-    {
-        _logger.LogWarning("DEPRECATED: Custom login endpoint used by username: {Username}. Please migrate to OAuth2/OIDC flows.", request.Username);
-
-        var query = new AuthenticateUserQuery
-        {
-            Username = request.Username,
-            Password = request.Password,
-            Role = request.Role
-        };
-
-        var result = await _mediator.Send(query);
-
-        if (!result.IsSuccess)
-        {
-            _logger.LogWarning("Authentication failed for user: {Username}", request.Username);
-            return BadRequest(ApiResponse<Application.DTOs.AuthenticationResultDto>.ErrorResponse(result.Error ?? "Authentication failed"));
-        }
-
-        if (!result.Data!.IsAuthenticated)
-        {
-            _logger.LogWarning("Authentication unsuccessful for user: {Username}", request.Username);
-            return Ok(ApiResponse<Application.DTOs.AuthenticationResultDto>.ErrorResponse(result.Data.Message ?? "Invalid credentials"));
-        }
-
-        _logger.LogInformation("User authenticated successfully via deprecated endpoint: {Username}", request.Username);
-        return Ok(ApiResponse<Application.DTOs.AuthenticationResultDto>.SuccessResponse(result.Data));
     }
 
     /// <summary>

@@ -111,7 +111,14 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(policy =>
     {
         var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
-            ?? new[] { "https://localhost:5001", "https://localhost:5002", "https://localhost:4200", "https://localhost:4300", "https://localhost:4400" };
+            ?? new[] {
+                "https://localhost:5001", // Identity Service
+                "https://localhost:5002", // Web App
+                "https://localhost:5101", // Admin BFF
+                "https://localhost:4200", // Customer Portal
+                "https://localhost:4300", // Admin Portal
+                "https://localhost:4400"  // Merchant Portal
+            };
 
         policy.WithOrigins(allowedOrigins)
               .AllowAnyHeader()
@@ -123,7 +130,14 @@ builder.Services.AddCors(options =>
     options.AddPolicy("IdentityServerPolicy", policy =>
     {
         var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
-            ?? new[] { "https://localhost:5001", "https://localhost:5002", "https://localhost:4200", "https://localhost:4300", "https://localhost:4400" };
+            ?? new[] {
+                "https://localhost:5001", // Identity Service
+                "https://localhost:5002", // Web App
+                "https://localhost:5101", // Admin BFF
+                "https://localhost:4200", // Customer Portal
+                "https://localhost:4300", // Admin Portal
+                "https://localhost:4400"  // Merchant Portal
+            };
 
         policy.WithOrigins(allowedOrigins)
               .AllowAnyHeader()

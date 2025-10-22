@@ -3,16 +3,12 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:5001/api',
-  identityUrl: 'http://localhost:5001',
 
-  // OAuth2/OIDC Configuration
-  oidc: {
-    issuer: 'http://localhost:5001',
-    clientId: 'spa',
-    scope: 'openid profile email roles tenant vendo.api.full_access',
-    responseType: 'code',
-    requireHttps: false, // Only false in development
-    showDebugInformation: true
-  }
+  // BFF (Backend for Frontend) URL
+  // All API calls go through the BFF for secure token management
+  bffUrl: 'https://localhost:5101',
+
+  // Legacy URLs - kept for backward compatibility but should use BFF
+  apiUrl: 'https://localhost:5101/api',
+  identityUrl: 'https://localhost:5001'
 };

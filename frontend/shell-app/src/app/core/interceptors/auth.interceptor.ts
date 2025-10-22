@@ -6,24 +6,26 @@ import {
   HttpInterceptor,
   HttpErrorResponse
 } from '@angular/common/http';
-import { Observable, throwError, BehaviorSubject } from 'rxjs';
-import { catchError, filter, take, switchMap } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { environment } from '../../../environments/environment';
 
 /**
- * Enhanced AuthInterceptor with OAuth2/OIDC support
+ * BFF-based AuthInterceptor
  *
  * This interceptor:
- * 1. Adds the OIDC access token to outgoing API requests
- * 2. Handles token expiration and automatic refresh
- * 3. Handles 401 Unauthorized responses
- * 4. Implements request queuing during token refresh
+ * 1. Ensures all requests to BFF include credentials (cookies)
+ * 2. Adds anti-CSRF header for state-changing requests
+ * 3. Handles 401 Unauthorized by redirecting to login
+ * 4. Does NOT add Bearer tokens (BFF manages tokens via cookies)
+ *
+ * The BFF automatically handles token refresh, so no manual refresh logic is needed.
  */
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  private isRefreshing = false;
-  private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+  private readonly bffUrl = environment.bffUrl;
 
   constructor(
     private authService: AuthService,
@@ -31,27 +33,35 @@ export class AuthInterceptor implements HttpInterceptor {
   ) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    // Don't add token to IdentityServer token endpoint requests
-    if (this.isTokenEndpoint(request.url)) {
-      return next.handle(request);
-    }
+    // Clone request and add credentials for BFF requests
+    if (this.isBffRequest(request.url)) {
+      request = request.clone({
+        withCredentials: true // Send HTTP-only cookies
+      });
 
-    // Add access token to request if available
-    const token = this.authService.getAccessToken();
-    if (token) {
-      request = this.addToken(request, token);
+      // Add anti-CSRF header for state-changing requests
+      // BFF validates this header to prevent CSRF attacks
+      if (this.isStateChangingRequest(request.method)) {
+        request = request.clone({
+          setHeaders: {
+            'X-CSRF': '1' // Simple anti-CSRF token
+          }
+        });
+      }
     }
 
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401) {
-          // Token expired or invalid, try to refresh
-          return this.handle401Error(request, next);
+          // Unauthorized - session expired or user not logged in
+          console.log('401 Unauthorized, redirecting to login');
+          this.redirectToLogin();
         }
 
         if (error.status === 403) {
           // Forbidden - user doesn't have permission
-          console.error('Access forbidden:', error);
+          console.error('403 Forbidden - Access denied:', error);
+          this.router.navigate(['/unauthorized']);
         }
 
         return throwError(() => error);
@@ -60,79 +70,29 @@ export class AuthInterceptor implements HttpInterceptor {
   }
 
   /**
-   * Add access token to request headers
+   * Check if request is going to BFF
    */
-  private addToken(request: HttpRequest<any>, token: string): HttpRequest<any> {
-    return request.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+  private isBffRequest(url: string): boolean {
+    return url.startsWith(this.bffUrl) || url.startsWith('/bff') || url.startsWith('/api');
   }
 
   /**
-   * Handle 401 Unauthorized error by attempting to refresh token
+   * Check if request method is state-changing (requires CSRF protection)
    */
-  private handle401Error(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    if (!this.isRefreshing) {
-      this.isRefreshing = true;
-      this.refreshTokenSubject.next(null);
-
-      // Check if we have a valid token before trying to refresh
-      if (this.authService.hasValidAccessToken()) {
-        // Token is still valid according to the library, proceed with request
-        this.isRefreshing = false;
-        return next.handle(request);
-      }
-
-      // Attempt to refresh the token
-      return this.authService.refreshToken().pipe(
-        switchMap((success: boolean) => {
-          this.isRefreshing = false;
-
-          if (success) {
-            const newToken = this.authService.getAccessToken();
-            this.refreshTokenSubject.next(newToken);
-            return next.handle(this.addToken(request, newToken!));
-          } else {
-            // Refresh failed, redirect to login
-            this.redirectToLogin();
-            return throwError(() => new Error('Token refresh failed'));
-          }
-        }),
-        catchError((err) => {
-          this.isRefreshing = false;
-          this.redirectToLogin();
-          return throwError(() => err);
-        })
-      );
-    } else {
-      // Token refresh is already in progress, queue this request
-      return this.refreshTokenSubject.pipe(
-        filter(token => token != null),
-        take(1),
-        switchMap(token => {
-          return next.handle(this.addToken(request, token));
-        })
-      );
-    }
+  private isStateChangingRequest(method: string): boolean {
+    return ['POST', 'PUT', 'DELETE', 'PATCH'].includes(method.toUpperCase());
   }
 
   /**
-   * Redirect to login and clear authentication
+   * Redirect to login
    */
   private redirectToLogin(): void {
-    this.authService.logoutLocally();
-    this.router.navigate(['/login/customer']);
-  }
+    // Store current URL for redirect after login
+    const currentUrl = this.router.url;
+    if (currentUrl && currentUrl !== '/login') {
+      sessionStorage.setItem('redirect_url', currentUrl);
+    }
 
-  /**
-   * Check if URL is a token endpoint (should not add auth header)
-   */
-  private isTokenEndpoint(url: string): boolean {
-    return url.includes('/connect/token') ||
-           url.includes('/connect/authorize') ||
-           url.includes('/connect/revocation') ||
-           url.includes('/.well-known/');
+    this.router.navigate(['/login']);
   }
 }

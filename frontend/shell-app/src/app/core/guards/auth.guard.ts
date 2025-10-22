@@ -6,13 +6,14 @@ import { AuthService } from '../services/auth.service';
 import { UserRole } from '../models/user.model';
 
 /**
- * Enhanced AuthGuard with OAuth2/OIDC support
+ * BFF-based AuthGuard
  *
  * This guard protects routes from unauthorized access by checking:
- * 1. If the user has a valid OIDC access token
+ * 1. If the user is authenticated (has valid session cookie)
  * 2. If the user has the required role for the route
  *
- * If authentication fails, the user is redirected to IdentityServer for login.
+ * If authentication fails, the user is redirected to login page.
+ * The BFF handles all OAuth/OIDC complexity.
  */
 @Injectable({
   providedIn: 'root'
@@ -31,12 +32,12 @@ export class AuthGuard implements CanActivate {
     return this.authService.isAuthenticationReady$.pipe(
       take(1),
       map(() => {
-        // Check if user has a valid access token
-        if (!this.authService.hasValidAccessToken()) {
-          console.log('No valid access token, redirecting to login');
+        // Check if user is authenticated
+        if (!this.authService.isUserAuthenticated()) {
+          console.log('User not authenticated, redirecting to login');
           // Store the attempted URL for redirecting after login
           sessionStorage.setItem('redirect_url', state.url);
-          return this.router.createUrlTree(['/login/customer']);
+          return this.router.createUrlTree(['/login']);
         }
 
         // Check if route requires specific role
