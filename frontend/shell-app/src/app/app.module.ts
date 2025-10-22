@@ -8,13 +8,14 @@ import { CoreModule } from './core/core.module';
 import { SharedModule } from './shared/shared.module';
 
 @NgModule({
-  declarations: [],
+  declarations: [
+    AppComponent
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     CoreModule,
-    SharedModule,
-    AppComponent
+    SharedModule
   ],
   providers: [
     provideHttpClient(withInterceptorsFromDi())

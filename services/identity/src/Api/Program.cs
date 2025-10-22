@@ -103,15 +103,33 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-// Configure CORS
+// Configure CORS for proper security
+// In production, these should come from configuration
 builder.Services.AddCors(options =>
 {
+    // Default policy for API access
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("https://localhost:5001", "https://localhost:5002")
+        var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+            ?? new[] { "https://localhost:5001", "https://localhost:5002", "https://localhost:4200", "https://localhost:4300", "https://localhost:4400" };
+
+        policy.WithOrigins(allowedOrigins)
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
+    });
+
+    // Strict policy for IdentityServer endpoints
+    options.AddPolicy("IdentityServerPolicy", policy =>
+    {
+        var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+            ?? new[] { "https://localhost:5001", "https://localhost:5002", "https://localhost:4200", "https://localhost:4300", "https://localhost:4400" };
+
+        policy.WithOrigins(allowedOrigins)
+              .AllowAnyHeader()
+              .WithMethods("GET", "POST")
+              .AllowCredentials()
+              .WithExposedHeaders("WWW-Authenticate");
     });
 });
 
