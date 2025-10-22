@@ -1,0 +1,759 @@
+{
+	"info": {
+		"_postman_id": "vendo-identity-collection",
+		"name": "Vendo Identity Service API",
+		"description": "Comprehensive Postman collection for Vendo Identity Service including IdentityServer OAuth2/OIDC endpoints and custom Identity APIs.\n\n**Quick Start:**\n1. Import the environment file (Vendo-Identity-Environment.postman_environment.json)\n2. Update the environment variables with your actual values\n3. Use the 'Discovery' request first to verify IdentityServer is running\n4. Test token endpoints with different grant types\n5. Use the returned tokens for authenticated API calls",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "IdentityServer OAuth2/OIDC",
+			"description": "Standard IdentityServer endpoints for OAuth2 and OpenID Connect flows",
+			"item": [
+				{
+					"name": "Discovery Document",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/.well-known/openid-configuration",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								".well-known",
+								"openid-configuration"
+							]
+						},
+						"description": "Get the OpenID Connect discovery document. This returns all available endpoints, supported grant types, scopes, and other configuration details."
+					},
+					"response": []
+				},
+				{
+					"name": "Token - Resource Owner Password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"access_token\", jsonData.access_token);",
+									"    if (jsonData.refresh_token) {",
+									"        pm.environment.set(\"refresh_token\", jsonData.refresh_token);",
+									"    }",
+									"    console.log(\"Access token saved to environment\");",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "{{client_id}}",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{client_secret}}",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "{{username}}",
+									"type": "text",
+									"description": "User's username or email"
+								},
+								{
+									"key": "password",
+									"value": "{{password}}",
+									"type": "text",
+									"description": "User's password"
+								},
+								{
+									"key": "scope",
+									"value": "openid profile email vendo.api.full_access roles tenant offline_access",
+									"type": "text",
+									"description": "Space-separated list of scopes"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/connect/token",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"connect",
+								"token"
+							]
+						},
+						"description": "Resource Owner Password Credentials flow. Send username and password directly to get tokens.\n\n**Note:** This flow is deprecated for security reasons. Use Authorization Code + PKCE for production."
+					},
+					"response": []
+				},
+				{
+					"name": "Token - Client Credentials",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"service_access_token\", jsonData.access_token);",
+									"    console.log(\"Service access token saved to environment\");",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "client_credentials",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "service",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "service-secret",
+									"type": "text"
+								},
+								{
+									"key": "scope",
+									"value": "vendo.api.full_access",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/connect/token",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"connect",
+								"token"
+							]
+						},
+						"description": "Client Credentials flow for service-to-service authentication. Use this when your backend service needs to call APIs without user context."
+					},
+					"response": []
+				},
+				{
+					"name": "Token - Refresh Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"access_token\", jsonData.access_token);",
+									"    if (jsonData.refresh_token) {",
+									"        pm.environment.set(\"refresh_token\", jsonData.refresh_token);",
+									"    }",
+									"    console.log(\"Tokens refreshed and saved to environment\");",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "refresh_token",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "{{client_id}}",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{client_secret}}",
+									"type": "text"
+								},
+								{
+									"key": "refresh_token",
+									"value": "{{refresh_token}}",
+									"type": "text",
+									"description": "The refresh token received from previous authentication"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/connect/token",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"connect",
+								"token"
+							]
+						},
+						"description": "Use a refresh token to get a new access token without requiring user credentials again."
+					},
+					"response": []
+				},
+				{
+					"name": "UserInfo",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/connect/userinfo",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"connect",
+								"userinfo"
+							]
+						},
+						"description": "Get information about the authenticated user using an access token. Returns user claims like sub, name, email, roles, tenant info, etc."
+					},
+					"response": []
+				},
+				{
+					"name": "Token Introspection",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "text",
+									"description": "The token to introspect"
+								},
+								{
+									"key": "client_id",
+									"value": "service",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "service-secret",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/connect/introspect",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"connect",
+								"introspect"
+							]
+						},
+						"description": "Introspect a token to check if it's valid and get information about it. Used by resource servers to validate access tokens."
+					},
+					"response": []
+				},
+				{
+					"name": "Token Revocation",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "token",
+									"value": "{{refresh_token}}",
+									"type": "text",
+									"description": "The token to revoke (usually refresh token)"
+								},
+								{
+									"key": "token_type_hint",
+									"value": "refresh_token",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "{{client_id}}",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{client_secret}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/connect/revocation",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"connect",
+								"revocation"
+							]
+						},
+						"description": "Revoke a token (access or refresh token). Use this for logout scenarios to invalidate tokens."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Account Management",
+			"description": "User account operations (registration, login, profile, password management)",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"newuser\",\n  \"email\": \"newuser@example.com\",\n  \"password\": \"SecureP@ssw0rd123\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/account/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"register"
+							]
+						},
+						"description": "Register a new user account. No authentication required."
+					},
+					"response": []
+				},
+				{
+					"name": "Login (DEPRECATED)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.data && jsonData.data.token) {",
+									"        pm.environment.set(\"legacy_token\", jsonData.data.token);",
+									"        console.log(\"Legacy token saved to environment\");",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\",\n  \"role\": \"Customer\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/account/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"login"
+							]
+						},
+						"description": "**DEPRECATED:** Legacy login endpoint. Use IdentityServer's /connect/token endpoint instead.\n\nThis endpoint is maintained for backward compatibility only."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/account/profile",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"profile"
+							]
+						},
+						"description": "Get the current authenticated user's profile. Requires Bearer token."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"updated.email@example.com\",\n  \"firstName\": \"Jane\",\n  \"lastName\": \"Smith\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/account/profile",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"profile"
+							]
+						},
+						"description": "Update the current authenticated user's profile. Requires Bearer token."
+					},
+					"response": []
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"currentPassword\": \"OldP@ssw0rd123\",\n  \"newPassword\": \"NewSecureP@ssw0rd123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/account/change-password",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"change-password"
+							]
+						},
+						"description": "Change password for the authenticated user. Requires current password and Bearer token."
+					},
+					"response": []
+				},
+				{
+					"name": "Forgot Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"user@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/account/forgot-password",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"forgot-password"
+							]
+						},
+						"description": "Request a password reset. An email with reset token will be sent (simulated in development). No authentication required."
+					},
+					"response": []
+				},
+				{
+					"name": "Reset Password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"user@example.com\",\n  \"token\": \"reset-token-from-email\",\n  \"newPassword\": \"NewSecureP@ssw0rd123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/account/reset-password",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"account",
+								"reset-password"
+							]
+						},
+						"description": "Reset password using the token received via email. No authentication required."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User Management (Admin)",
+			"description": "Administrative operations for managing users (Admin role required)",
+			"item": [
+				{
+					"name": "Get All Users",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/users?isActive=true",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users"
+							],
+							"query": [
+								{
+									"key": "isActive",
+									"value": "true",
+									"description": "Optional: Filter by active status (true/false)"
+								}
+							]
+						},
+						"description": "Get all users with optional active status filter. Requires Admin role and Bearer token."
+					},
+					"response": []
+				},
+				{
+					"name": "Get User by ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/{{user_id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"{{user_id}}"
+							]
+						},
+						"description": "Get a specific user by their ID. Requires Admin role and Bearer token."
+					},
+					"response": []
+				},
+				{
+					"name": "Activate User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/{{user_id}}/activate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"{{user_id}}",
+								"activate"
+							]
+						},
+						"description": "Activate a deactivated user account. Requires Admin role and Bearer token."
+					},
+					"response": []
+				},
+				{
+					"name": "Deactivate User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/{{user_id}}/deactivate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"{{user_id}}",
+								"deactivate"
+							]
+						},
+						"description": "Deactivate a user account. Requires Admin role and Bearer token."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://localhost:7269",
+			"type": "string"
+		}
+	]
+}
