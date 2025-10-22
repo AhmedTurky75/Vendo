@@ -110,7 +110,9 @@
       "Bash(cat /d/Projects/Vendo/frontend/shell-app/package.json)",
       "Bash(mkdir -p /d/Projects/Vendo/services/identity/src/Domain/Constants)",
       "Bash(mkdir -p d:/Projects/Vendo/frontend/shared-lib/projects/common/src/lib/constants)",
-      "Bash(mkdir -p d:/Projects/Vendo/frontend/shared-lib/projects/common/src/lib/models)"
+      "Bash(mkdir -p d:/Projects/Vendo/frontend/shared-lib/projects/common/src/lib/models)",
+      "Bash(npm install:*)",
+      "Bash(timeout 30 ng serve:*)"
     ],
     "deny": [],
     "ask": []

@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Vendo.Identity.Api.Models;
 using Vendo.Identity.Application.Commands.ChangePassword;
+using Vendo.Identity.Application.Commands.ForgotPassword;
 using Vendo.Identity.Application.Commands.RegisterUser;
+using Vendo.Identity.Application.Commands.ResetPassword;
 using Vendo.Identity.Application.Commands.UpdateUser;
 using Vendo.Identity.Application.Queries.AuthenticateUser;
 using Vendo.Identity.Application.Queries.GetUser;
@@ -66,7 +68,7 @@ public class AccountController : ControllerBase
     /// Authenticate user with username and password
     /// </summary>
     /// <param name="request">Login credentials</param>
-    /// <returns>Authentication result</returns>
+    /// <returns>Authentication result with JWT tokens</returns>
     [HttpPost("login")]
     [AllowAnonymous]
     [ProducesResponseType(typeof(ApiResponse<Application.DTOs.AuthenticationResultDto>), StatusCodes.Status200OK)]
@@ -76,7 +78,8 @@ public class AccountController : ControllerBase
         var query = new AuthenticateUserQuery
         {
             Username = request.Username,
-            Password = request.Password
+            Password = request.Password,
+            Role = request.Role
         };
 
         var result = await _mediator.Send(query);
@@ -202,6 +205,71 @@ public class AccountController : ControllerBase
 
         _logger.LogInformation("Password changed successfully for user: {UserId}", userId);
         return Ok(ApiResponse<object>.SuccessResponse(new { message = "Password changed successfully" }));
+    }
+
+    /// <summary>
+    /// Request password reset (forgot password)
+    /// </summary>
+    /// <param name="request">Forgot password request with email</param>
+    /// <returns>Success response</returns>
+    [HttpPost("forgot-password")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
+    {
+        var command = new ForgotPasswordCommand
+        {
+            Email = request.Email
+        };
+
+        var result = await _mediator.Send(command);
+
+        if (!result.IsSuccess)
+        {
+            _logger.LogWarning("Forgot password request failed: {Error}", result.Error);
+            return BadRequest(ApiResponse<object>.ErrorResponse(
+                result.Error ?? "Failed to process password reset request",
+                result.ValidationErrors.Any() ? result.ValidationErrors : null));
+        }
+
+        _logger.LogInformation("Password reset email process initiated");
+        return Ok(ApiResponse<object>.SuccessResponse(new
+        {
+            message = "If the email exists, a password reset link has been sent. Please check your email."
+        }));
+    }
+
+    /// <summary>
+    /// Reset password with token
+    /// </summary>
+    /// <param name="request">Reset password request with token and new password</param>
+    /// <returns>Success or error response</returns>
+    [HttpPost("reset-password")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+    {
+        var command = new ResetPasswordCommand
+        {
+            Email = request.Email,
+            Token = request.Token,
+            NewPassword = request.NewPassword
+        };
+
+        var result = await _mediator.Send(command);
+
+        if (!result.IsSuccess)
+        {
+            _logger.LogWarning("Password reset failed: {Error}", result.Error);
+            return BadRequest(ApiResponse<object>.ErrorResponse(
+                result.Error ?? "Failed to reset password",
+                result.ValidationErrors.Any() ? result.ValidationErrors : null));
+        }
+
+        _logger.LogInformation("Password reset successfully");
+        return Ok(ApiResponse<object>.SuccessResponse(new { message = "Password has been reset successfully" }));
     }
 
     private Guid? GetCurrentUserId()

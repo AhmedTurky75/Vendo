@@ -23,6 +23,7 @@ public static class DependencyInjection
 
         // Register services
         services.AddSingleton<IPasswordHasher, BCryptPasswordHasher>();
+        services.AddSingleton<IJwtTokenService, JwtTokenService>();
 
         // Configure IdentityServer
         services.AddIdentityServer(options =>
