@@ -7,10 +7,27 @@ A complete Identity and Authentication service built with .NET 9.0, Duende Ident
 This service provides comprehensive identity management and authentication capabilities for the Vendo platform, including:
 
 - User registration and management
-- Authentication and authorization
-- JWT token-based API security
-- OAuth2/OpenID Connect flows
+- Authentication and authorization using **OAuth2/OpenID Connect** standards
+- Token-based API security with proper flows
+- Multi-tenancy support (placeholder for full implementation)
 - Role-based access control (RBAC)
+
+## 📚 Documentation
+
+| Document | Description |
+|----------|-------------|
+| [README.md](./README.md) | This file - general overview and quick start |
+| [QUICK-START.md](./QUICK-START.md) | Quick start guide for testing |
+| [OAUTH2-MIGRATION-GUIDE.md](./OAUTH2-MIGRATION-GUIDE.md) | **Essential** - How to migrate from custom login to OAuth2/OIDC |
+| [OAUTH2-ENDPOINTS.md](./OAUTH2-ENDPOINTS.md) | Complete OAuth2/OIDC endpoint reference |
+| [IDENTITYSERVER-IMPLEMENTATION-SUMMARY.md](./IDENTITYSERVER-IMPLEMENTATION-SUMMARY.md) | Detailed implementation summary |
+| [API-TESTING-GUIDE.md](./API-TESTING-GUIDE.md) | API testing guide with examples |
+| [BACKEND-IMPLEMENTATION-SUMMARY.md](./BACKEND-IMPLEMENTATION-SUMMARY.md) | Backend implementation details |
+| [../../07_SECURITY_AND_COMPLIANCE.md](../../07_SECURITY_AND_COMPLIANCE.md) | Security and compliance requirements |
+
+## ⚠️ Important Notice
+
+The custom `/api/account/login` endpoint is **deprecated**. All new applications should use standard OAuth2/OIDC flows via `/connect/token` and `/connect/authorize`. See [OAUTH2-MIGRATION-GUIDE.md](./OAUTH2-MIGRATION-GUIDE.md) for migration instructions.
 
 ## Technology Stack
 
@@ -162,31 +179,63 @@ The service comes with pre-seeded test users:
 
 - `GET /health` - Service health status
 
-## Testing with Swagger
+## Authentication with OAuth2/OIDC
 
-### Option 1: OAuth2 Authorization Code Flow (Recommended)
+### Important: Custom Login Endpoint Deprecated
 
-1. Click the "Authorize" button in Swagger UI
-2. Select all scopes
-3. Click "Authorize"
-4. You'll be redirected to the IdentityServer login page
-5. Login with test credentials
-6. After successful authentication, you can test protected endpoints
+The custom `/api/account/login` endpoint is **deprecated** and will be removed in a future version. Please migrate to standard OAuth2/OIDC flows. See [OAUTH2-MIGRATION-GUIDE.md](./OAUTH2-MIGRATION-GUIDE.md) for detailed instructions.
 
-### Option 2: Resource Owner Password Flow
+### Recommended: OAuth2 Authorization Code Flow with PKCE
 
-1. Get a token using cURL or Postman:
+This is the industry-standard, most secure authentication flow for web and mobile applications.
+
+#### Using Swagger UI (Easiest for Testing)
+
+1. Navigate to `https://localhost:5001/swagger`
+2. Click the **"Authorize"** button (top right)
+3. Select all scopes you need
+4. Click **"Authorize"**
+5. You'll be redirected to the IdentityServer login page
+6. Login with test credentials (e.g., `admin` / `Admin@123`)
+7. After successful authentication, you can test all protected endpoints
+
+#### Using OAuth2 Libraries in Your Application
+
+**Angular:**
+```bash
+npm install angular-oauth2-oidc
+```
+
+**React:**
+```bash
+npm install oidc-client-ts
+```
+
+See [OAUTH2-MIGRATION-GUIDE.md](./OAUTH2-MIGRATION-GUIDE.md) for complete implementation examples.
+
+### Alternative: Resource Owner Password Flow (Legacy)
+
+For testing or legacy applications only. **Not recommended** for new applications.
 
 ```bash
 curl -X POST "https://localhost:5001/connect/token" \
   -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "grant_type=password&username=admin&password=Admin@123&client_id=client&client_secret=secret&scope=openid profile email vendo.api.full_access roles"
+  -d "grant_type=password&username=admin&password=Admin@123&client_id=client&client_secret=secret&scope=openid profile email vendo.api.full_access roles tenant"
 ```
 
-2. Copy the `access_token` from the response
-3. Click "Authorize" in Swagger and paste the token
+### Service-to-Service: Client Credentials Flow
 
-### Option 3: Direct API Testing
+For backend services and microservices:
+
+```bash
+curl -X POST "https://localhost:5001/connect/token" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=client_credentials&client_id=service&client_secret=service-secret&scope=vendo.api.full_access"
+```
+
+### Direct API Testing (No OAuth2)
+
+These endpoints don't require OAuth2 authentication:
 
 1. **Register a new user:**
 ```bash
@@ -201,7 +250,7 @@ curl -X POST "https://localhost:5001/api/account/register" \
   }'
 ```
 
-2. **Login:**
+2. **Login (Deprecated - Use /connect/token instead):**
 ```bash
 curl -X POST "https://localhost:5001/api/account/login" \
   -H "Content-Type: application/json" \
@@ -215,32 +264,75 @@ curl -X POST "https://localhost:5001/api/account/login" \
 
 ### IdentityServer Clients
 
-The service is pre-configured with three clients:
+The service is pre-configured with **8 clients** for different use cases:
 
 1. **Swagger UI** (`swagger`)
-   - Authorization Code with PKCE
-   - No client secret required
-   - For testing via Swagger UI
+   - **Flow**: Authorization Code with PKCE
+   - **Secret**: None (public client)
+   - **Use**: API testing via Swagger UI
 
-2. **Resource Owner Password** (`client`)
-   - Username/password flow
-   - Secret: `secret`
-   - For programmatic access
+2. **Single Page Application** (`spa`)
+   - **Flow**: Authorization Code with PKCE
+   - **Secret**: None (public client)
+   - **Use**: Angular, React, Vue applications
+   - **Ports**: localhost:4200 (HTTP/HTTPS)
 
-3. **Interactive Application** (`interactive`)
-   - Authorization Code with PKCE
-   - Secret: `secret`
-   - For web applications
+3. **Mobile Application** (`mobile`)
+   - **Flow**: Authorization Code with PKCE
+   - **Secret**: None (public client)
+   - **Use**: iOS, Android, React Native apps
+   - **Redirect**: Custom URL schemes (com.vendo.app://)
+
+4. **Interactive Web Application** (`interactive`)
+   - **Flow**: Authorization Code with PKCE
+   - **Secret**: `secret` (confidential client)
+   - **Use**: Server-side web applications
+   - **Ports**: localhost:5002, localhost:4200
+
+5. **Admin Portal** (`admin-portal`)
+   - **Flow**: Authorization Code with PKCE
+   - **Secret**: None (public client)
+   - **Use**: Admin dashboard
+   - **Ports**: localhost:4300 (HTTP/HTTPS)
+   - **Security**: Shorter token lifetime (30 min)
+
+6. **Merchant Portal** (`merchant-portal`)
+   - **Flow**: Authorization Code with PKCE
+   - **Secret**: None (public client)
+   - **Use**: Merchant dashboard
+   - **Ports**: localhost:4400 (HTTP/HTTPS)
+
+7. **Legacy Client** (`client`) - **DEPRECATED**
+   - **Flow**: Resource Owner Password Credentials
+   - **Secret**: `secret`
+   - **Use**: Legacy applications during migration
+   - **Note**: Migrate to Authorization Code + PKCE
+
+8. **Backend Service** (`service`)
+   - **Flow**: Client Credentials
+   - **Secret**: `service-secret`
+   - **Use**: Service-to-service authentication
+   - **No user context**: For background jobs, microservices
 
 ### API Scopes
 
-- `openid` - OpenID Connect
-- `profile` - User profile information
-- `email` - User email
-- `vendo.api.full_access` - Full API access
+**Identity Scopes** (user information):
+- `openid` - OpenID Connect (required for OIDC)
+- `profile` - User profile information (name, given_name, family_name)
+- `email` - User email address
+- `roles` - User roles for authorization
+- `tenant` - Tenant information (tenant_id, tenant_name)
+
+**API Scopes** (resource access):
+- `vendo.api.full_access` - Full API access (read + write)
 - `vendo.api.read` - Read-only access
-- `vendo.api.write` - Write access
-- `roles` - User roles
+- `vendo.api.write` - Write-only access
+
+**Recommended Scope Combinations**:
+- **Web/Mobile Apps**: `openid profile email vendo.api.full_access roles tenant`
+- **Admin Portal**: `openid profile email vendo.api.full_access roles tenant`
+- **Merchant Portal**: `openid profile email vendo.api.read vendo.api.write roles tenant`
+- **Backend Service**: `vendo.api.full_access` (no user scopes)
 
 ## Development Notes
 

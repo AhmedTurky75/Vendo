@@ -7,17 +7,22 @@ import { MerchantLoginComponent } from './merchant-login/merchant-login.componen
 import { CustomerLoginComponent } from './customer-login/customer-login.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { AuthCallbackComponent } from './auth-callback/auth-callback.component';
+import { SignoutCallbackComponent } from './signout-callback/signout-callback.component';
 
 @NgModule({
-  declarations: [],
-  imports: [
-    SharedModule,
-    AuthRoutingModule,
+  declarations: [
     AdminLoginComponent,
     MerchantLoginComponent,
     CustomerLoginComponent,
     ForgotPasswordComponent,
-    ResetPasswordComponent
+    ResetPasswordComponent,
+    AuthCallbackComponent,
+    SignoutCallbackComponent
+  ],
+  imports: [
+    SharedModule,
+    AuthRoutingModule
   ]
 })
 export class AuthModule { }

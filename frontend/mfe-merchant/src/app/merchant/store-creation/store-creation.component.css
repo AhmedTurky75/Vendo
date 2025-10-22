@@ -1,0 +1,6 @@
+/* Store Creation Component Styles */
+/* Tailwind CSS is used for most styling, this file is for custom styles if needed */
+
+input.lowercase {
+  text-transform: lowercase;
+}

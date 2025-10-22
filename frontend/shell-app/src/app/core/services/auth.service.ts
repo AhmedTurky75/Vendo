@@ -1,10 +1,27 @@
 import { Injectable, signal } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, of, throwError } from 'rxjs';
-import { delay, tap, catchError } from 'rxjs/operators';
-import { User, UserRole, LoginRequest, LoginResponse } from '../models/user.model';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { Observable, from, BehaviorSubject } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
+import { OAuthService, OAuthEvent, OAuthErrorEvent } from 'angular-oauth2-oidc';
+import { User, UserRole } from '../models/user.model';
 import { environment } from '../../../environments/environment';
+import { authConfig, getAuthConfigForRole } from '../config/oauth.config';
 
+/**
+ * Enhanced AuthService with OAuth2/OIDC support
+ *
+ * This service uses angular-oauth2-oidc library to implement
+ * Authorization Code Flow with PKCE (Proof Key for Code Exchange).
+ *
+ * Key features:
+ * - Authorization Code + PKCE flow (most secure for SPAs)
+ * - Automatic token refresh using refresh tokens
+ * - Silent refresh via hidden iframe
+ * - Secure token storage in sessionStorage
+ * - Role-based access control
+ * - Multi-tenant support
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -12,41 +29,172 @@ export class AuthService {
   // Signal-based state management as per tech decisions
   private currentUserSignal = signal<User | null>(null);
   private isAuthenticatedSignal = signal<boolean>(false);
+  private isAuthenticationReadySubject = new BehaviorSubject<boolean>(false);
 
   readonly currentUser = this.currentUserSignal.asReadonly();
   readonly isAuthenticated = this.isAuthenticatedSignal.asReadonly();
+  readonly isAuthenticationReady$ = this.isAuthenticationReadySubject.asObservable();
 
   private readonly apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) {
-    this.loadUserFromStorage();
+  constructor(
+    private http: HttpClient,
+    private oauthService: OAuthService,
+    private router: Router
+  ) {
+    this.configureOAuth();
+    this.setupOAuthEventHandlers();
   }
 
   /**
-   * Login method for all user roles
-   * Connects to IdentityServer backend API
+   * Configure OAuth2/OIDC settings
    */
-  login(loginRequest: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(
-      `${this.apiUrl}/account/login`,
-      loginRequest
-    ).pipe(
-      tap(response => {
-        this.setSession(response);
-      }),
-      catchError(this.handleError)
+  private configureOAuth(): void {
+    // Use sessionStorage instead of localStorage for better security
+    // SessionStorage is cleared when browser tab is closed
+    this.oauthService.configure(authConfig);
+
+    // Use sessionStorage for tokens (more secure than localStorage)
+    this.oauthService.setStorage(sessionStorage);
+
+    // Load discovery document and try to login automatically
+    this.oauthService.loadDiscoveryDocumentAndTryLogin().then(() => {
+      if (this.oauthService.hasValidAccessToken()) {
+        this.loadUserProfile();
+      } else {
+        this.isAuthenticationReadySubject.next(true);
+      }
+
+      // Setup automatic silent refresh
+      this.oauthService.setupAutomaticSilentRefresh();
+    }).catch(err => {
+      console.error('Error loading discovery document', err);
+      this.isAuthenticationReadySubject.next(true);
+    });
+  }
+
+  /**
+   * Setup OAuth event handlers
+   */
+  private setupOAuthEventHandlers(): void {
+    // Listen to OAuth events
+    this.oauthService.events
+      .subscribe((event: OAuthEvent) => {
+        if (event.type === 'token_received') {
+          this.loadUserProfile();
+        }
+
+        if (event.type === 'token_expires') {
+          console.log('Token is about to expire');
+        }
+
+        if (event.type === 'logout') {
+          this.clearUserData();
+        }
+
+        if (event instanceof OAuthErrorEvent) {
+          console.error('OAuth error', event);
+        }
+      });
+  }
+
+  /**
+   * Initialize authentication by redirecting to IdentityServer
+   * @param role User role to customize login experience
+   */
+  login(role?: UserRole): void {
+    // Configure with role-specific settings if provided
+    if (role) {
+      const config = getAuthConfigForRole(role);
+      this.oauthService.configure(config);
+    }
+
+    // Initiate Authorization Code Flow with PKCE
+    this.oauthService.initCodeFlow();
+  }
+
+  /**
+   * Handle OAuth callback after redirect from IdentityServer
+   */
+  handleCallback(): Observable<boolean> {
+    return from(this.oauthService.loadDiscoveryDocumentAndTryLogin()).pipe(
+      map(() => {
+        if (this.oauthService.hasValidAccessToken()) {
+          this.loadUserProfile();
+          return true;
+        }
+        return false;
+      })
     );
   }
 
   /**
    * Logout current user
+   * This will revoke tokens and redirect to IdentityServer logout
    */
   logout(): void {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    localStorage.removeItem('user');
+    // Revoke refresh token if available (for security)
+    this.oauthService.revokeTokenAndLogout();
+
+    // Clear local user data
+    this.clearUserData();
+  }
+
+  /**
+   * Logout without revoking token (local logout only)
+   */
+  logoutLocally(): void {
+    this.oauthService.logOut(false);
+    this.clearUserData();
+  }
+
+  /**
+   * Clear user data from state
+   */
+  private clearUserData(): void {
     this.currentUserSignal.set(null);
     this.isAuthenticatedSignal.set(false);
+  }
+
+  /**
+   * Load user profile from ID token claims
+   */
+  private loadUserProfile(): void {
+    const claims = this.oauthService.getIdentityClaims();
+
+    if (claims) {
+      const user: User = {
+        id: claims['sub'],
+        email: claims['email'],
+        role: this.mapClaimToRole(claims['role']),
+        firstName: claims['given_name'],
+        lastName: claims['family_name'],
+        tenantId: claims['tenant_id']
+      };
+
+      this.currentUserSignal.set(user);
+      this.isAuthenticatedSignal.set(true);
+      this.isAuthenticationReadySubject.next(true);
+    }
+  }
+
+  /**
+   * Map claim role to UserRole enum
+   */
+  private mapClaimToRole(roleClaim: string | string[]): UserRole {
+    const roles = Array.isArray(roleClaim) ? roleClaim : [roleClaim];
+
+    // Priority: Admin > Merchant > Customer
+    if (roles.includes('Admin')) return UserRole.Admin;
+    if (roles.includes('Merchant')) return UserRole.Merchant;
+    return UserRole.Customer;
+  }
+
+  /**
+   * Get user info from IdentityServer userinfo endpoint
+   */
+  getUserInfo(): Observable<any> {
+    return from(this.oauthService.loadUserProfile());
   }
 
   /**
@@ -57,8 +205,6 @@ export class AuthService {
     return this.http.post<{ message: string }>(
       `${this.apiUrl}/account/forgot-password`,
       { email }
-    ).pipe(
-      catchError(this.handleError)
     );
   }
 
@@ -70,30 +216,16 @@ export class AuthService {
     return this.http.post<{ message: string }>(
       `${this.apiUrl}/account/reset-password`,
       { email, token, newPassword }
-    ).pipe(
-      catchError(this.handleError)
     );
   }
 
   /**
-   * Refresh authentication token
-   * TODO: Implement token refresh logic when backend is ready
+   * Refresh access token using refresh token
+   * This is handled automatically by the library, but can be called manually
    */
-  refreshToken(): Observable<LoginResponse> {
-    const refreshToken = localStorage.getItem('refresh_token');
-
-    if (!refreshToken) {
-      return throwError(() => new Error('No refresh token available'));
-    }
-
-    return this.http.post<LoginResponse>(
-      `${this.apiUrl}/account/refresh-token`,
-      { refreshToken }
-    ).pipe(
-      tap(response => {
-        this.setSession(response);
-      }),
-      catchError(this.handleError)
+  refreshToken(): Observable<boolean> {
+    return from(this.oauthService.refreshToken()).pipe(
+      map(() => this.oauthService.hasValidAccessToken())
     );
   }
 
@@ -106,6 +238,14 @@ export class AuthService {
   }
 
   /**
+   * Check if user has any of the specified roles
+   */
+  hasAnyRole(roles: UserRole[]): boolean {
+    const user = this.currentUserSignal();
+    return user ? roles.includes(user.role) : false;
+  }
+
+  /**
    * Get current user's role
    */
   getUserRole(): UserRole | null {
@@ -114,75 +254,59 @@ export class AuthService {
   }
 
   /**
-   * Get access token from storage
+   * Get access token from OAuthService
    */
   getAccessToken(): string | null {
-    return localStorage.getItem('access_token');
+    return this.oauthService.getAccessToken();
   }
 
   /**
-   * Store authentication session
+   * Get ID token from OAuthService
    */
-  private setSession(authResult: LoginResponse): void {
-    localStorage.setItem('access_token', authResult.accessToken);
-    localStorage.setItem('refresh_token', authResult.refreshToken);
-    localStorage.setItem('user', JSON.stringify(authResult.user));
-
-    this.currentUserSignal.set(authResult.user);
-    this.isAuthenticatedSignal.set(true);
+  getIdToken(): string | null {
+    return this.oauthService.getIdToken();
   }
 
   /**
-   * Load user data from localStorage on app initialization
+   * Check if access token is valid
    */
-  private loadUserFromStorage(): void {
-    const userJson = localStorage.getItem('user');
-    const token = localStorage.getItem('access_token');
-
-    if (userJson && token) {
-      try {
-        const user = JSON.parse(userJson) as User;
-        this.currentUserSignal.set(user);
-        this.isAuthenticatedSignal.set(true);
-      } catch (error) {
-        // Invalid stored data, clear it
-        this.logout();
-      }
-    }
+  hasValidAccessToken(): boolean {
+    return this.oauthService.hasValidAccessToken();
   }
 
   /**
-   * Handle HTTP errors
+   * Check if ID token is valid
    */
-  private handleError(error: HttpErrorResponse): Observable<never> {
-    let errorMessage = 'An unexpected error occurred';
+  hasValidIdToken(): boolean {
+    return this.oauthService.hasValidIdToken();
+  }
 
-    if (error.error instanceof ErrorEvent) {
-      // Client-side or network error
-      errorMessage = `Network error: ${error.error.message}`;
-    } else {
-      // Backend returned an unsuccessful response code
-      switch (error.status) {
-        case 400:
-          errorMessage = error.error?.message || 'Invalid request';
-          break;
-        case 401:
-          errorMessage = 'Invalid credentials';
-          break;
-        case 403:
-          errorMessage = 'Access denied';
-          break;
-        case 404:
-          errorMessage = 'Service not found';
-          break;
-        case 500:
-          errorMessage = 'Server error. Please try again later';
-          break;
-        default:
-          errorMessage = error.error?.message || `Error: ${error.status}`;
-      }
-    }
+  /**
+   * Get token expiration time
+   */
+  getAccessTokenExpiration(): number {
+    return this.oauthService.getAccessTokenExpiration();
+  }
 
-    return throwError(() => new Error(errorMessage));
+  /**
+   * Get identity claims from ID token
+   */
+  getIdentityClaims(): Record<string, any> {
+    return this.oauthService.getIdentityClaims() as Record<string, any>;
+  }
+
+  /**
+   * Get user's tenant ID
+   */
+  getTenantId(): string | null {
+    const user = this.currentUserSignal();
+    return user?.tenantId || null;
+  }
+
+  /**
+   * Check if user is authenticated (for compatibility)
+   */
+  isUserAuthenticated(): boolean {
+    return this.isAuthenticatedSignal();
   }
 }

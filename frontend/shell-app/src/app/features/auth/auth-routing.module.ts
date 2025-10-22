@@ -5,6 +5,8 @@ import { MerchantLoginComponent } from './merchant-login/merchant-login.componen
 import { CustomerLoginComponent } from './customer-login/customer-login.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { AuthCallbackComponent } from './auth-callback/auth-callback.component';
+import { SignoutCallbackComponent } from './signout-callback/signout-callback.component';
 
 const routes: Routes = [
   {
@@ -26,6 +28,19 @@ const routes: Routes = [
         path: '',
         redirectTo: 'customer',
         pathMatch: 'full'
+      }
+    ]
+  },
+  {
+    path: 'auth',
+    children: [
+      {
+        path: 'callback',
+        component: AuthCallbackComponent
+      },
+      {
+        path: 'signout-callback',
+        component: SignoutCallbackComponent
       }
     ]
   },

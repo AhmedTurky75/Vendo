@@ -1,14 +1,11 @@
 import { Component, signal } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { UserRole } from '../../../core/models/user.model';
 
 @Component({
   selector: 'app-merchant-login',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './merchant-login.component.html',
   styleUrls: ['./merchant-login.component.css']
 })
@@ -35,31 +32,18 @@ export class MerchantLoginComponent {
   }
 
   onSubmit(): void {
-    if (this.loginForm.invalid) {
-      this.loginForm.markAllAsTouched();
-      return;
-    }
+    // Note: With OAuth2/OIDC, the form fields are not used for direct authentication
+    // The user will be redirected to IdentityServer for authentication
+    // This form is kept for UI consistency, but actual auth happens on IdentityServer
 
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
-    const { email, password } = this.loginForm.value;
+    // Redirect to IdentityServer for authentication with PKCE flow
+    this.authService.login(UserRole.Merchant);
 
-    this.authService.login({
-      email,
-      password,
-      role: UserRole.Merchant
-    }).subscribe({
-      next: () => {
-        this.isLoading.set(false);
-        this.router.navigate(['/merchant/dashboard']);
-      },
-      error: (error) => {
-        this.isLoading.set(false);
-        this.errorMessage.set('Invalid credentials. Please try again.');
-        console.error('Login error:', error);
-      }
-    });
+    // Note: The page will redirect, so loading state may not be visible
+    // The user will be brought back to /auth/callback after authentication
   }
 
   get email() {
