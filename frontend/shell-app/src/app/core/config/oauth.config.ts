@@ -63,16 +63,6 @@ export const authConfig: AuthConfig = {
   // Clear hash after login to avoid exposing tokens in URL
   clearHashAfterLogin: true,
 
-  // Disable id_token nonce verification for development
-  // (MUST be enabled in production for security)
-  disableIdTokenNonceClaim: false,
-
-  // Revoke refresh token on logout
-  revokeTokenOnLogout: true,
-
-  // Token endpoint for revoking tokens
-  revocationEndpoint: environment.identityUrl + '/connect/revocation',
-
   // Custom query parameters to pass during authorization
   // These can be used to pass additional context like user type
   customQueryParams: {}

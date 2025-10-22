@@ -6,6 +6,8 @@ import { UserRole } from '../../../core/models/user.model';
 
 @Component({
   selector: 'app-customer-login',
+    standalone: false,
+
   templateUrl: './customer-login.component.html',
   styleUrls: ['./customer-login.component.css']
 })

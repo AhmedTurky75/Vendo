@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
  */
 @Component({
   selector: 'app-signout-callback',
+  standalone: false,
   templateUrl: './signout-callback.component.html',
   styleUrls: ['./signout-callback.component.css']
 })

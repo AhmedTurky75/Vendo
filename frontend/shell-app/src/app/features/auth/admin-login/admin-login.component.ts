@@ -6,6 +6,7 @@ import { UserRole } from '../../../core/models/user.model';
 
 @Component({
   selector: 'app-admin-login',
+    standalone: false,
   templateUrl: './admin-login.component.html',
   styleUrls: ['./admin-login.component.css']
 })

@@ -6,6 +6,8 @@ import { UserRole } from '../../../core/models/user.model';
 
 @Component({
   selector: 'app-merchant-login',
+    standalone: false,
+
   templateUrl: './merchant-login.component.html',
   styleUrls: ['./merchant-login.component.css']
 })

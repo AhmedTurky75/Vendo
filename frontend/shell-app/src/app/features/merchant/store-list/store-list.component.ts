@@ -6,6 +6,7 @@ import { Store } from '../../../core/models/store.model';
 
 @Component({
   selector: 'app-store-list',
+  standalone: false,
   templateUrl: './store-list.component.html',
   styleUrls: ['./store-list.component.css']
 })

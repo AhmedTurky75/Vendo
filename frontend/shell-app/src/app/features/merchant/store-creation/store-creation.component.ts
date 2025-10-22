@@ -9,6 +9,7 @@ import { CreateStoreRequest } from '../../../core/models/store.model';
 
 @Component({
   selector: 'app-store-creation',
+  standalone: false,
   templateUrl: './store-creation.component.html',
   styleUrls: ['./store-creation.component.css']
 })

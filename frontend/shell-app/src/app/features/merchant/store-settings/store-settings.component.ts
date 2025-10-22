@@ -7,6 +7,7 @@ import { Store, UpdateStoreRequest } from '../../../core/models/store.model';
 
 @Component({
   selector: 'app-store-settings',
+  standalone : false,
   templateUrl: './store-settings.component.html',
   styleUrls: ['./store-settings.component.css']
 })

@@ -14,6 +14,7 @@ import { UserRole } from '../../../core/models/user.model';
  */
 @Component({
   selector: 'app-auth-callback',
+    standalone: false,
   templateUrl: './auth-callback.component.html',
   styleUrls: ['./auth-callback.component.css']
 })
