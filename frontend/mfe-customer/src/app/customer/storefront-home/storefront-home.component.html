@@ -1,0 +1,137 @@
+<div class="min-h-screen bg-gray-50">
+  <!-- Header -->
+  <header class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center py-4">
+        <div class="flex items-center">
+          <span class="text-2xl font-bold text-blue-600">My Store</span>
+        </div>
+        <div class="flex items-center space-x-6">
+          <a href="#" class="text-gray-600 hover:text-gray-900">Products</a>
+          <a href="#" class="text-gray-600 hover:text-gray-900">About</a>
+          <a href="#" class="text-gray-600 hover:text-gray-900">Contact</a>
+          <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center">
+            <span class="mr-2">🛒</span>
+            Cart (0)
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h1 class="text-5xl font-bold mb-4">Welcome to Our Store</h1>
+      <p class="text-xl text-blue-100 mb-8">Discover amazing products at great prices</p>
+      <button class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition">
+        Shop Now
+      </button>
+    </div>
+  </section>
+
+  <!-- Featured Products -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <h2 class="text-3xl font-bold text-gray-900 mb-8">Featured Products</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+      <div *ngFor="let product of featuredProducts" class="bg-white rounded-lg shadow-md hover:shadow-xl transition overflow-hidden">
+        <div class="h-48 bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
+          <span class="text-6xl">{{ product.image }}</span>
+        </div>
+        <div class="p-4">
+          <h3 class="font-semibold text-gray-900 mb-2">{{ product.name }}</h3>
+          <div class="flex items-center mb-2">
+            <span class="text-yellow-400 mr-2">⭐</span>
+            <span class="text-sm text-gray-600">{{ product.rating }}</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-2xl font-bold text-blue-600">${{ product.price }}</span>
+            <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm">
+              Add to Cart
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category Filter -->
+    <div class="mb-6">
+      <h2 class="text-3xl font-bold text-gray-900 mb-4">All Products</h2>
+      <div class="flex space-x-4 mb-6">
+        <button
+          *ngFor="let category of categories"
+          (click)="selectCategory(category)"
+          [class.bg-blue-600]="selectedCategory === category"
+          [class.text-white]="selectedCategory === category"
+          [class.bg-gray-200]="selectedCategory !== category"
+          [class.text-gray-700]="selectedCategory !== category"
+          class="px-4 py-2 rounded-lg font-medium transition capitalize"
+        >
+          {{ category }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div *ngFor="let product of getFilteredProducts()" class="bg-white rounded-lg shadow-md hover:shadow-xl transition overflow-hidden">
+        <div class="h-48 bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center">
+          <span class="text-6xl">{{ product.image }}</span>
+        </div>
+        <div class="p-4">
+          <span class="text-xs text-gray-500 uppercase">{{ product.category }}</span>
+          <h3 class="font-semibold text-gray-900 mb-2">{{ product.name }}</h3>
+          <div class="flex items-center mb-2">
+            <span class="text-yellow-400 mr-2">⭐</span>
+            <span class="text-sm text-gray-600">{{ product.rating }}</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-2xl font-bold text-blue-600">${{ product.price }}</span>
+            <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm">
+              Add to Cart
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white mt-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div>
+          <h3 class="text-lg font-semibold mb-4">About Us</h3>
+          <p class="text-gray-400">Your trusted online store for quality products.</p>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Customer Service</h3>
+          <ul class="space-y-2 text-gray-400">
+            <li><a href="#" class="hover:text-white">Contact Us</a></li>
+            <li><a href="#" class="hover:text-white">Shipping Info</a></li>
+            <li><a href="#" class="hover:text-white">Returns</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+          <ul class="space-y-2 text-gray-400">
+            <li><a href="#" class="hover:text-white">Privacy Policy</a></li>
+            <li><a href="#" class="hover:text-white">Terms of Service</a></li>
+            <li><a href="#" class="hover:text-white">FAQ</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Follow Us</h3>
+          <div class="flex space-x-4">
+            <a href="#" class="text-gray-400 hover:text-white">Facebook</a>
+            <a href="#" class="text-gray-400 hover:text-white">Twitter</a>
+            <a href="#" class="text-gray-400 hover:text-white">Instagram</a>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+        <p>&copy; 2024 My Store. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+</div>

@@ -1,15 +1,21 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
-  "cli": {
-    "packageManager": "npm",
-    "analytics": false
-  },
   "newProjectRoot": "projects",
   "projects": {
-    "shell-app": {
+    "mfe-admin": {
       "projectType": "application",
-      "schematics": {},
+      "schematics": {
+        "@schematics/angular:component": {
+          "standalone": false
+        },
+        "@schematics/angular:directive": {
+          "standalone": false
+        },
+        "@schematics/angular:pipe": {
+          "standalone": false
+        }
+      },
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -61,15 +67,15 @@
         "serve": {
           "builder": "@angular-architects/module-federation:dev-server",
           "options": {
-            "port": 4200,
+            "port": 4201,
             "extraWebpackConfig": "webpack.config.js"
           },
           "configurations": {
             "production": {
-              "buildTarget": "shell-app:build:production"
+              "buildTarget": "mfe-admin:build:production"
             },
             "development": {
-              "buildTarget": "shell-app:build:development"
+              "buildTarget": "mfe-admin:build:development"
             }
           },
           "defaultConfiguration": "development"

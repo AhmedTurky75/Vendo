@@ -1,0 +1,96 @@
+<div class="min-h-screen bg-gray-50">
+  <!-- Header -->
+  <header class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center py-4">
+        <div class="flex items-center">
+          <button (click)="goBack()" class="mr-4 text-gray-600 hover:text-gray-900">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+          </button>
+          <span class="text-2xl font-bold text-blue-600">My Store</span>
+        </div>
+        <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center">
+          <span class="mr-2">🛒</span>
+          Cart (0)
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Product Detail -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-8">
+        <!-- Product Image -->
+        <div class="bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg h-96 flex items-center justify-center">
+          <span class="text-9xl">{{ product.image }}</span>
+        </div>
+
+        <!-- Product Info -->
+        <div>
+          <span class="text-sm text-gray-500 uppercase">{{ product.category }}</span>
+          <h1 class="text-3xl font-bold text-gray-900 mt-2 mb-4">{{ product.name }}</h1>
+
+          <!-- Rating -->
+          <div class="flex items-center mb-4">
+            <div class="flex items-center">
+              <span class="text-yellow-400 text-xl mr-2">⭐⭐⭐⭐⭐</span>
+              <span class="text-gray-600">{{ product.rating }} ({{ product.reviews }} reviews)</span>
+            </div>
+          </div>
+
+          <!-- Price -->
+          <div class="mb-6">
+            <span class="text-4xl font-bold text-blue-600">${{ product.price }}</span>
+          </div>
+
+          <!-- Description -->
+          <p class="text-gray-600 mb-6">{{ product.description }}</p>
+
+          <!-- Features -->
+          <div class="mb-6">
+            <h3 class="font-semibold text-gray-900 mb-3">Key Features:</h3>
+            <ul class="space-y-2">
+              <li *ngFor="let feature of product.features" class="flex items-start">
+                <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span class="text-gray-700">{{ feature }}</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Quantity Selector -->
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
+            <div class="flex items-center space-x-4">
+              <button
+                (click)="decrementQuantity()"
+                class="bg-gray-200 text-gray-700 w-10 h-10 rounded-lg hover:bg-gray-300"
+              >
+                -
+              </button>
+              <span class="text-xl font-semibold">{{ quantity }}</span>
+              <button
+                (click)="incrementQuantity()"
+                class="bg-gray-200 text-gray-700 w-10 h-10 rounded-lg hover:bg-gray-300"
+              >
+                +
+              </button>
+            </div>
+          </div>
+
+          <!-- Add to Cart Button -->
+          <button
+            (click)="addToCart()"
+            class="w-full bg-blue-600 text-white py-4 rounded-lg font-semibold hover:bg-blue-700 transition text-lg"
+          >
+            Add to Cart - ${{ (product.price * quantity).toFixed(2) }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
