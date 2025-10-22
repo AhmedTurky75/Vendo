@@ -1,0 +1,6 @@
+@Vendo.Payment.Api_HostAddress = http://localhost:5078
+
+GET {{Vendo.Payment.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
