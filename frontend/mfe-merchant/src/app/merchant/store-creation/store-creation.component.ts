@@ -3,12 +3,13 @@ import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors }
 import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
-import { StoreService } from '../../../core/services/store.service';
-import { AuthService } from '../../../core/services/auth.service';
-import { CreateStoreRequest } from '../../../core/models/store.model';
+import { StoreService } from '../../core/services/store.service';
+import { AuthService } from '../../core/services/auth.service';
+import { CreateStoreRequest } from '../../core/models/store.model';
 
 @Component({
   selector: 'app-store-creation',
+  standalone: false,
   templateUrl: './store-creation.component.html',
   styleUrls: ['./store-creation.component.css']
 })
@@ -96,7 +97,7 @@ export class StoreCreationComponent implements OnInit {
         // If validation endpoint fails, assume available
         return of(true);
       })
-    ).subscribe(isAvailable => {
+    ).subscribe((isAvailable: boolean) => {
       this.isCheckingSubdomain.set(false);
 
       if (!isAvailable) {
@@ -140,7 +141,7 @@ export class StoreCreationComponent implements OnInit {
     };
 
     this.storeService.createStore(request).subscribe({
-      next: (store) => {
+      next: (store :any) => {
         this.isLoading.set(false);
         this.successMessage.set('Store created successfully!');
 
@@ -149,7 +150,7 @@ export class StoreCreationComponent implements OnInit {
           this.router.navigate(['/merchant/dashboard']);
         }, 1500);
       },
-      error: (error) => {
+      error: (error :any) => {
         this.isLoading.set(false);
         this.errorMessage.set(error.message || 'Failed to create store. Please try again.');
         console.error('Store creation error:', error);

@@ -1,11 +1,12 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { StoreService } from '../../../core/services/store.service';
-import { AuthService } from '../../../core/services/auth.service';
-import { Store } from '../../../core/models/store.model';
+import { StoreService } from '../../core/services/store.service';
+import { AuthService } from '../../core/services/auth.service';
+import { Store } from '../../core/models/store.model';
 
 @Component({
   selector: 'app-store-list',
+  standalone: false,
   templateUrl: './store-list.component.html',
   styleUrls: ['./store-list.component.css']
 })
@@ -40,7 +41,7 @@ export class StoreListComponent implements OnInit {
     this.errorMessage.set(null);
 
     this.storeService.getStoresByOwner(currentUser.id).subscribe({
-      next: (stores) => {
+      next: (stores :any) => {
         this.isLoading.set(false);
         this.stores.set(stores);
 
@@ -49,7 +50,7 @@ export class StoreListComponent implements OnInit {
           this.router.navigate(['/merchant/onboarding']);
         }
       },
-      error: (error) => {
+      error: (error:any) => {
         this.isLoading.set(false);
         this.errorMessage.set(error.message || 'Failed to load stores. Please try again.');
         console.error('Error loading stores:', error);

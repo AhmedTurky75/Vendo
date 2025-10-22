@@ -66,7 +66,7 @@ public class CustomProfileService : IProfileService
         // TODO: Once User entity has TenantId, retrieve from user object
         // For now, add placeholder tenant claim if tenant scope is requested
         if (context.RequestedClaimTypes.Contains("tenant_id") ||
-            context.ValidatedRequest?.RequestedScopes.Contains("tenant") == true)
+            context.RequestedResources?.ParsedScopes?.Any(s => s.ParsedName == "tenant") == true)
         {
             // Default tenant for MVP - will be replaced with actual tenant from User entity
             claims.Add(new Claim("tenant_id", "default"));

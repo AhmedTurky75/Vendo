@@ -11,6 +11,7 @@ interface Product {
 
 @Component({
   selector: 'app-storefront-home',
+  standalone: false,
   templateUrl: './storefront-home.component.html',
   styleUrls: ['./storefront-home.component.css']
 })

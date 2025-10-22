@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-tenants',
+    standalone: false,
   templateUrl: './tenants.component.html',
   styleUrls: ['./tenants.component.css']
 })

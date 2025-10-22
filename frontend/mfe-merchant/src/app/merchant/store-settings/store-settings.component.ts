@@ -2,11 +2,12 @@ import { Component, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { StoreService } from '../../../core/services/store.service';
-import { Store, UpdateStoreRequest } from '../../../core/models/store.model';
+import { StoreService } from '../../core/services/store.service';
+import { Store, UpdateStoreRequest } from '../../core/models/store.model';
 
 @Component({
   selector: 'app-store-settings',
+  standalone: false,
   templateUrl: './store-settings.component.html',
   styleUrls: ['./store-settings.component.css']
 })
