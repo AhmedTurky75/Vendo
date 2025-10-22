@@ -1,31 +1,40 @@
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-900 via-indigo-900 to-blue-900">
-  <div class="w-full max-w-md">
-    <!-- Logo and Title -->
-    <div class="text-center mb-8">
-      <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-4">
-        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
-        </svg>
+<div class="min-h-screen flex">
+  <!-- Left Column - Login Form -->
+  <div class="w-full lg:w-1/2 flex items-center justify-center px-6 py-12 bg-white">
+    <div class="w-full max-w-md">
+      <!-- Logo and Title -->
+      <div class="mb-8">
+        <div class="flex items-center mb-6">
+          <svg class="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+          </svg>
+          <span class="ml-3 text-2xl font-bold text-gray-900">Vendo Platform</span>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-2">Sign in</h2>
+        <p class="text-gray-600">Welcome back! Continue shopping</p>
       </div>
-      <h1 class="text-3xl font-bold text-white mb-2">Welcome to Vendo</h1>
-      <p class="text-blue-200">Sign in to start shopping</p>
-    </div>
 
-    <!-- Login Card -->
-    <div class="bg-white rounded-lg shadow-2xl p-8">
+      <!-- Login Form -->
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <!-- Error Message -->
+        @if (errorMessage()) {
+          <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <p class="text-sm text-red-600">{{ errorMessage() }}</p>
+          </div>
+        }
+
         <!-- Email Field -->
-        <div class="mb-6">
+        <div class="mb-4">
           <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-            Email Address
+            Username or Email
           </label>
           <input
             type="email"
             id="email"
             formControlName="email"
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+            class="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
             [class.border-red-500]="email?.invalid && email?.touched"
-            placeholder="you@example.com"
+            placeholder="Enter your email"
           />
           @if (email?.invalid && email?.touched) {
             <p class="mt-1 text-sm text-red-600">
@@ -39,18 +48,36 @@
         </div>
 
         <!-- Password Field -->
-        <div class="mb-6">
+        <div class="mb-4">
           <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
             Password
           </label>
-          <input
-            type="password"
-            id="password"
-            formControlName="password"
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-            [class.border-red-500]="password?.invalid && password?.touched"
-            placeholder="Enter your password"
-          />
+          <div class="relative">
+            <input
+              [type]="showPassword() ? 'text' : 'password'"
+              id="password"
+              formControlName="password"
+              class="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 pr-12"
+              [class.border-red-500]="password?.invalid && password?.touched"
+              placeholder="Enter your password"
+            />
+            <button
+              type="button"
+              (click)="togglePasswordVisibility()"
+              class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+            >
+              @if (showPassword()) {
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
+                </svg>
+              } @else {
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                </svg>
+              }
+            </button>
+          </div>
           @if (password?.invalid && password?.touched) {
             <p class="mt-1 text-sm text-red-600">
               @if (password?.errors?.['required']) {
@@ -63,9 +90,9 @@
         </div>
 
         <!-- Remember Me & Forgot Password -->
-        <div class="mb-6 flex items-center justify-between">
+        <div class="flex items-center justify-between mb-6">
           <label class="flex items-center">
-            <input type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+            <input type="checkbox" formControlName="rememberMe" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
             <span class="ml-2 text-sm text-gray-700">Remember me</span>
           </label>
           <a routerLink="/forgot-password" class="text-sm text-blue-600 hover:text-blue-700 font-medium">
@@ -73,21 +100,14 @@
           </a>
         </div>
 
-        <!-- Error Message -->
-        @if (errorMessage()) {
-          <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-            <p class="text-sm text-red-600">{{ errorMessage() }}</p>
-          </div>
-        }
-
         <!-- Submit Button -->
         <button
           type="submit"
           [disabled]="isLoading()"
-          class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          class="w-full bg-blue-600 text-white py-3 px-4 rounded-md font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           @if (isLoading()) {
-            <span class="inline-flex items-center">
+            <span class="inline-flex items-center justify-center">
               <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -95,34 +115,9 @@
               Signing in...
             </span>
           } @else {
-            Sign In
+            Sign in
           }
         </button>
-
-        <!-- Social Login Options -->
-        <div class="mt-6">
-          <div class="relative">
-            <div class="absolute inset-0 flex items-center">
-              <div class="w-full border-t border-gray-300"></div>
-            </div>
-            <div class="relative flex justify-center text-sm">
-              <span class="px-2 bg-white text-gray-500">Or continue with</span>
-            </div>
-          </div>
-
-          <div class="mt-4 grid grid-cols-2 gap-3">
-            <button type="button" class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition duration-200">
-              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 0C4.477 0 0 4.484 0 10.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0020 10.017C20 4.484 15.522 0 10 0z"/>
-              </svg>
-            </button>
-            <button type="button" class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition duration-200">
-              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 0C4.477 0 0 4.477 0 10c0 4.991 3.657 9.128 8.438 9.879V12.89h-2.54V10h2.54V7.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V10h2.773l-.443 2.89h-2.33v6.989C16.343 19.129 20 14.99 20 10c0-5.523-4.477-10-10-10z"/>
-              </svg>
-            </button>
-          </div>
-        </div>
       </form>
 
       <!-- Sign Up Link -->
@@ -135,22 +130,34 @@
         </p>
       </div>
 
+      <!-- Role Switch Links -->
       <div class="mt-6 pt-6 border-t border-gray-200">
-        <p class="text-sm text-gray-600 text-center mb-3">Other login options:</p>
+        <p class="text-sm text-gray-600 text-center mb-3">Sign in as different role:</p>
         <div class="flex gap-3">
-          <a routerLink="/login/admin" class="flex-1 text-center py-2 px-4 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition duration-200">
+          <a routerLink="/login/admin" class="flex-1 text-center py-2 px-4 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition duration-200">
             Admin
           </a>
-          <a routerLink="/login/merchant" class="flex-1 text-center py-2 px-4 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition duration-200">
+          <a routerLink="/login/merchant" class="flex-1 text-center py-2 px-4 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition duration-200">
             Merchant
           </a>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Footer -->
-    <p class="text-center text-blue-200 text-sm mt-8">
-      &copy; 2025 Vendo. All rights reserved.
-    </p>
+  <!-- Right Column - Welcome Section -->
+  <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 to-blue-800 items-center justify-center p-12">
+    <div class="max-w-md text-white">
+      <h2 class="text-4xl font-bold mb-6">Welcome to Vendo</h2>
+      <p class="text-lg text-blue-100 mb-6">
+        Discover amazing products from thousands of merchants on our multi-tenant e-commerce platform. Shop with confidence and convenience.
+      </p>
+      <p class="text-lg text-blue-100 mb-6">
+        Browse curated collections, compare prices, read reviews, and find exactly what you're looking for across multiple stores in one place.
+      </p>
+      <p class="text-blue-100">
+        Join our community of satisfied shoppers and enjoy a seamless shopping experience with secure checkout and fast delivery.
+      </p>
+    </div>
   </div>
 </div>

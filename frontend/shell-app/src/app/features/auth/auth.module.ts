@@ -9,16 +9,15 @@ import { ForgotPasswordComponent } from './forgot-password/forgot-password.compo
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 
 @NgModule({
-  declarations: [
+  declarations: [],
+  imports: [
+    SharedModule,
+    AuthRoutingModule,
     AdminLoginComponent,
     MerchantLoginComponent,
     CustomerLoginComponent,
     ForgotPasswordComponent,
     ResetPasswordComponent
-  ],
-  imports: [
-    SharedModule,
-    AuthRoutingModule
   ]
 })
 export class AuthModule { }
