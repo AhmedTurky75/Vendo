@@ -14,4 +14,9 @@ public class LoginRequest
     /// User password
     /// </summary>
     public string Password { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Role to authenticate as (Admin, Merchant, Customer) - optional for role-specific login
+    /// </summary>
+    public string? Role { get; set; }
 }

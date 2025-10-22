@@ -19,6 +19,7 @@ public class User
     public string LastName { get; private set; } = string.Empty;
     public bool IsActive { get; private set; }
     public IReadOnlyList<string> Roles => _roles.AsReadOnly();
+    public PasswordResetToken? PasswordResetToken { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime UpdatedAt { get; private set; }
 
@@ -109,6 +110,37 @@ public class User
             _roles.Remove(role);
             UpdatedAt = DateTime.UtcNow;
         }
+    }
+
+    public void SetPasswordResetToken(PasswordResetToken token)
+    {
+        PasswordResetToken = token;
+        UpdatedAt = DateTime.UtcNow;
+    }
+
+    public void ResetPasswordWithToken(string token, string newPasswordHash)
+    {
+        if (PasswordResetToken == null)
+        {
+            throw new InvalidOperationException("No password reset token exists for this user");
+        }
+
+        if (!PasswordResetToken.Matches(token))
+        {
+            throw new InvalidOperationException("Invalid or expired password reset token");
+        }
+
+        PasswordHash = newPasswordHash;
+        PasswordResetToken = null; // Clear the token after use
+        UpdatedAt = DateTime.UtcNow;
+
+        AddDomainEvent(new PasswordChangedEvent(Id, Username));
+    }
+
+    public void ClearPasswordResetToken()
+    {
+        PasswordResetToken = null;
+        UpdatedAt = DateTime.UtcNow;
     }
 
     private void AddDomainEvent(IDomainEvent domainEvent)

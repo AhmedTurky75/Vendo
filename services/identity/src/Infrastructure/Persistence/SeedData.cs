@@ -32,6 +32,32 @@ public static class SeedData
 
         await userRepository.AddAsync(adminUser);
 
+        // Create merchant user
+        var merchantEmail = Email.Create("merchant@vendo.com");
+        var merchantPassword = passwordHasher.HashPassword("Merchant@123");
+        var merchantUser = User.Create(
+            "merchant",
+            merchantEmail,
+            merchantPassword,
+            "Test",
+            "Merchant",
+            new List<string> { "Merchant", "User" });
+
+        await userRepository.AddAsync(merchantUser);
+
+        // Create customer user
+        var customerEmail = Email.Create("customer@vendo.com");
+        var customerPassword = passwordHasher.HashPassword("Customer@123");
+        var customerUser = User.Create(
+            "customer",
+            customerEmail,
+            customerPassword,
+            "Test",
+            "Customer",
+            new List<string> { "Customer", "User" });
+
+        await userRepository.AddAsync(customerUser);
+
         // Create regular user
         var userEmail = Email.Create("user@vendo.com");
         var userPassword = passwordHasher.HashPassword("User@123");

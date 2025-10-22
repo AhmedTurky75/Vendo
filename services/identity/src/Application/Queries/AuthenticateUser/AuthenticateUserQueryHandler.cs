@@ -14,15 +14,18 @@ public class AuthenticateUserQueryHandler : IRequestHandler<AuthenticateUserQuer
 {
     private readonly IUserRepository _userRepository;
     private readonly IPasswordHasher _passwordHasher;
+    private readonly IJwtTokenService _jwtTokenService;
     private readonly IMapper _mapper;
 
     public AuthenticateUserQueryHandler(
         IUserRepository userRepository,
         IPasswordHasher passwordHasher,
+        IJwtTokenService jwtTokenService,
         IMapper mapper)
     {
         _userRepository = userRepository;
         _passwordHasher = passwordHasher;
+        _jwtTokenService = jwtTokenService;
         _mapper = mapper;
     }
 
@@ -61,12 +64,33 @@ public class AuthenticateUserQueryHandler : IRequestHandler<AuthenticateUserQuer
                 });
             }
 
+            // If a specific role is requested, verify the user has that role
+            if (!string.IsNullOrEmpty(request.Role))
+            {
+                if (!user.Roles.Any(r => r.Equals(request.Role, StringComparison.OrdinalIgnoreCase)))
+                {
+                    return Result<AuthenticationResultDto>.Success(new AuthenticationResultDto
+                    {
+                        IsAuthenticated = false,
+                        Message = $"User does not have the required role: {request.Role}"
+                    });
+                }
+            }
+
+            // Generate JWT tokens
+            var accessToken = _jwtTokenService.GenerateAccessToken(user);
+            var refreshToken = _jwtTokenService.GenerateRefreshToken();
+            var expiresIn = _jwtTokenService.GetTokenExpirationInSeconds();
+
             var userDto = _mapper.Map<UserDto>(user);
 
             return Result<AuthenticationResultDto>.Success(new AuthenticationResultDto
             {
                 IsAuthenticated = true,
                 User = userDto,
+                AccessToken = accessToken,
+                RefreshToken = refreshToken,
+                ExpiresIn = expiresIn,
                 Message = "Authentication successful"
             });
         }
