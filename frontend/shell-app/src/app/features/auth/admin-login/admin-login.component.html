@@ -1,0 +1,117 @@
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+  <div class="w-full max-w-md">
+    <!-- Logo and Title -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-purple-600 rounded-full mb-4">
+        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+        </svg>
+      </div>
+      <h1 class="text-3xl font-bold text-white mb-2">Admin Portal</h1>
+      <p class="text-purple-200">Sign in to access the admin dashboard</p>
+    </div>
+
+    <!-- Login Card -->
+    <div class="bg-white rounded-lg shadow-2xl p-8">
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <!-- Email Field -->
+        <div class="mb-6">
+          <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+            Email Address
+          </label>
+          <input
+            type="email"
+            id="email"
+            formControlName="email"
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200"
+            [class.border-red-500]="email?.invalid && email?.touched"
+            placeholder="admin@example.com"
+          />
+          @if (email?.invalid && email?.touched) {
+            <p class="mt-1 text-sm text-red-600">
+              @if (email?.errors?.['required']) {
+                Email is required
+              } @else if (email?.errors?.['email']) {
+                Please enter a valid email address
+              }
+            </p>
+          }
+        </div>
+
+        <!-- Password Field -->
+        <div class="mb-6">
+          <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+            Password
+          </label>
+          <input
+            type="password"
+            id="password"
+            formControlName="password"
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200"
+            [class.border-red-500]="password?.invalid && password?.touched"
+            placeholder="Enter your password"
+          />
+          @if (password?.invalid && password?.touched) {
+            <p class="mt-1 text-sm text-red-600">
+              @if (password?.errors?.['required']) {
+                Password is required
+              } @else if (password?.errors?.['minlength']) {
+                Password must be at least 6 characters
+              }
+            </p>
+          }
+        </div>
+
+        <!-- Error Message -->
+        @if (errorMessage()) {
+          <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <p class="text-sm text-red-600">{{ errorMessage() }}</p>
+          </div>
+        }
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          [disabled]="isLoading()"
+          class="w-full bg-purple-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          @if (isLoading()) {
+            <span class="inline-flex items-center">
+              <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Signing in...
+            </span>
+          } @else {
+            Sign In
+          }
+        </button>
+      </form>
+
+      <!-- Additional Links -->
+      <div class="mt-6 text-center">
+        <a href="#" class="text-sm text-purple-600 hover:text-purple-700 font-medium">
+          Forgot your password?
+        </a>
+      </div>
+
+      <div class="mt-6 pt-6 border-t border-gray-200">
+        <p class="text-sm text-gray-600 text-center mb-3">Sign in as:</p>
+        <div class="flex gap-3">
+          <a routerLink="/login/merchant" class="flex-1 text-center py-2 px-4 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition duration-200">
+            Merchant
+          </a>
+          <a routerLink="/login/customer" class="flex-1 text-center py-2 px-4 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition duration-200">
+            Customer
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <p class="text-center text-purple-200 text-sm mt-8">
+      &copy; 2025 Vendo. All rights reserved.
+    </p>
+  </div>
+</div>
