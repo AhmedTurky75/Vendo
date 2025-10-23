@@ -69,6 +69,28 @@ public class CreateStoreCommandHandler : IRequestHandler<CreateStoreCommand, Res
                 ownerId: request.OwnerId
             );
 
+            // Update HTML content if provided
+            if (!string.IsNullOrEmpty(request.HeaderHtml) ||
+                !string.IsNullOrEmpty(request.ContentHtml) ||
+                !string.IsNullOrEmpty(request.FooterHtml))
+            {
+                var updatedSettings = StoreSettings.Create(
+                    currency: store.Settings.Currency,
+                    timezone: store.Settings.Timezone,
+                    language: store.Settings.Language,
+                    taxRate: store.Settings.TaxRate,
+                    taxEnabled: store.Settings.TaxEnabled,
+                    primaryColor: store.Settings.PrimaryColor,
+                    accentColor: store.Settings.AccentColor,
+                    logoUrl: store.Settings.LogoUrl,
+                    headerHtml: request.HeaderHtml,
+                    contentHtml: request.ContentHtml,
+                    footerHtml: request.FooterHtml
+                );
+
+                store.UpdateSettings(updatedSettings);
+            }
+
             // Save to repository
             await _storeRepository.AddAsync(store, cancellationToken);
             await _storeRepository.SaveChangesAsync(cancellationToken);
@@ -105,7 +127,10 @@ public class CreateStoreCommandHandler : IRequestHandler<CreateStoreCommand, Res
             IsInTrial = store.IsInTrial,
             TrialEndsAt = store.TrialEndsAt,
             CreatedAt = store.CreatedAt,
-            UpdatedAt = store.UpdatedAt
+            UpdatedAt = store.UpdatedAt,
+            HeaderHtml = store.Settings.HeaderHtml,
+            ContentHtml = store.Settings.ContentHtml,
+            FooterHtml = store.Settings.FooterHtml
         };
     }
 }

@@ -1,0 +1,128 @@
+@page
+@model Vendo.Identity.Api.Pages.Account.ErrorModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Vendo Identity</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .error-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            width: 100%;
+            max-width: 520px;
+        }
+        .error-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .error-header h1 {
+            color: #d32f2f;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        .error-header p {
+            color: #666;
+            font-size: 14px;
+        }
+        .error-details {
+            background: #f5f5f5;
+            border-left: 4px solid #d32f2f;
+            padding: 16px;
+            border-radius: 4px;
+            margin-bottom: 24px;
+        }
+        .error-details h3 {
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        .error-details p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .error-id {
+            font-size: 12px;
+            color: #999;
+            font-family: monospace;
+            margin-top: 8px;
+        }
+        .btn-home {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-home:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-header">
+            <h1>An Error Has Occurred</h1>
+            <p>We're sorry, but something went wrong</p>
+        </div>
+
+        @if (Model.ErrorViewModel != null)
+        {
+            <div class="error-details">
+                @if (!string.IsNullOrEmpty(Model.ErrorViewModel.Error))
+                {
+                    <h3>@Model.ErrorViewModel.Error</h3>
+                }
+                @if (!string.IsNullOrEmpty(Model.ErrorViewModel.ErrorDescription))
+                {
+                    <p>@Model.ErrorViewModel.ErrorDescription</p>
+                }
+                @if (!string.IsNullOrEmpty(Model.ErrorViewModel.RequestId))
+                {
+                    <div class="error-id">
+                        Request ID: @Model.ErrorViewModel.RequestId
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="error-details">
+                <p>An unexpected error occurred while processing your request. Please try again later.</p>
+            </div>
+        }
+
+        <a href="/Account/Login" class="btn-home">Return to Login</a>
+    </div>
+</body>
+</html>

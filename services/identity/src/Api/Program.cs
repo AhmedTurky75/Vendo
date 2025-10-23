@@ -12,7 +12,8 @@ using Vendo.Identity.Domain.Repositories;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
-builder.Services.AddControllers();
+builder.Services.AddControllersWithViews(); // Changed from AddControllers() to support MVC views
+builder.Services.AddRazorPages(); // Add Razor Pages support for IdentityServer UI
 builder.Services.AddEndpointsApiExplorer();
 
 // Configure Application layer services
@@ -186,6 +187,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapRazorPages(); // Map Razor Pages for IdentityServer UI
 
 // Health check endpoint
 app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }))

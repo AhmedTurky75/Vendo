@@ -63,4 +63,19 @@ public sealed class CreateStoreCommand : IRequest<Result<StoreDto>>
     /// Gets or sets the owner user ID (merchant admin).
     /// </summary>
     public string OwnerId { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the custom HTML content for the store header section (optional).
+    /// </summary>
+    public string? HeaderHtml { get; set; }
+
+    /// <summary>
+    /// Gets or sets the custom HTML content for the store main content section (optional).
+    /// </summary>
+    public string? ContentHtml { get; set; }
+
+    /// <summary>
+    /// Gets or sets the custom HTML content for the store footer section (optional).
+    /// </summary>
+    public string? FooterHtml { get; set; }
 }

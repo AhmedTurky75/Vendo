@@ -32,7 +32,11 @@ export class StoreCreationComponent implements OnInit {
       subdomain: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(63), this.subdomainValidator]],
       businessName: ['', [Validators.maxLength(200)]],
       email: ['', [Validators.required, Validators.email]],
-      phone: ['', [Validators.pattern(/^[\d\s+()-]+$/)]]
+      phone: ['', [Validators.pattern(/^[\d\s+()-]+$/)]],
+      // HTML Content fields for store customization
+      headerHtml: ['<div class="store-header"><h1>Welcome to My Store</h1></div>'],
+      contentHtml: ['<div class="store-content"><p>This is where your main content goes. Add your products, descriptions, and more!</p></div>'],
+      footerHtml: ['<div class="store-footer"><p>&copy; 2024 My Store. All rights reserved.</p></div>']
     });
   }
 
@@ -137,7 +141,10 @@ export class StoreCreationComponent implements OnInit {
       subdomain: this.storeForm.value.subdomain.toLowerCase(),
       businessName: this.storeForm.value.businessName || undefined,
       email: this.storeForm.value.email,
-      phone: this.storeForm.value.phone || undefined
+      phone: this.storeForm.value.phone || undefined,
+      headerHtml: this.storeForm.value.headerHtml || undefined,
+      contentHtml: this.storeForm.value.contentHtml || undefined,
+      footerHtml: this.storeForm.value.footerHtml || undefined
     };
 
     this.storeService.createStore(request).subscribe({
@@ -184,5 +191,17 @@ export class StoreCreationComponent implements OnInit {
 
   get phone() {
     return this.storeForm.get('phone');
+  }
+
+  get headerHtml() {
+    return this.storeForm.get('headerHtml');
+  }
+
+  get contentHtml() {
+    return this.storeForm.get('contentHtml');
+  }
+
+  get footerHtml() {
+    return this.storeForm.get('footerHtml');
   }
 }
