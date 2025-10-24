@@ -1,0 +1,662 @@
+{
+  "info": {
+    "name": "Vendo Multi-Tenant E-Commerce Platform API",
+    "description": "Complete API collection for testing all Vendo backend services including Tenant Management, Catalog, Order, and Payment services.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url_tenant",
+      "value": "https://localhost:5005",
+      "type": "string"
+    },
+    {
+      "key": "base_url_catalog",
+      "value": "https://localhost:5002",
+      "type": "string"
+    },
+    {
+      "key": "base_url_order",
+      "value": "https://localhost:5003",
+      "type": "string"
+    },
+    {
+      "key": "base_url_payment",
+      "value": "https://localhost:5004",
+      "type": "string"
+    },
+    {
+      "key": "tenant_id_techgadgets",
+      "value": "11111111-1111-1111-1111-111111111111",
+      "type": "string"
+    },
+    {
+      "key": "tenant_id_fashionhub",
+      "value": "22222222-2222-2222-2222-222222222222",
+      "type": "string"
+    },
+    {
+      "key": "tenant_id_homeessentials",
+      "value": "33333333-3333-3333-3333-333333333333",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Tenant Management Service",
+      "item": [
+        {
+          "name": "Stores",
+          "item": [
+            {
+              "name": "Get All Stores",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url_tenant}}/api/stores",
+                  "host": ["{{base_url_tenant}}"],
+                  "path": ["api", "stores"]
+                },
+                "description": "Retrieves all stores/tenants in the system"
+              }
+            },
+            {
+              "name": "Get Store by ID",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url_tenant}}/api/stores/{{tenant_id_techgadgets}}",
+                  "host": ["{{base_url_tenant}}"],
+                  "path": ["api", "stores", "{{tenant_id_techgadgets}}"]
+                },
+                "description": "Retrieves a specific store by ID"
+              }
+            },
+            {
+              "name": "Create Store",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"New Electronics Store\",\n  \"subdomain\": \"newelectronics\",\n  \"ownerId\": \"new-owner-guid\",\n  \"email\": \"owner@newelectronics.com\",\n  \"phone\": \"+1-555-9999\",\n  \"businessName\": \"New Electronics LLC\",\n  \"address\": \"456 Tech Avenue\",\n  \"city\": \"San Jose\",\n  \"state\": \"CA\",\n  \"postalCode\": \"95110\",\n  \"country\": \"USA\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url_tenant}}/api/stores",
+                  "host": ["{{base_url_tenant}}"],
+                  "path": ["api", "stores"]
+                },
+                "description": "Creates a new store/tenant"
+              }
+            },
+            {
+              "name": "Update Store",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Updated Store Name\",\n  \"email\": \"updated@email.com\",\n  \"phone\": \"+1-555-8888\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url_tenant}}/api/stores/{{tenant_id_techgadgets}}",
+                  "host": ["{{base_url_tenant}}"],
+                  "path": ["api", "stores", "{{tenant_id_techgadgets}}"]
+                },
+                "description": "Updates an existing store"
+              }
+            },
+            {
+              "name": "Delete Store",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url_tenant}}/api/stores/{{tenant_id_techgadgets}}",
+                  "host": ["{{base_url_tenant}}"],
+                  "path": ["api", "stores", "{{tenant_id_techgadgets}}"]
+                },
+                "description": "Deletes a store (soft delete)"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Catalog Service",
+      "item": [
+        {
+          "name": "Categories",
+          "item": [
+            {
+              "name": "Get All Categories",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url_catalog}}/api/categories?tenantId={{tenant_id_techgadgets}}",
+                  "host": ["{{base_url_catalog}}"],
+                  "path": ["api", "categories"],
+                  "query": [
+                    {
+                      "key": "tenantId",
+                      "value": "{{tenant_id_techgadgets}}"
+                    }
+                  ]
+                },
+                "description": "Retrieves all categories for a tenant"
+              }
+            },
+            {
+              "name": "Get Category by ID",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url_catalog}}/api/categories/c2222222-2222-2222-2222-222222222222",
+                  "host": ["{{base_url_catalog}}"],
+                  "path": ["api", "categories", "c2222222-2222-2222-2222-222222222222"]
+                },
+                "description": "Retrieves a specific category by ID"
+              }
+            },
+            {
+              "name": "Create Category",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"tenantId\": \"{{tenant_id_techgadgets}}\",\n  \"name\": \"Tablets\",\n  \"description\": \"iPad and Android tablets\",\n  \"slug\": \"tablets\",\n  \"parentCategoryId\": \"c1111111-1111-1111-1111-111111111111\",\n  \"displayOrder\": 5,\n  \"isActive\": true\n}"
+                },
+                "url": {
+                  "raw": "{{base_url_catalog}}/api/categories",
+                  "host": ["{{base_url_catalog}}"],
+                  "path": ["api", "categories"]
+                },
+                "description": "Creates a new product category"
+              }
+            },
+            {
+              "name": "Update Category",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Updated Category Name\",\n  \"description\": \"Updated description\",\n  \"displayOrder\": 10\n}"
+                },
+                "url": {
+                  "raw": "{{base_url_catalog}}/api/categories/c2222222-2222-2222-2222-222222222222",
+                  "host": ["{{base_url_catalog}}"],
+                  "path": ["api", "categories", "c2222222-2222-2222-2222-222222222222"]
+                },
+                "description": "Updates an existing category"
+              }
+            },
+            {
+              "name": "Delete Category",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url_catalog}}/api/categories/c2222222-2222-2222-2222-222222222222",
+                  "host": ["{{base_url_catalog}}"],
+                  "path": ["api", "categories", "c2222222-2222-2222-2222-222222222222"]
+                },
+                "description": "Deletes a category"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Products",
+          "item": [
+            {
+              "name": "Get All Products",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url_catalog}}/api/products?tenantId={{tenant_id_techgadgets}}&page=1&pageSize=10",
+                  "host": ["{{base_url_catalog}}"],
+                  "path": ["api", "products"],
+                  "query": [
+                    {
+                      "key": "tenantId",
+                      "value": "{{tenant_id_techgadgets}}"
+                    },
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "pageSize",
+                      "value": "10"
+                    }
+                  ]
+                },
+                "description": "Retrieves all products for a tenant with pagination"
+              }
+            },
+            {
+              "name": "Get Product by ID",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url_catalog}}/api/products/p1111111-1111-1111-1111-111111111111",
+                  "host": ["{{base_url_catalog}}"],
+                  "path": ["api", "products", "p1111111-1111-1111-1111-111111111111"]
+                },
+                "description": "Retrieves a specific product by ID"
+              }
+            },
+            {
+              "name": "Search Products",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url_catalog}}/api/products/search?tenantId={{tenant_id_techgadgets}}&searchTerm=iphone",
+                  "host": ["{{base_url_catalog}}"],
+                  "path": ["api", "products", "search"],
+                  "query": [
+                    {
+                      "key": "tenantId",
+                      "value": "{{tenant_id_techgadgets}}"
+                    },
+                    {
+                      "key": "searchTerm",
+                      "value": "iphone"
+                    }
+                  ]
+                },
+                "description": "Searches products by name or SKU"
+              }
+            },
+            {
+              "name": "Get Products by Category",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url_catalog}}/api/products/category/c2222222-2222-2222-2222-222222222222?page=1&pageSize=10",
+                  "host": ["{{base_url_catalog}}"],
+                  "path": ["api", "products", "category", "c2222222-2222-2222-2222-222222222222"],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "pageSize",
+                      "value": "10"
+                    }
+                  ]
+                },
+                "description": "Retrieves all products in a specific category"
+              }
+            },
+            {
+              "name": "Create Product",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"tenantId\": \"{{tenant_id_techgadgets}}\",\n  \"categoryId\": \"c2222222-2222-2222-2222-222222222222\",\n  \"name\": \"Google Pixel 8 Pro\",\n  \"description\": \"Latest Google flagship smartphone with AI features\",\n  \"shortDescription\": \"AI-powered Android flagship\",\n  \"sku\": \"TECH-GOOGLE-PIXEL8PRO\",\n  \"price\": 999.99,\n  \"compareAtPrice\": 1099.99,\n  \"costPrice\": 700.00,\n  \"stockQuantity\": 25,\n  \"lowStockThreshold\": 5,\n  \"trackInventory\": true,\n  \"isTaxable\": true,\n  \"taxRate\": 8.5,\n  \"weight\": 0.213,\n  \"dimensions\": \"16.2 x 7.6 x 0.88 cm\",\n  \"imageUrl\": \"https://example.com/products/pixel-8-pro.jpg\",\n  \"status\": \"Active\",\n  \"isFeatured\": true,\n  \"tags\": [\"smartphone\", \"google\", \"android\", \"ai\", \"5g\"],\n  \"metaTitle\": \"Google Pixel 8 Pro - AI Camera\",\n  \"metaDescription\": \"Experience Google's latest AI-powered smartphone\",\n  \"displayOrder\": 3\n}"
+                },
+                "url": {
+                  "raw": "{{base_url_catalog}}/api/products",
+                  "host": ["{{base_url_catalog}}"],
+                  "path": ["api", "products"]
+                },
+                "description": "Creates a new product"
+              }
+            },
+            {
+              "name": "Update Product",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Updated Product Name\",\n  \"price\": 1299.99,\n  \"stockQuantity\": 100,\n  \"status\": \"Active\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url_catalog}}/api/products/p1111111-1111-1111-1111-111111111111",
+                  "host": ["{{base_url_catalog}}"],
+                  "path": ["api", "products", "p1111111-1111-1111-1111-111111111111"]
+                },
+                "description": "Updates an existing product"
+              }
+            },
+            {
+              "name": "Delete Product",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url_catalog}}/api/products/p1111111-1111-1111-1111-111111111111",
+                  "host": ["{{base_url_catalog}}"],
+                  "path": ["api", "products", "p1111111-1111-1111-1111-111111111111"]
+                },
+                "description": "Deletes a product"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Order Service",
+      "item": [
+        {
+          "name": "Get All Orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url_order}}/api/orders?tenantId={{tenant_id_techgadgets}}&page=1&pageSize=10",
+              "host": ["{{base_url_order}}"],
+              "path": ["api", "orders"],
+              "query": [
+                {
+                  "key": "tenantId",
+                  "value": "{{tenant_id_techgadgets}}"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Retrieves all orders for a tenant with pagination"
+          }
+        },
+        {
+          "name": "Get Order by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url_order}}/api/orders/o1111111-1111-1111-1111-111111111111",
+              "host": ["{{base_url_order}}"],
+              "path": ["api", "orders", "o1111111-1111-1111-1111-111111111111"]
+            },
+            "description": "Retrieves a specific order by ID"
+          }
+        },
+        {
+          "name": "Get Orders by Customer",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url_order}}/api/orders/customer/u1111111-1111-1111-1111-111111111111?page=1&pageSize=10",
+              "host": ["{{base_url_order}}"],
+              "path": ["api", "orders", "customer", "u1111111-1111-1111-1111-111111111111"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Retrieves all orders for a specific customer"
+          }
+        },
+        {
+          "name": "Get Orders by Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url_order}}/api/orders/status/Pending?tenantId={{tenant_id_techgadgets}}&page=1&pageSize=10",
+              "host": ["{{base_url_order}}"],
+              "path": ["api", "orders", "status", "Pending"],
+              "query": [
+                {
+                  "key": "tenantId",
+                  "value": "{{tenant_id_techgadgets}}"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Retrieves orders by status (Pending, Processing, Shipped, Delivered, Cancelled)"
+          }
+        },
+        {
+          "name": "Create Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tenantId\": \"{{tenant_id_techgadgets}}\",\n  \"customerId\": \"u1111111-1111-1111-1111-111111111111\",\n  \"customerName\": \"John Doe\",\n  \"customerEmail\": \"john.doe@example.com\",\n  \"customerPhone\": \"+1-555-0101\",\n  \"shippingAddress\": \"{\\\"fullName\\\":\\\"John Doe\\\",\\\"addressLine1\\\":\\\"123 Tech Street\\\",\\\"city\\\":\\\"San Francisco\\\",\\\"state\\\":\\\"CA\\\",\\\"postalCode\\\":\\\"94102\\\",\\\"country\\\":\\\"USA\\\"}\",\n  \"billingAddress\": \"{\\\"fullName\\\":\\\"John Doe\\\",\\\"addressLine1\\\":\\\"123 Tech Street\\\",\\\"city\\\":\\\"San Francisco\\\",\\\"state\\\":\\\"CA\\\",\\\"postalCode\\\":\\\"94102\\\",\\\"country\\\":\\\"USA\\\"}\",\n  \"orderItems\": [\n    {\n      \"productId\": \"p1111111-1111-1111-1111-111111111111\",\n      \"productName\": \"iPhone 15 Pro Max\",\n      \"productSKU\": \"TECH-IPHONE-15-PM-256\",\n      \"quantity\": 1,\n      \"unitPrice\": 1199.99\n    }\n  ],\n  \"subTotal\": 1199.99,\n  \"taxAmount\": 102.00,\n  \"shippingCost\": 15.00,\n  \"discountAmount\": 0.00,\n  \"totalAmount\": 1316.99,\n  \"notes\": \"Please deliver in the evening\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url_order}}/api/orders",
+              "host": ["{{base_url_order}}"],
+              "path": ["api", "orders"]
+            },
+            "description": "Creates a new order"
+          }
+        },
+        {
+          "name": "Update Order Status",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Shipped\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url_order}}/api/orders/o1111111-1111-1111-1111-111111111111/status",
+              "host": ["{{base_url_order}}"],
+              "path": ["api", "orders", "o1111111-1111-1111-1111-111111111111", "status"]
+            },
+            "description": "Updates the status of an order (Pending, Processing, Shipped, Delivered, Cancelled)"
+          }
+        },
+        {
+          "name": "Cancel Order",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url_order}}/api/orders/o1111111-1111-1111-1111-111111111111/cancel",
+              "host": ["{{base_url_order}}"],
+              "path": ["api", "orders", "o1111111-1111-1111-1111-111111111111", "cancel"]
+            },
+            "description": "Cancels an order"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payment Service",
+      "item": [
+        {
+          "name": "Get All Payments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url_payment}}/api/payments?tenantId={{tenant_id_techgadgets}}&page=1&pageSize=10",
+              "host": ["{{base_url_payment}}"],
+              "path": ["api", "payments"],
+              "query": [
+                {
+                  "key": "tenantId",
+                  "value": "{{tenant_id_techgadgets}}"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Retrieves all payments for a tenant with pagination"
+          }
+        },
+        {
+          "name": "Get Payment by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url_payment}}/api/payments/pay11111-1111-1111-1111-111111111111",
+              "host": ["{{base_url_payment}}"],
+              "path": ["api", "payments", "pay11111-1111-1111-1111-111111111111"]
+            },
+            "description": "Retrieves a specific payment by ID"
+          }
+        },
+        {
+          "name": "Get Payment by Order ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url_payment}}/api/payments/order/o1111111-1111-1111-1111-111111111111",
+              "host": ["{{base_url_payment}}"],
+              "path": ["api", "payments", "order", "o1111111-1111-1111-1111-111111111111"]
+            },
+            "description": "Retrieves payment for a specific order"
+          }
+        },
+        {
+          "name": "Create Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tenantId\": \"{{tenant_id_techgadgets}}\",\n  \"orderId\": \"o1111111-1111-1111-1111-111111111111\",\n  \"customerId\": \"u1111111-1111-1111-1111-111111111111\",\n  \"amount\": 1316.99,\n  \"currency\": \"USD\",\n  \"paymentMethod\": \"CreditCard\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url_payment}}/api/payments",
+              "host": ["{{base_url_payment}}"],
+              "path": ["api", "payments"]
+            },
+            "description": "Creates a new payment"
+          }
+        },
+        {
+          "name": "Process Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"transactionId\": \"stripe_pi_123456789\",\n  \"gatewayResponse\": \"{\\\"status\\\":\\\"succeeded\\\"}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url_payment}}/api/payments/pay11111-1111-1111-1111-111111111111/process",
+              "host": ["{{base_url_payment}}"],
+              "path": ["api", "payments", "pay11111-1111-1111-1111-111111111111", "process"]
+            },
+            "description": "Processes a payment and marks it as completed"
+          }
+        },
+        {
+          "name": "Refund Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refundAmount\": 1316.99,\n  \"reason\": \"Customer requested refund\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url_payment}}/api/payments/pay11111-1111-1111-1111-111111111111/refund",
+              "host": ["{{base_url_payment}}"],
+              "path": ["api", "payments", "pay11111-1111-1111-1111-111111111111", "refund"]
+            },
+            "description": "Refunds a payment fully or partially"
+          }
+        }
+      ]
+    }
+  ]
+}
