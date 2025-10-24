@@ -1,7 +1,9 @@
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Vendo.TenantManagement.Api.Middleware;
 using Vendo.TenantManagement.Application;
 using Vendo.TenantManagement.Infrastructure;
+using Vendo.TenantManagement.Infrastructure.Persistence;
 
 // Configure Serilog
 Log.Logger = new LoggerConfiguration()
@@ -94,6 +96,33 @@ try
     app.MapControllers();
 
     app.MapHealthChecks("/health");
+
+    // Apply migrations and seed data on startup
+    using (var scope = app.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+        var logger = services.GetRequiredService<ILogger<Program>>();
+
+        try
+        {
+            // Apply pending migrations automatically
+            var context = services.GetRequiredService<TenantManagementDbContext>();
+            logger.LogInformation("Applying database migrations...");
+            await context.Database.MigrateAsync();
+            logger.LogInformation("Database migrations applied successfully.");
+
+            // Seed initial data
+            logger.LogInformation("Starting database seeding...");
+            var seeder = new DataSeeder(context, services.GetRequiredService<ILogger<DataSeeder>>());
+            await seeder.SeedAsync();
+            logger.LogInformation("Database seeding completed successfully.");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An error occurred while migrating or seeding the database.");
+            // Don't throw - allow the application to start even if seeding fails
+        }
+    }
 
     Log.Information("Tenant Management API started successfully");
 

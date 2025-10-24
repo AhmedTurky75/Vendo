@@ -1,0 +1,90 @@
+[
+  {
+    "id": "c1111111-1111-1111-1111-111111111111",
+    "tenantId": "11111111-1111-1111-1111-111111111111",
+    "name": "Electronics",
+    "slug": "electronics",
+    "description": "Latest electronic devices and gadgets",
+    "parentCategoryId": null,
+    "displayOrder": 1,
+    "isActive": true,
+    "imageUrl": "https://example.com/categories/electronics.jpg"
+  },
+  {
+    "id": "c2222222-2222-2222-2222-222222222222",
+    "tenantId": "11111111-1111-1111-1111-111111111111",
+    "name": "Smartphones",
+    "slug": "smartphones",
+    "description": "Latest smartphones and accessories",
+    "parentCategoryId": "c1111111-1111-1111-1111-111111111111",
+    "displayOrder": 1,
+    "isActive": true,
+    "imageUrl": "https://example.com/categories/smartphones.jpg"
+  },
+  {
+    "id": "c3333333-3333-3333-3333-333333333333",
+    "tenantId": "11111111-1111-1111-1111-111111111111",
+    "name": "Laptops",
+    "slug": "laptops",
+    "description": "High-performance laptops for work and gaming",
+    "parentCategoryId": "c1111111-1111-1111-1111-111111111111",
+    "displayOrder": 2,
+    "isActive": true,
+    "imageUrl": "https://example.com/categories/laptops.jpg"
+  },
+  {
+    "id": "c4444444-4444-4444-4444-444444444444",
+    "tenantId": "11111111-1111-1111-1111-111111111111",
+    "name": "Audio",
+    "slug": "audio",
+    "description": "Headphones, speakers, and audio equipment",
+    "parentCategoryId": "c1111111-1111-1111-1111-111111111111",
+    "displayOrder": 3,
+    "isActive": true,
+    "imageUrl": "https://example.com/categories/audio.jpg"
+  },
+  {
+    "id": "c5555555-5555-5555-5555-555555555555",
+    "tenantId": "22222222-2222-2222-2222-222222222222",
+    "name": "Clothing",
+    "slug": "clothing",
+    "description": "Fashion clothing for men and women",
+    "parentCategoryId": null,
+    "displayOrder": 1,
+    "isActive": true,
+    "imageUrl": "https://example.com/categories/clothing.jpg"
+  },
+  {
+    "id": "c6666666-6666-6666-6666-666666666666",
+    "tenantId": "22222222-2222-2222-2222-222222222222",
+    "name": "Accessories",
+    "slug": "accessories",
+    "description": "Fashion accessories and jewelry",
+    "parentCategoryId": null,
+    "displayOrder": 2,
+    "isActive": true,
+    "imageUrl": "https://example.com/categories/accessories.jpg"
+  },
+  {
+    "id": "c7777777-7777-7777-7777-777777777777",
+    "tenantId": "33333333-3333-3333-3333-333333333333",
+    "name": "Furniture",
+    "slug": "furniture",
+    "description": "Quality furniture for your home",
+    "parentCategoryId": null,
+    "displayOrder": 1,
+    "isActive": true,
+    "imageUrl": "https://example.com/categories/furniture.jpg"
+  },
+  {
+    "id": "c8888888-8888-8888-8888-888888888888",
+    "tenantId": "33333333-3333-3333-3333-333333333333",
+    "name": "Kitchen",
+    "slug": "kitchen",
+    "description": "Kitchen essentials and appliances",
+    "parentCategoryId": null,
+    "displayOrder": 2,
+    "isActive": true,
+    "imageUrl": "https://example.com/categories/kitchen.jpg"
+  }
+]

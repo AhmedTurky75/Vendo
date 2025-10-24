@@ -1,5 +1,7 @@
+using Microsoft.EntityFrameworkCore;
 using Vendo.Catalog.Application;
 using Vendo.Catalog.Infrastructure;
+using Vendo.Catalog.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -74,5 +76,32 @@ app.UseCors("AllowAll");
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Apply migrations and seed data on startup
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var logger = services.GetRequiredService<ILogger<Program>>();
+
+    try
+    {
+        // Apply pending migrations automatically
+        var context = services.GetRequiredService<CatalogDbContext>();
+        logger.LogInformation("Applying database migrations...");
+        await context.Database.MigrateAsync();
+        logger.LogInformation("Database migrations applied successfully.");
+
+        // Seed initial data
+        logger.LogInformation("Starting database seeding...");
+        var seeder = new DataSeeder(context, services.GetRequiredService<ILogger<DataSeeder>>());
+        await seeder.SeedAsync();
+        logger.LogInformation("Database seeding completed successfully.");
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "An error occurred while migrating or seeding the database.");
+        // Don't throw - allow the application to start even if seeding fails
+    }
+}
 
 app.Run();
