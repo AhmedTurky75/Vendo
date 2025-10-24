@@ -333,6 +333,51 @@ public static class IdentityServerConfig
                 // BFF-specific settings
                 AlwaysIncludeUserClaimsInIdToken = true,
                 UpdateAccessTokenClaimsOnRefresh = true
+            },
+
+            // Merchant BFF - Backend for Frontend for Merchant Portal
+            new Client
+            {
+                ClientId = "merchant-bff",
+                ClientName = "Merchant BFF",
+                AllowedGrantTypes = GrantTypes.Code,
+                RequirePkce = true,
+                RequireClientSecret = false, // Public client
+
+                // BFF redirect URIs
+                RedirectUris = {
+                    "https://localhost:5102/signin-oidc"
+                },
+                PostLogoutRedirectUris = {
+                    "https://localhost:5102/signout-callback-oidc"
+                },
+                FrontChannelLogoutUri = "https://localhost:5102/signout-oidc",
+
+                AllowedCorsOrigins = {
+                    "https://localhost:5102"
+                },
+
+                AllowedScopes =
+                {
+                    IdentityServerConstants.StandardScopes.OpenId,
+                    IdentityServerConstants.StandardScopes.Profile,
+                    IdentityServerConstants.StandardScopes.Email,
+                    "vendo.api.full_access",
+                    "roles",
+                    "tenant"
+                },
+
+                // Merchant portal has longer token lifetime than admin
+                AccessTokenLifetime = 3600, // 60 minutes
+                RefreshTokenUsage = TokenUsage.OneTimeOnly,
+                RefreshTokenExpiration = TokenExpiration.Sliding,
+                SlidingRefreshTokenLifetime = 86400, // 24 hours
+                AllowOfflineAccess = true, // For refresh tokens
+                RequireConsent = false,
+
+                // BFF-specific settings
+                AlwaysIncludeUserClaimsInIdToken = true,
+                UpdateAccessTokenClaimsOnRefresh = true
             }
         };
 }

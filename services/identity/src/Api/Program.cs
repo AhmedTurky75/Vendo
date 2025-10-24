@@ -115,6 +115,7 @@ builder.Services.AddCors(options =>
                 "https://localhost:5001", // Identity Service
                 "https://localhost:5002", // Web App
                 "https://localhost:5101", // Admin BFF
+                "https://localhost:5102", // Merchant BFF
                 "https://localhost:4200", // Customer Portal
                 "https://localhost:4300", // Admin Portal
                 "https://localhost:4400"  // Merchant Portal
@@ -134,6 +135,7 @@ builder.Services.AddCors(options =>
                 "https://localhost:5001", // Identity Service
                 "https://localhost:5002", // Web App
                 "https://localhost:5101", // Admin BFF
+                "https://localhost:5102", // Merchant BFF
                 "https://localhost:4200", // Customer Portal
                 "https://localhost:4300", // Admin Portal
                 "https://localhost:4400"  // Merchant Portal
