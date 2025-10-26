@@ -1,6 +1,6 @@
-using Vendo.Order.Domain.Enums;
+using Vendo.OrderManagement.Domain.Enums;
 
-namespace Vendo.Order.Application.DTOs;
+namespace Vendo.OrderManagement.Application.DTOs;
 
 public class CreateOrderRequest
 {

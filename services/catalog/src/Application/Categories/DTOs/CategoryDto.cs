@@ -1,4 +1,4 @@
-namespace Vendo.Catalog.Application.Categories.DTOs;
+namespace Vendo.CatalogManagement.Application.Categories.DTOs;
 
 /// <summary>
 /// Category data transfer object.

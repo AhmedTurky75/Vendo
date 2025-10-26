@@ -1,10 +1,10 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Vendo.Catalog.Application.Common;
-using Vendo.Catalog.Application.Products.DTOs;
-using Vendo.Catalog.Domain.Interfaces;
+using Vendo.CatalogManagement.Application.Common;
+using Vendo.CatalogManagement.Application.Products.DTOs;
+using Vendo.CatalogManagement.Domain.Interfaces;
 
-namespace Vendo.Catalog.Application.Products.Queries.GetProducts;
+namespace Vendo.CatalogManagement.Application.Products.Queries.GetProducts;
 
 /// <summary>
 /// Handler for getting all products with pagination.

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using Vendo.TenantManagement.Domain.Entities;
@@ -16,14 +17,18 @@ public class DataSeeder
     private readonly ILogger<DataSeeder> _logger;
     private readonly string _dataPath;
 
-    public DataSeeder(TenantManagementDbContext context, ILogger<DataSeeder> logger)
+    public DataSeeder(TenantManagementDbContext context, ILogger<DataSeeder> logger, IConfiguration configuration)
     {
         _context = context;
         _logger = logger;
 
-        // Get the data directory path (goes up from bin/Debug/net9.0 to project root, then to Data/SeedData)
-        var assemblyLocation = AppContext.BaseDirectory;
-        _dataPath = Path.Combine(assemblyLocation, "..", "..", "..", "..", "Data", "SeedData");
+        // Get the data directory path from configuration
+        var configuredPath = configuration["SeedDataSettings:DataPath"] ?? "Infrastructure/Persistence/SeedData";
+        var baseDirectory = AppContext.BaseDirectory;
+
+        // Navigate up from bin/Debug/net9.0 to the src folder, then to the configured path
+        var srcRoot = Path.Combine(baseDirectory, "..", "..", "..", "..");
+        _dataPath = Path.GetFullPath(Path.Combine(srcRoot, configuredPath));
     }
 
     public async Task SeedAsync()

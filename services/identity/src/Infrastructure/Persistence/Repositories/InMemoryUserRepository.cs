@@ -1,9 +1,9 @@
 using System.Collections.Concurrent;
-using Vendo.Identity.Domain.Entities;
-using Vendo.Identity.Domain.Repositories;
-using Vendo.Identity.Domain.ValueObjects;
+using Vendo.IdentityManagement.Domain.Entities;
+using Vendo.IdentityManagement.Domain.Repositories;
+using Vendo.IdentityManagement.Domain.ValueObjects;
 
-namespace Vendo.Identity.Infrastructure.Persistence.Repositories;
+namespace Vendo.IdentityManagement.Infrastructure.Persistence.Repositories;
 
 /// <summary>
 /// In-memory implementation of IUserRepository for development/testing

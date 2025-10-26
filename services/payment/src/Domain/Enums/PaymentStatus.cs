@@ -1,4 +1,4 @@
-namespace Vendo.Payment.Domain.Enums;
+namespace Vendo.PaymentManagement.Domain.Enums;
 
 /// <summary>
 /// Payment status lifecycle states.

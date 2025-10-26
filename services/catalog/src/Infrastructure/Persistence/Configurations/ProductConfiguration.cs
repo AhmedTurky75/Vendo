@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Vendo.Catalog.Domain.Entities;
-using Vendo.Catalog.Domain.Enums;
+using Vendo.CatalogManagement.Domain.Entities;
+using Vendo.CatalogManagement.Domain.Enums;
 
-namespace Vendo.Catalog.Infrastructure.Persistence.Configurations;
+namespace Vendo.CatalogManagement.Infrastructure.Persistence.Configurations;
 
 /// <summary>
 /// Entity configuration for Product.

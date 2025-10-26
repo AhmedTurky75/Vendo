@@ -1,4 +1,4 @@
-namespace Vendo.Payment.Application.DTOs;
+namespace Vendo.PaymentManagement.Application.DTOs;
 
 /// <summary>
 /// Data transfer object for Transaction.

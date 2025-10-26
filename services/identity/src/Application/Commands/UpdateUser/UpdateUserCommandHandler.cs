@@ -1,12 +1,12 @@
 using AutoMapper;
 using MediatR;
-using Vendo.Identity.Application.Common.Models;
-using Vendo.Identity.Application.DTOs;
-using Vendo.Identity.Domain.Exceptions;
-using Vendo.Identity.Domain.Repositories;
-using Vendo.Identity.Domain.ValueObjects;
+using Vendo.IdentityManagement.Application.Common.Models;
+using Vendo.IdentityManagement.Application.DTOs;
+using Vendo.IdentityManagement.Domain.Exceptions;
+using Vendo.IdentityManagement.Domain.Repositories;
+using Vendo.IdentityManagement.Domain.ValueObjects;
 
-namespace Vendo.Identity.Application.Commands.UpdateUser;
+namespace Vendo.IdentityManagement.Application.Commands.UpdateUser;
 
 /// <summary>
 /// Handler for UpdateUserCommand

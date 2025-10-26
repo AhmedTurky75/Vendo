@@ -1,8 +1,8 @@
 using MediatR;
-using Vendo.Catalog.Application.Categories.DTOs;
-using Vendo.Catalog.Application.Common;
+using Vendo.CatalogManagement.Application.Categories.DTOs;
+using Vendo.CatalogManagement.Application.Common;
 
-namespace Vendo.Catalog.Application.Categories.Commands.UpdateCategory;
+namespace Vendo.CatalogManagement.Application.Categories.Commands.UpdateCategory;
 
 /// <summary>
 /// Command to update an existing category.

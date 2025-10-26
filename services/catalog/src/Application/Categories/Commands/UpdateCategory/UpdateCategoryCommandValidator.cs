@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Vendo.Catalog.Application.Categories.Commands.UpdateCategory;
+namespace Vendo.CatalogManagement.Application.Categories.Commands.UpdateCategory;
 
 /// <summary>
 /// Validator for UpdateCategoryCommand.

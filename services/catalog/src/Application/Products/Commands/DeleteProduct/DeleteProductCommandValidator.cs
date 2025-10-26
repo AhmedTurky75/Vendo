@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Vendo.Catalog.Application.Products.Commands.DeleteProduct;
+namespace Vendo.CatalogManagement.Application.Products.Commands.DeleteProduct;
 
 /// <summary>
 /// Validator for DeleteProductCommand.

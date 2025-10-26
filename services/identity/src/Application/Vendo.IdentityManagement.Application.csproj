@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\Domain\Vendo.Identity.Domain.csproj" />
+    <ProjectReference Include="..\Domain\Vendo.IdentityManagement.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,7 +1,7 @@
 using MediatR;
-using Vendo.Catalog.Application.Common;
+using Vendo.CatalogManagement.Application.Common;
 
-namespace Vendo.Catalog.Application.Products.Commands.DeleteProduct;
+namespace Vendo.CatalogManagement.Application.Products.Commands.DeleteProduct;
 
 /// <summary>
 /// Command to delete a product.

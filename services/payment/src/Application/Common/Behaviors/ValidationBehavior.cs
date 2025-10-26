@@ -1,8 +1,8 @@
 using FluentValidation;
 using MediatR;
-using Vendo.Payment.Application.Common.Models;
+using Vendo.PaymentManagement.Application.Common.Models;
 
-namespace Vendo.Payment.Application.Common.Behaviors;
+namespace Vendo.PaymentManagement.Application.Common.Behaviors;
 
 /// <summary>
 /// MediatR pipeline behavior for automatic validation of requests.

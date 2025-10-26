@@ -1,7 +1,7 @@
 using MediatR;
-using Vendo.Identity.Application.Common.Models;
+using Vendo.IdentityManagement.Application.Common.Models;
 
-namespace Vendo.Identity.Application.Commands.DeactivateUser;
+namespace Vendo.IdentityManagement.Application.Commands.DeactivateUser;
 
 /// <summary>
 /// Command to deactivate a user account

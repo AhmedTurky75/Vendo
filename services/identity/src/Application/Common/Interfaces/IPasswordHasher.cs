@@ -1,4 +1,4 @@
-namespace Vendo.Identity.Application.Common.Interfaces;
+namespace Vendo.IdentityManagement.Application.Common.Interfaces;
 
 /// <summary>
 /// Service interface for password hashing operations

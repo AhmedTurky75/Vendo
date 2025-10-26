@@ -113,7 +113,8 @@ try
 
             // Seed initial data
             logger.LogInformation("Starting database seeding...");
-            var seeder = new DataSeeder(context, services.GetRequiredService<ILogger<DataSeeder>>());
+            var configuration = services.GetRequiredService<IConfiguration>();
+            var seeder = new DataSeeder(context, services.GetRequiredService<ILogger<DataSeeder>>(), configuration);
             await seeder.SeedAsync();
             logger.LogInformation("Database seeding completed successfully.");
         }

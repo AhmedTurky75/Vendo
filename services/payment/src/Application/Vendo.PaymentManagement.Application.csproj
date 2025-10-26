@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\Domain\Vendo.Payment.Domain.csproj" />
+    <ProjectReference Include="..\Domain\Vendo.PaymentManagement.Domain.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

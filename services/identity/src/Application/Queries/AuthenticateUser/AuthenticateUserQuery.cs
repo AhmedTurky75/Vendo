@@ -1,8 +1,8 @@
 using MediatR;
-using Vendo.Identity.Application.Common.Models;
-using Vendo.Identity.Application.DTOs;
+using Vendo.IdentityManagement.Application.Common.Models;
+using Vendo.IdentityManagement.Application.DTOs;
 
-namespace Vendo.Identity.Application.Queries.AuthenticateUser;
+namespace Vendo.IdentityManagement.Application.Queries.AuthenticateUser;
 
 /// <summary>
 /// Query to authenticate a user

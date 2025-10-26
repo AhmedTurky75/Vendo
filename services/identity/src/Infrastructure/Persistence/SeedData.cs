@@ -1,9 +1,9 @@
-using Vendo.Identity.Application.Common.Interfaces;
-using Vendo.Identity.Domain.Entities;
-using Vendo.Identity.Domain.Repositories;
-using Vendo.Identity.Domain.ValueObjects;
+using Vendo.IdentityManagement.Application.Common.Interfaces;
+using Vendo.IdentityManagement.Domain.Entities;
+using Vendo.IdentityManagement.Domain.Repositories;
+using Vendo.IdentityManagement.Domain.ValueObjects;
 
-namespace Vendo.Identity.Infrastructure.Persistence;
+namespace Vendo.IdentityManagement.Infrastructure.Persistence;
 
 /// <summary>
 /// Seeds initial test users into the repository

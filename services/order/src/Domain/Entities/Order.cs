@@ -1,7 +1,7 @@
-using Vendo.Order.Domain.Common;
-using Vendo.Order.Domain.Enums;
+using Vendo.OrderManagement.Domain.Common;
+using Vendo.OrderManagement.Domain.Enums;
 
-namespace Vendo.Order.Domain.Entities;
+namespace Vendo.OrderManagement.Domain.Entities;
 
 public class Order : BaseEntity
 {

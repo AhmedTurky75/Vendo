@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using Vendo.Payment.Domain.Entities;
-using Vendo.Payment.Infrastructure.Persistence.Configurations;
+using Vendo.PaymentManagement.Domain.Entities;
+using Vendo.PaymentManagement.Infrastructure.Persistence.Configurations;
 
-namespace Vendo.Payment.Infrastructure.Persistence;
+namespace Vendo.PaymentManagement.Infrastructure.Persistence;
 
 /// <summary>
 /// Database context for payment service.

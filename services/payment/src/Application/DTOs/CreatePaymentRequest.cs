@@ -1,4 +1,4 @@
-namespace Vendo.Payment.Application.DTOs;
+namespace Vendo.PaymentManagement.Application.DTOs;
 
 /// <summary>
 /// Request to create a new payment.

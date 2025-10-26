@@ -1,6 +1,6 @@
-using Vendo.Payment.Domain.Entities;
+using Vendo.PaymentManagement.Domain.Entities;
 
-namespace Vendo.Payment.Domain.Repositories;
+namespace Vendo.PaymentManagement.Domain.Repositories;
 
 /// <summary>
 /// Repository interface for Payment aggregate.

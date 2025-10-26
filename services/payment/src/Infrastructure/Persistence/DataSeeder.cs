@@ -1,10 +1,12 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
-using Vendo.Payment.Domain.Entities;
-using Vendo.Payment.Domain.Enums;
+using System.Text.Json.Serialization;
+using Vendo.PaymentManagement.Domain.Entities;
+using Vendo.PaymentManagement.Domain.Enums;
 
-namespace Vendo.Payment.Infrastructure.Persistence;
+namespace Vendo.PaymentManagement.Infrastructure.Persistence;
 
 /// <summary>
 /// Seeds initial data into the Payment database from JSON files.
@@ -15,14 +17,18 @@ public class DataSeeder
     private readonly ILogger<DataSeeder> _logger;
     private readonly string _dataPath;
 
-    public DataSeeder(PaymentDbContext context, ILogger<DataSeeder> logger)
+    public DataSeeder(PaymentDbContext context, ILogger<DataSeeder> logger, IConfiguration configuration)
     {
         _context = context;
         _logger = logger;
 
-        // Get the data directory path (goes up from bin/Debug/net9.0 to project root, then to Data/SeedData)
-        var assemblyLocation = AppContext.BaseDirectory;
-        _dataPath = Path.Combine(assemblyLocation, "..", "..", "..", "..", "Data", "SeedData");
+        // Get the data directory path from configuration
+        var configuredPath = configuration["SeedDataSettings:DataPath"] ?? "Infrastructure/Persistence/SeedData";
+        var baseDirectory = AppContext.BaseDirectory;
+
+        // Navigate up from bin/Debug/net9.0 to the src folder, then to the configured path
+        var srcRoot = Path.Combine(baseDirectory, "..", "..", "..", "..");
+        _dataPath = Path.GetFullPath(Path.Combine(srcRoot, configuredPath));
     }
 
     public async Task SeedAsync()
@@ -63,7 +69,8 @@ public class DataSeeder
         var paymentsJson = await File.ReadAllTextAsync(paymentsFilePath);
         var paymentDtos = JsonSerializer.Deserialize<List<PaymentSeedDto>>(paymentsJson, new JsonSerializerOptions
         {
-            PropertyNameCaseInsensitive = true
+            PropertyNameCaseInsensitive = true,
+            Converters = { new JsonStringEnumConverter() }
         });
 
         if (paymentDtos == null || !paymentDtos.Any())

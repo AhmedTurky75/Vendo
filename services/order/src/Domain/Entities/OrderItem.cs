@@ -1,6 +1,6 @@
-using Vendo.Order.Domain.Common;
+using Vendo.OrderManagement.Domain.Common;
 
-namespace Vendo.Order.Domain.Entities;
+namespace Vendo.OrderManagement.Domain.Entities;
 
 public class OrderItem : BaseEntity
 {

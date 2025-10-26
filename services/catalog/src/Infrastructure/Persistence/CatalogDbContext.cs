@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using Vendo.Catalog.Domain.Entities;
+using Vendo.CatalogManagement.Domain.Entities;
 
-namespace Vendo.Catalog.Infrastructure.Persistence;
+namespace Vendo.CatalogManagement.Infrastructure.Persistence;
 
 /// <summary>
 /// Database context for the Catalog service.

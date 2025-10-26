@@ -1,4 +1,4 @@
-namespace Vendo.Identity.Api.Models;
+namespace Vendo.IdentityManagement.Api.Models;
 
 /// <summary>
 /// Standard API response wrapper

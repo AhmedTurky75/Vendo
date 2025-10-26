@@ -1,11 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Vendo.Payment.Domain.Repositories;
-using Vendo.Payment.Infrastructure.Persistence;
-using Vendo.Payment.Infrastructure.Persistence.Repositories;
+using Vendo.PaymentManagement.Domain.Repositories;
+using Vendo.PaymentManagement.Infrastructure.Persistence;
+using Vendo.PaymentManagement.Infrastructure.Persistence.Repositories;
 
-namespace Vendo.Payment.Infrastructure;
+namespace Vendo.PaymentManagement.Infrastructure;
 
 /// <summary>
 /// Dependency injection configuration for Infrastructure layer.

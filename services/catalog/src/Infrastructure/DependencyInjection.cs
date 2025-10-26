@@ -1,11 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Vendo.Catalog.Domain.Interfaces;
-using Vendo.Catalog.Infrastructure.Persistence;
-using Vendo.Catalog.Infrastructure.Repositories;
+using Vendo.CatalogManagement.Domain.Interfaces;
+using Vendo.CatalogManagement.Infrastructure.Persistence;
+using Vendo.CatalogManagement.Infrastructure.Repositories;
 
-namespace Vendo.Catalog.Infrastructure;
+namespace Vendo.CatalogManagement.Infrastructure;
 
 /// <summary>
 /// Dependency injection configuration for the Infrastructure layer.

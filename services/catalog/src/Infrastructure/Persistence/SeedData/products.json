@@ -1,8 +1,8 @@
 [
   {
-    "id": "p1111111-1111-1111-1111-111111111111",
+    "id": "b1111111-1111-1111-1111-111111111111",
     "tenantId": "11111111-1111-1111-1111-111111111111",
-    "categoryId": "c2222222-2222-2222-2222-222222222222",
+    "categoryId": "a2222222-2222-2222-2222-222222222222",
     "name": "iPhone 15 Pro Max",
     "slug": "iphone-15-pro-max",
     "description": "The most powerful iPhone ever with A17 Pro chip, titanium design, and advanced camera system",
@@ -27,9 +27,9 @@
     "displayOrder": 1
   },
   {
-    "id": "p2222222-2222-2222-2222-222222222222",
+    "id": "b2222222-2222-2222-2222-222222222222",
     "tenantId": "11111111-1111-1111-1111-111111111111",
-    "categoryId": "c2222222-2222-2222-2222-222222222222",
+    "categoryId": "a2222222-2222-2222-2222-222222222222",
     "name": "Samsung Galaxy S24 Ultra",
     "slug": "samsung-galaxy-s24-ultra",
     "description": "Flagship Android smartphone with S Pen, 200MP camera, and AI features",
@@ -54,9 +54,9 @@
     "displayOrder": 2
   },
   {
-    "id": "p3333333-3333-3333-3333-333333333333",
+    "id": "b3333333-3333-3333-3333-333333333333",
     "tenantId": "11111111-1111-1111-1111-111111111111",
-    "categoryId": "c3333333-3333-3333-3333-333333333333",
+    "categoryId": "a3333333-3333-3333-3333-333333333333",
     "name": "MacBook Pro 16-inch M3 Max",
     "slug": "macbook-pro-16-m3-max",
     "description": "Powerful laptop for professionals with M3 Max chip, 36GB RAM, and stunning Liquid Retina XDR display",
@@ -81,9 +81,9 @@
     "displayOrder": 1
   },
   {
-    "id": "p4444444-4444-4444-4444-444444444444",
+    "id": "b4444444-4444-4444-4444-444444444444",
     "tenantId": "11111111-1111-1111-1111-111111111111",
-    "categoryId": "c3333333-3333-3333-3333-333333333333",
+    "categoryId": "a3333333-3333-3333-3333-333333333333",
     "name": "Dell XPS 15",
     "slug": "dell-xps-15",
     "description": "Premium Windows laptop with Intel i9, NVIDIA RTX 4070, and stunning OLED display",
@@ -108,9 +108,9 @@
     "displayOrder": 2
   },
   {
-    "id": "p5555555-5555-5555-5555-555555555555",
+    "id": "b5555555-5555-5555-5555-555555555555",
     "tenantId": "11111111-1111-1111-1111-111111111111",
-    "categoryId": "c4444444-4444-4444-4444-444444444444",
+    "categoryId": "a4444444-4444-4444-4444-444444444444",
     "name": "Sony WH-1000XM5",
     "slug": "sony-wh1000xm5",
     "description": "Industry-leading noise canceling headphones with exceptional sound quality",
@@ -135,9 +135,9 @@
     "displayOrder": 1
   },
   {
-    "id": "p6666666-6666-6666-6666-666666666666",
+    "id": "b6666666-6666-6666-6666-666666666666",
     "tenantId": "22222222-2222-2222-2222-222222222222",
-    "categoryId": "c5555555-5555-5555-5555-555555555555",
+    "categoryId": "a5555555-5555-5555-5555-555555555555",
     "name": "Premium Cotton T-Shirt",
     "slug": "premium-cotton-tshirt",
     "description": "Soft and comfortable 100% organic cotton t-shirt",
@@ -162,9 +162,9 @@
     "displayOrder": 1
   },
   {
-    "id": "p7777777-7777-7777-7777-777777777777",
+    "id": "b7777777-7777-7777-7777-777777777777",
     "tenantId": "22222222-2222-2222-2222-222222222222",
-    "categoryId": "c6666666-6666-6666-6666-666666666666",
+    "categoryId": "a6666666-6666-6666-6666-666666666666",
     "name": "Leather Crossbody Bag",
     "slug": "leather-crossbody-bag",
     "description": "Elegant genuine leather crossbody bag perfect for any occasion",
@@ -189,9 +189,9 @@
     "displayOrder": 1
   },
   {
-    "id": "p8888888-8888-8888-8888-888888888888",
+    "id": "b8888888-8888-8888-8888-888888888888",
     "tenantId": "33333333-3333-3333-3333-333333333333",
-    "categoryId": "c7777777-7777-7777-7777-777777777777",
+    "categoryId": "a7777777-7777-7777-7777-777777777777",
     "name": "Modern Sofa Set",
     "slug": "modern-sofa-set",
     "description": "Comfortable 3-seater sofa with contemporary design and premium fabric",
@@ -216,9 +216,9 @@
     "displayOrder": 1
   },
   {
-    "id": "p9999999-9999-9999-9999-999999999999",
+    "id": "b9999999-9999-9999-9999-999999999999",
     "tenantId": "33333333-3333-3333-3333-333333333333",
-    "categoryId": "c8888888-8888-8888-8888-888888888888",
+    "categoryId": "a8888888-8888-8888-8888-888888888888",
     "name": "Stainless Steel Cookware Set",
     "slug": "stainless-steel-cookware-set",
     "description": "Professional 10-piece stainless steel cookware set with non-stick coating",

@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Vendo.Order.Application.Commands.UpdateOrderStatus;
+namespace Vendo.OrderManagement.Application.Commands.UpdateOrderStatus;
 
 public class UpdateOrderStatusCommandValidator : AbstractValidator<UpdateOrderStatusCommand>
 {

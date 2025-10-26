@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using Vendo.Catalog.Domain.Entities;
-using Vendo.Catalog.Domain.Interfaces;
-using Vendo.Catalog.Infrastructure.Persistence;
+using Vendo.CatalogManagement.Domain.Entities;
+using Vendo.CatalogManagement.Domain.Interfaces;
+using Vendo.CatalogManagement.Infrastructure.Persistence;
 
-namespace Vendo.Catalog.Infrastructure.Repositories;
+namespace Vendo.CatalogManagement.Infrastructure.Repositories;
 
 /// <summary>
 /// Repository implementation for Product operations.

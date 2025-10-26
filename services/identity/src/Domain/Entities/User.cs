@@ -1,7 +1,7 @@
-using Vendo.Identity.Domain.Events;
-using Vendo.Identity.Domain.ValueObjects;
+using Vendo.IdentityManagement.Domain.Events;
+using Vendo.IdentityManagement.Domain.ValueObjects;
 
-namespace Vendo.Identity.Domain.Entities;
+namespace Vendo.IdentityManagement.Domain.Entities;
 
 /// <summary>
 /// Represents a user in the identity system

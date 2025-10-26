@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using Vendo.Order.Domain.Entities;
-using Vendo.Order.Domain.Repositories;
-using Vendo.Order.Infrastructure.Persistence;
+using Vendo.OrderManagement.Domain.Entities;
+using Vendo.OrderManagement.Domain.Repositories;
+using Vendo.OrderManagement.Infrastructure.Persistence;
 
-namespace Vendo.Order.Infrastructure.Repositories;
+namespace Vendo.OrderManagement.Infrastructure.Repositories;
 
 public class OrderItemRepository : IOrderItemRepository
 {

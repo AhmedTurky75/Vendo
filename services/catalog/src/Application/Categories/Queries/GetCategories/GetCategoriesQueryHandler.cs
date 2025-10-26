@@ -1,10 +1,10 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Vendo.Catalog.Application.Categories.DTOs;
-using Vendo.Catalog.Application.Common;
-using Vendo.Catalog.Domain.Interfaces;
+using Vendo.CatalogManagement.Application.Categories.DTOs;
+using Vendo.CatalogManagement.Application.Common;
+using Vendo.CatalogManagement.Domain.Interfaces;
 
-namespace Vendo.Catalog.Application.Categories.Queries.GetCategories;
+namespace Vendo.CatalogManagement.Application.Categories.Queries.GetCategories;
 
 /// <summary>
 /// Handler for getting all categories for a tenant.

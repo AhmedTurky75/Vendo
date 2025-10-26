@@ -1,8 +1,8 @@
 using MediatR;
-using Vendo.Catalog.Application.Categories.DTOs;
-using Vendo.Catalog.Application.Common;
+using Vendo.CatalogManagement.Application.Categories.DTOs;
+using Vendo.CatalogManagement.Application.Common;
 
-namespace Vendo.Catalog.Application.Categories.Queries.GetCategory;
+namespace Vendo.CatalogManagement.Application.Categories.Queries.GetCategory;
 
 /// <summary>
 /// Query to get a category by ID.

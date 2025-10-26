@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Vendo.Catalog.Application.Products.Commands.UpdateProduct;
+namespace Vendo.CatalogManagement.Application.Products.Commands.UpdateProduct;
 
 /// <summary>
 /// Validator for UpdateProductCommand.

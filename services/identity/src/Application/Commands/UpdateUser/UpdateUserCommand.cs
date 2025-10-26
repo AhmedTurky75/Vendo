@@ -1,8 +1,8 @@
 using MediatR;
-using Vendo.Identity.Application.Common.Models;
-using Vendo.Identity.Application.DTOs;
+using Vendo.IdentityManagement.Application.Common.Models;
+using Vendo.IdentityManagement.Application.DTOs;
 
-namespace Vendo.Identity.Application.Commands.UpdateUser;
+namespace Vendo.IdentityManagement.Application.Commands.UpdateUser;
 
 /// <summary>
 /// Command to update user profile

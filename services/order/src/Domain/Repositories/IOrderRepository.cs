@@ -1,6 +1,6 @@
-using Vendo.Order.Domain.Entities;
+using Vendo.OrderManagement.Domain.Entities;
 
-namespace Vendo.Order.Domain.Repositories;
+namespace Vendo.OrderManagement.Domain.Repositories;
 
 public interface IOrderRepository
 {

@@ -1,6 +1,6 @@
-using Vendo.Catalog.Domain.Common;
+using Vendo.CatalogManagement.Domain.Common;
 
-namespace Vendo.Catalog.Domain.Entities;
+namespace Vendo.CatalogManagement.Domain.Entities;
 
 /// <summary>
 /// Represents a product category.

@@ -1,9 +1,9 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Vendo.Catalog.Application.Common;
-using Vendo.Catalog.Domain.Interfaces;
+using Vendo.CatalogManagement.Application.Common;
+using Vendo.CatalogManagement.Domain.Interfaces;
 
-namespace Vendo.Catalog.Application.Categories.Commands.DeleteCategory;
+namespace Vendo.CatalogManagement.Application.Categories.Commands.DeleteCategory;
 
 /// <summary>
 /// Handler for deleting a category.

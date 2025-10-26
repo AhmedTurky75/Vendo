@@ -4,10 +4,10 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Vendo.Identity.Application.Common.Interfaces;
-using Vendo.Identity.Domain.Entities;
+using Vendo.IdentityManagement.Application.Common.Interfaces;
+using Vendo.IdentityManagement.Domain.Entities;
 
-namespace Vendo.Identity.Infrastructure.Services;
+namespace Vendo.IdentityManagement.Infrastructure.Services;
 
 /// <summary>
 /// JWT token service implementation

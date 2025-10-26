@@ -1,10 +1,10 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Vendo.Payment.Application.Common.Models;
-using Vendo.Payment.Application.DTOs;
-using Vendo.Payment.Domain.Repositories;
+using Vendo.PaymentManagement.Application.Common.Models;
+using Vendo.PaymentManagement.Application.DTOs;
+using Vendo.PaymentManagement.Domain.Repositories;
 
-namespace Vendo.Payment.Application.Queries.GetTransactionHistory;
+namespace Vendo.PaymentManagement.Application.Queries.GetTransactionHistory;
 
 /// <summary>
 /// Handler for GetTransactionHistoryQuery.

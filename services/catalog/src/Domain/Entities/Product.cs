@@ -1,7 +1,7 @@
-using Vendo.Catalog.Domain.Common;
-using Vendo.Catalog.Domain.Enums;
+using Vendo.CatalogManagement.Domain.Common;
+using Vendo.CatalogManagement.Domain.Enums;
 
-namespace Vendo.Catalog.Domain.Entities;
+namespace Vendo.CatalogManagement.Domain.Entities;
 
 /// <summary>
 /// Represents a product in the catalog.

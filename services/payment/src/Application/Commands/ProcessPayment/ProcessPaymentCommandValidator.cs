@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Vendo.Payment.Application.Commands.ProcessPayment;
+namespace Vendo.PaymentManagement.Application.Commands.ProcessPayment;
 
 /// <summary>
 /// Validator for ProcessPaymentCommand.

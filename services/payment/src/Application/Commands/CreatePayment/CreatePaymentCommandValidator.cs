@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Vendo.Payment.Application.Commands.CreatePayment;
+namespace Vendo.PaymentManagement.Application.Commands.CreatePayment;
 
 /// <summary>
 /// Validator for CreatePaymentCommand.

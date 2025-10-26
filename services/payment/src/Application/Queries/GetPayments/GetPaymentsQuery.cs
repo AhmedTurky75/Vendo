@@ -1,8 +1,8 @@
 using MediatR;
-using Vendo.Payment.Application.Common.Models;
-using Vendo.Payment.Application.DTOs;
+using Vendo.PaymentManagement.Application.Common.Models;
+using Vendo.PaymentManagement.Application.DTOs;
 
-namespace Vendo.Payment.Application.Queries.GetPayments;
+namespace Vendo.PaymentManagement.Application.Queries.GetPayments;
 
 /// <summary>
 /// Query to get all payments with pagination.

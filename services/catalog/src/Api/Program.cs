@@ -1,18 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using Vendo.Catalog.Application;
-using Vendo.Catalog.Infrastructure;
-using Vendo.Catalog.Infrastructure.Persistence;
+using Vendo.CatalogManagement.Application;
+using Vendo.CatalogManagement.Infrastructure;
+using Vendo.CatalogManagement.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Configure Kestrel to listen on port 5002
-builder.WebHost.ConfigureKestrel(options =>
-{
-    options.ListenLocalhost(5002, listenOptions =>
-    {
-        listenOptions.UseHttps();
-    });
-});
 
 // Add services to the container
 builder.Services.AddControllers();
@@ -93,7 +84,8 @@ using (var scope = app.Services.CreateScope())
 
         // Seed initial data
         logger.LogInformation("Starting database seeding...");
-        var seeder = new DataSeeder(context, services.GetRequiredService<ILogger<DataSeeder>>());
+        var configuration = services.GetRequiredService<IConfiguration>();
+        var seeder = new DataSeeder(context, services.GetRequiredService<ILogger<DataSeeder>>(), configuration);
         await seeder.SeedAsync();
         logger.LogInformation("Database seeding completed successfully.");
     }

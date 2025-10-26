@@ -1,4 +1,4 @@
-namespace Vendo.Identity.Application.DTOs;
+namespace Vendo.IdentityManagement.Application.DTOs;
 
 /// <summary>
 /// Data transfer object for user information

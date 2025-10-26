@@ -1,7 +1,7 @@
 using MediatR;
-using Vendo.Payment.Application.Common.Models;
+using Vendo.PaymentManagement.Application.Common.Models;
 
-namespace Vendo.Payment.Application.Commands.DeletePayment;
+namespace Vendo.PaymentManagement.Application.Commands.DeletePayment;
 
 /// <summary>
 /// Command to delete a payment.

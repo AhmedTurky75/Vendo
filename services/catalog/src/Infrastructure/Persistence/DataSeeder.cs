@@ -1,10 +1,12 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
-using Vendo.Catalog.Domain.Entities;
-using Vendo.Catalog.Domain.Enums;
+using System.Text.Json.Serialization;
+using Vendo.CatalogManagement.Domain.Entities;
+using Vendo.CatalogManagement.Domain.Enums;
 
-namespace Vendo.Catalog.Infrastructure.Persistence;
+namespace Vendo.CatalogManagement.Infrastructure.Persistence;
 
 /// <summary>
 /// Seeds initial data into the Catalog database from JSON files.
@@ -15,14 +17,18 @@ public class DataSeeder
     private readonly ILogger<DataSeeder> _logger;
     private readonly string _dataPath;
 
-    public DataSeeder(CatalogDbContext context, ILogger<DataSeeder> logger)
+    public DataSeeder(CatalogDbContext context, ILogger<DataSeeder> logger, IConfiguration configuration)
     {
         _context = context;
         _logger = logger;
 
-        // Get the data directory path (goes up from bin/Debug/net9.0 to project root, then to Data/SeedData)
-        var assemblyLocation = AppContext.BaseDirectory;
-        _dataPath = Path.Combine(assemblyLocation, "..", "..", "..", "..", "Data", "SeedData");
+        // Get the data directory path from configuration
+        var configuredPath = configuration["SeedDataSettings:DataPath"] ?? "Infrastructure/Persistence/SeedData";
+        var baseDirectory = AppContext.BaseDirectory;
+
+        // Navigate up from bin/Debug/net9.0 to the src folder, then to the configured path
+        var srcRoot = Path.Combine(baseDirectory, "..", "..", "..", "..");
+        _dataPath = Path.GetFullPath(Path.Combine(srcRoot, configuredPath));
     }
 
     public async Task SeedAsync()
@@ -64,7 +70,8 @@ public class DataSeeder
         var categoriesJson = await File.ReadAllTextAsync(categoriesFilePath);
         var categoryDtos = JsonSerializer.Deserialize<List<CategorySeedDto>>(categoriesJson, new JsonSerializerOptions
         {
-            PropertyNameCaseInsensitive = true
+            PropertyNameCaseInsensitive = true,
+            Converters = { new JsonStringEnumConverter() }
         });
 
         if (categoryDtos == null || !categoryDtos.Any())
@@ -121,7 +128,8 @@ public class DataSeeder
         var productsJson = await File.ReadAllTextAsync(productsFilePath);
         var productDtos = JsonSerializer.Deserialize<List<ProductSeedDto>>(productsJson, new JsonSerializerOptions
         {
-            PropertyNameCaseInsensitive = true
+            PropertyNameCaseInsensitive = true,
+            Converters = { new JsonStringEnumConverter() }
         });
 
         if (productDtos == null || !productDtos.Any())

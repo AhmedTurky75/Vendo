@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Vendo.Payment.Application.Commands.DeletePayment;
+namespace Vendo.PaymentManagement.Application.Commands.DeletePayment;
 
 /// <summary>
 /// Validator for DeletePaymentCommand.

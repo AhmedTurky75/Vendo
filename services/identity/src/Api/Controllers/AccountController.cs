@@ -2,15 +2,15 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using Vendo.Identity.Api.Models;
-using Vendo.Identity.Application.Commands.ChangePassword;
-using Vendo.Identity.Application.Commands.ForgotPassword;
-using Vendo.Identity.Application.Commands.RegisterUser;
-using Vendo.Identity.Application.Commands.ResetPassword;
-using Vendo.Identity.Application.Commands.UpdateUser;
-using Vendo.Identity.Application.Queries.GetUser;
+using Vendo.IdentityManagement.Api.Models;
+using Vendo.IdentityManagement.Application.Commands.ChangePassword;
+using Vendo.IdentityManagement.Application.Commands.ForgotPassword;
+using Vendo.IdentityManagement.Application.Commands.RegisterUser;
+using Vendo.IdentityManagement.Application.Commands.ResetPassword;
+using Vendo.IdentityManagement.Application.Commands.UpdateUser;
+using Vendo.IdentityManagement.Application.Queries.GetUser;
 
-namespace Vendo.Identity.Api.Controllers;
+namespace Vendo.IdentityManagement.Api.Controllers;
 
 /// <summary>
 /// Handles user account operations

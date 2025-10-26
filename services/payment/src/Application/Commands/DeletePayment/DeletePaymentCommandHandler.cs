@@ -1,9 +1,9 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Vendo.Payment.Application.Common.Models;
-using Vendo.Payment.Domain.Repositories;
+using Vendo.PaymentManagement.Application.Common.Models;
+using Vendo.PaymentManagement.Domain.Repositories;
 
-namespace Vendo.Payment.Application.Commands.DeletePayment;
+namespace Vendo.PaymentManagement.Application.Commands.DeletePayment;
 
 /// <summary>
 /// Handler for DeletePaymentCommand.

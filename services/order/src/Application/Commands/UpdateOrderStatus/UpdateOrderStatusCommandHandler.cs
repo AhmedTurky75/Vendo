@@ -1,9 +1,9 @@
 using MediatR;
-using Vendo.Order.Application.Common;
-using Vendo.Order.Application.DTOs;
-using Vendo.Order.Domain.Repositories;
+using Vendo.OrderManagement.Application.Common;
+using Vendo.OrderManagement.Application.DTOs;
+using Vendo.OrderManagement.Domain.Repositories;
 
-namespace Vendo.Order.Application.Commands.UpdateOrderStatus;
+namespace Vendo.OrderManagement.Application.Commands.UpdateOrderStatus;
 
 public class UpdateOrderStatusCommandHandler : IRequestHandler<UpdateOrderStatusCommand, Result<OrderDto>>
 {

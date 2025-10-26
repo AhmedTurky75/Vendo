@@ -1,7 +1,7 @@
 using MediatR;
-using Vendo.Identity.Application.Common.Models;
+using Vendo.IdentityManagement.Application.Common.Models;
 
-namespace Vendo.Identity.Application.Commands.ResetPassword;
+namespace Vendo.IdentityManagement.Application.Commands.ResetPassword;
 
 /// <summary>
 /// Command to reset user password with token

@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Vendo.Catalog.Application.Categories.Commands.DeleteCategory;
+namespace Vendo.CatalogManagement.Application.Categories.Commands.DeleteCategory;
 
 /// <summary>
 /// Validator for DeleteCategoryCommand.

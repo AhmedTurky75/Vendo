@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Vendo.Identity.Application.Commands.UpdateUser;
+namespace Vendo.IdentityManagement.Application.Commands.UpdateUser;
 
 /// <summary>
 /// Validator for UpdateUserCommand

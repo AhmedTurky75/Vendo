@@ -1,4 +1,4 @@
-namespace Vendo.Order.Application.Common;
+namespace Vendo.OrderManagement.Application.Common;
 
 public class Result<T>
 {

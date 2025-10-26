@@ -1,11 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Vendo.Order.Domain.Repositories;
-using Vendo.Order.Infrastructure.Persistence;
-using Vendo.Order.Infrastructure.Repositories;
+using Vendo.OrderManagement.Domain.Repositories;
+using Vendo.OrderManagement.Infrastructure.Persistence;
+using Vendo.OrderManagement.Infrastructure.Repositories;
 
-namespace Vendo.Order.Infrastructure;
+namespace Vendo.OrderManagement.Infrastructure;
 
 public static class DependencyInjection
 {

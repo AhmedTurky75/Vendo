@@ -1,7 +1,7 @@
-using Vendo.Identity.Domain.Entities;
-using Vendo.Identity.Domain.ValueObjects;
+using Vendo.IdentityManagement.Domain.Entities;
+using Vendo.IdentityManagement.Domain.ValueObjects;
 
-namespace Vendo.Identity.Domain.Repositories;
+namespace Vendo.IdentityManagement.Domain.Repositories;
 
 /// <summary>
 /// Repository interface for User aggregate

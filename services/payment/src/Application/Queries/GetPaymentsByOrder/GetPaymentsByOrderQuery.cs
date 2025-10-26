@@ -1,8 +1,8 @@
 using MediatR;
-using Vendo.Payment.Application.Common.Models;
-using Vendo.Payment.Application.DTOs;
+using Vendo.PaymentManagement.Application.Common.Models;
+using Vendo.PaymentManagement.Application.DTOs;
 
-namespace Vendo.Payment.Application.Queries.GetPaymentsByOrder;
+namespace Vendo.PaymentManagement.Application.Queries.GetPaymentsByOrder;
 
 /// <summary>
 /// Query to get all payments for an order.

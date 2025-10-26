@@ -1,8 +1,8 @@
 using MediatR;
-using Vendo.Payment.Application.Common.Models;
-using Vendo.Payment.Application.DTOs;
+using Vendo.PaymentManagement.Application.Common.Models;
+using Vendo.PaymentManagement.Application.DTOs;
 
-namespace Vendo.Payment.Application.Commands.ProcessPayment;
+namespace Vendo.PaymentManagement.Application.Commands.ProcessPayment;
 
 /// <summary>
 /// Command to process a payment.

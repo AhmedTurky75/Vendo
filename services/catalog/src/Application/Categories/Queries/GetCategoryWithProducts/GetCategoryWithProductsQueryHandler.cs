@@ -1,11 +1,11 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Vendo.Catalog.Application.Categories.DTOs;
-using Vendo.Catalog.Application.Common;
-using Vendo.Catalog.Application.Products.DTOs;
-using Vendo.Catalog.Domain.Interfaces;
+using Vendo.CatalogManagement.Application.Categories.DTOs;
+using Vendo.CatalogManagement.Application.Common;
+using Vendo.CatalogManagement.Application.Products.DTOs;
+using Vendo.CatalogManagement.Domain.Interfaces;
 
-namespace Vendo.Catalog.Application.Categories.Queries.GetCategoryWithProducts;
+namespace Vendo.CatalogManagement.Application.Categories.Queries.GetCategoryWithProducts;
 
 /// <summary>
 /// Handler for getting a category with its products.

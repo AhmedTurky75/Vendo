@@ -1,18 +1,18 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Vendo.Order.Application.Commands.CancelOrder;
-using Vendo.Order.Application.Commands.CreateOrder;
-using Vendo.Order.Application.Commands.DeleteOrder;
-using Vendo.Order.Application.Commands.UpdateOrder;
-using Vendo.Order.Application.Commands.UpdateOrderStatus;
-using Vendo.Order.Application.DTOs;
-using Vendo.Order.Application.Queries.GetOrder;
-using Vendo.Order.Application.Queries.GetOrders;
-using Vendo.Order.Application.Queries.GetOrdersByCustomer;
-using Vendo.Order.Application.Queries.GetOrdersByStatus;
-using Vendo.Order.Domain.Enums;
+using Vendo.OrderManagement.Application.Commands.CancelOrder;
+using Vendo.OrderManagement.Application.Commands.CreateOrder;
+using Vendo.OrderManagement.Application.Commands.DeleteOrder;
+using Vendo.OrderManagement.Application.Commands.UpdateOrder;
+using Vendo.OrderManagement.Application.Commands.UpdateOrderStatus;
+using Vendo.OrderManagement.Application.DTOs;
+using Vendo.OrderManagement.Application.Queries.GetOrder;
+using Vendo.OrderManagement.Application.Queries.GetOrders;
+using Vendo.OrderManagement.Application.Queries.GetOrdersByCustomer;
+using Vendo.OrderManagement.Application.Queries.GetOrdersByStatus;
+using Vendo.OrderManagement.Domain.Enums;
 
-namespace Vendo.Order.Api.Controllers;
+namespace Vendo.OrderManagement.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]

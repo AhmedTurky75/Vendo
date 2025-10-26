@@ -1,17 +1,17 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Vendo.Payment.Application.Commands.CreatePayment;
-using Vendo.Payment.Application.Commands.UpdatePayment;
-using Vendo.Payment.Application.Commands.ProcessPayment;
-using Vendo.Payment.Application.Commands.RefundPayment;
-using Vendo.Payment.Application.Commands.DeletePayment;
-using Vendo.Payment.Application.Queries.GetPayment;
-using Vendo.Payment.Application.Queries.GetPayments;
-using Vendo.Payment.Application.Queries.GetPaymentsByOrder;
-using Vendo.Payment.Application.Queries.GetPaymentsByCustomer;
-using Vendo.Payment.Application.DTOs;
+using Vendo.PaymentManagement.Application.Commands.CreatePayment;
+using Vendo.PaymentManagement.Application.Commands.UpdatePayment;
+using Vendo.PaymentManagement.Application.Commands.ProcessPayment;
+using Vendo.PaymentManagement.Application.Commands.RefundPayment;
+using Vendo.PaymentManagement.Application.Commands.DeletePayment;
+using Vendo.PaymentManagement.Application.Queries.GetPayment;
+using Vendo.PaymentManagement.Application.Queries.GetPayments;
+using Vendo.PaymentManagement.Application.Queries.GetPaymentsByOrder;
+using Vendo.PaymentManagement.Application.Queries.GetPaymentsByCustomer;
+using Vendo.PaymentManagement.Application.DTOs;
 
-namespace Vendo.Payment.Api.Controllers;
+namespace Vendo.PaymentManagement.Api.Controllers;
 
 /// <summary>
 /// API controller for managing payments.

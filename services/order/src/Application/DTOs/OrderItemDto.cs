@@ -1,4 +1,4 @@
-namespace Vendo.Order.Application.DTOs;
+namespace Vendo.OrderManagement.Application.DTOs;
 
 public class OrderItemDto
 {

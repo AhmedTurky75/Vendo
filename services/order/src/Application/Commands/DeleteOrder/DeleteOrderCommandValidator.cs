@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Vendo.Order.Application.Commands.DeleteOrder;
+namespace Vendo.OrderManagement.Application.Commands.DeleteOrder;
 
 public class DeleteOrderCommandValidator : AbstractValidator<DeleteOrderCommand>
 {

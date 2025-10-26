@@ -1,4 +1,4 @@
-namespace Vendo.Catalog.Application.Common;
+namespace Vendo.CatalogManagement.Application.Common;
 
 /// <summary>
 /// Represents the result of an operation.

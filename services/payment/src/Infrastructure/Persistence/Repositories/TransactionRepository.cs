@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using Vendo.Payment.Domain.Entities;
-using Vendo.Payment.Domain.Repositories;
+using Vendo.PaymentManagement.Domain.Entities;
+using Vendo.PaymentManagement.Domain.Repositories;
 
-namespace Vendo.Payment.Infrastructure.Persistence.Repositories;
+namespace Vendo.PaymentManagement.Infrastructure.Persistence.Repositories;
 
 /// <summary>
 /// Repository implementation for Transaction entity.

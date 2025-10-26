@@ -1,8 +1,8 @@
 using MediatR;
-using Vendo.Order.Application.Common;
-using Vendo.Order.Application.DTOs;
+using Vendo.OrderManagement.Application.Common;
+using Vendo.OrderManagement.Application.DTOs;
 
-namespace Vendo.Order.Application.Queries.GetOrders;
+namespace Vendo.OrderManagement.Application.Queries.GetOrders;
 
 public class GetOrdersQuery : IRequest<Result<List<OrderDto>>>
 {

@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Vendo.Payment.Domain.Entities;
-using Vendo.Payment.Domain.Enums;
+using Vendo.PaymentManagement.Domain.Entities;
+using Vendo.PaymentManagement.Domain.Enums;
 
-namespace Vendo.Payment.Infrastructure.Persistence.Configurations;
+namespace Vendo.PaymentManagement.Infrastructure.Persistence.Configurations;
 
 /// <summary>
 /// Entity Framework configuration for Transaction entity.

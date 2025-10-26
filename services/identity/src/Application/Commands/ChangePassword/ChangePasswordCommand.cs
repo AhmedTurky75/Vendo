@@ -1,7 +1,7 @@
 using MediatR;
-using Vendo.Identity.Application.Common.Models;
+using Vendo.IdentityManagement.Application.Common.Models;
 
-namespace Vendo.Identity.Application.Commands.ChangePassword;
+namespace Vendo.IdentityManagement.Application.Commands.ChangePassword;
 
 /// <summary>
 /// Command to change user password

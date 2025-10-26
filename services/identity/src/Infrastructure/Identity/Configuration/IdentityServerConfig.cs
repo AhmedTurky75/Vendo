@@ -1,7 +1,7 @@
 using Duende.IdentityServer;
 using Duende.IdentityServer.Models;
 
-namespace Vendo.Identity.Infrastructure.Identity.Configuration;
+namespace Vendo.IdentityManagement.Infrastructure.Identity.Configuration;
 
 /// <summary>
 /// Configuration for Duende IdentityServer resources and clients

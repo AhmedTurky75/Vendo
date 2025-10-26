@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
-using Vendo.Identity.Domain.Exceptions;
+using Vendo.IdentityManagement.Domain.Exceptions;
 
-namespace Vendo.Identity.Domain.ValueObjects;
+namespace Vendo.IdentityManagement.Domain.ValueObjects;
 
 /// <summary>
 /// Value object for password reset token

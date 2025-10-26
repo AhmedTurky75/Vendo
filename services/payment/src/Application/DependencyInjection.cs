@@ -2,9 +2,9 @@ using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using Vendo.Payment.Application.Common.Behaviors;
+using Vendo.PaymentManagement.Application.Common.Behaviors;
 
-namespace Vendo.Payment.Application;
+namespace Vendo.PaymentManagement.Application;
 
 /// <summary>
 /// Dependency injection configuration for Application layer.

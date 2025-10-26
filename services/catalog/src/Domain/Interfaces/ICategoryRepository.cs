@@ -1,6 +1,6 @@
-using Vendo.Catalog.Domain.Entities;
+using Vendo.CatalogManagement.Domain.Entities;
 
-namespace Vendo.Catalog.Domain.Interfaces;
+namespace Vendo.CatalogManagement.Domain.Interfaces;
 
 /// <summary>
 /// Repository interface for Category operations.

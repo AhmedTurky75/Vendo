@@ -2,7 +2,7 @@ using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace Vendo.Catalog.Application;
+namespace Vendo.CatalogManagement.Application;
 
 /// <summary>
 /// Dependency injection configuration for the Application layer.

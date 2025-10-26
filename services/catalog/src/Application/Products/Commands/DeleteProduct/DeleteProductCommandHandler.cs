@@ -1,9 +1,9 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Vendo.Catalog.Application.Common;
-using Vendo.Catalog.Domain.Interfaces;
+using Vendo.CatalogManagement.Application.Common;
+using Vendo.CatalogManagement.Domain.Interfaces;
 
-namespace Vendo.Catalog.Application.Products.Commands.DeleteProduct;
+namespace Vendo.CatalogManagement.Application.Products.Commands.DeleteProduct;
 
 /// <summary>
 /// Handler for deleting a product.

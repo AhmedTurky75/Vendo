@@ -1,11 +1,11 @@
 using MediatR;
-using Vendo.Order.Application.Common;
-using Vendo.Order.Application.DTOs;
-using Vendo.Order.Domain.Entities;
-using Vendo.Order.Domain.Enums;
-using Vendo.Order.Domain.Repositories;
+using Vendo.OrderManagement.Application.Common;
+using Vendo.OrderManagement.Application.DTOs;
+using Vendo.OrderManagement.Domain.Entities;
+using Vendo.OrderManagement.Domain.Enums;
+using Vendo.OrderManagement.Domain.Repositories;
 
-namespace Vendo.Order.Application.Commands.CreateOrder;
+namespace Vendo.OrderManagement.Application.Commands.CreateOrder;
 
 public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Result<OrderDto>>
 {

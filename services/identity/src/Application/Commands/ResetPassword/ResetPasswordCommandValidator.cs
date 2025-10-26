@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Vendo.Identity.Application.Commands.ResetPassword;
+namespace Vendo.IdentityManagement.Application.Commands.ResetPassword;
 
 /// <summary>
 /// Validator for ResetPasswordCommand

@@ -1,4 +1,4 @@
-namespace Vendo.Order.Domain.Common;
+namespace Vendo.OrderManagement.Domain.Common;
 
 public abstract class BaseEntity
 {

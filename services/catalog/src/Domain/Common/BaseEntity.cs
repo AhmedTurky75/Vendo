@@ -1,4 +1,4 @@
-namespace Vendo.Catalog.Domain.Common;
+namespace Vendo.CatalogManagement.Domain.Common;
 
 /// <summary>
 /// Base entity class with common properties.

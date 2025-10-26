@@ -1,8 +1,8 @@
 using AutoMapper;
-using Vendo.Identity.Application.DTOs;
-using Vendo.Identity.Domain.Entities;
+using Vendo.IdentityManagement.Application.DTOs;
+using Vendo.IdentityManagement.Domain.Entities;
 
-namespace Vendo.Identity.Application.Mappings;
+namespace Vendo.IdentityManagement.Application.Mappings;
 
 /// <summary>
 /// AutoMapper profile for User entity mappings

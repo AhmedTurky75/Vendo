@@ -1,8 +1,8 @@
 using MediatR;
-using Vendo.Catalog.Application.Common;
-using Vendo.Catalog.Application.Products.DTOs;
+using Vendo.CatalogManagement.Application.Common;
+using Vendo.CatalogManagement.Application.Products.DTOs;
 
-namespace Vendo.Catalog.Application.Products.Queries.SearchProducts;
+namespace Vendo.CatalogManagement.Application.Products.Queries.SearchProducts;
 
 /// <summary>
 /// Query to search products by name or description.

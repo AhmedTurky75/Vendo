@@ -1,8 +1,8 @@
 using MediatR;
-using Vendo.Catalog.Application.Categories.DTOs;
-using Vendo.Catalog.Application.Common;
+using Vendo.CatalogManagement.Application.Categories.DTOs;
+using Vendo.CatalogManagement.Application.Common;
 
-namespace Vendo.Catalog.Application.Categories.Queries.GetCategories;
+namespace Vendo.CatalogManagement.Application.Categories.Queries.GetCategories;
 
 /// <summary>
 /// Query to get all categories for a tenant.

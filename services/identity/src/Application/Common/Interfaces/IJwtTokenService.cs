@@ -1,6 +1,6 @@
-using Vendo.Identity.Domain.Entities;
+using Vendo.IdentityManagement.Domain.Entities;
 
-namespace Vendo.Identity.Application.Common.Interfaces;
+namespace Vendo.IdentityManagement.Application.Common.Interfaces;
 
 /// <summary>
 /// Service interface for JWT token operations

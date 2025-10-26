@@ -1,8 +1,8 @@
 using MediatR;
-using Vendo.Order.Application.Common;
-using Vendo.Order.Application.DTOs;
+using Vendo.OrderManagement.Application.Common;
+using Vendo.OrderManagement.Application.DTOs;
 
-namespace Vendo.Order.Application.Commands.CancelOrder;
+namespace Vendo.OrderManagement.Application.Commands.CancelOrder;
 
 public class CancelOrderCommand : IRequest<Result<OrderDto>>
 {

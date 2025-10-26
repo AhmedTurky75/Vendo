@@ -1,4 +1,4 @@
-namespace Vendo.Identity.Domain.Exceptions;
+namespace Vendo.IdentityManagement.Domain.Exceptions;
 
 /// <summary>
 /// Exception thrown when domain validation fails

@@ -1,10 +1,10 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Vendo.Identity.Application.Common.Models;
-using Vendo.Identity.Domain.Repositories;
-using Vendo.Identity.Domain.ValueObjects;
+using Vendo.IdentityManagement.Application.Common.Models;
+using Vendo.IdentityManagement.Domain.Repositories;
+using Vendo.IdentityManagement.Domain.ValueObjects;
 
-namespace Vendo.Identity.Application.Commands.ForgotPassword;
+namespace Vendo.IdentityManagement.Application.Commands.ForgotPassword;
 
 /// <summary>
 /// Handler for ForgotPasswordCommand

@@ -1,9 +1,9 @@
 using MediatR;
-using Vendo.Order.Application.Common;
-using Vendo.Order.Application.DTOs;
-using Vendo.Order.Domain.Enums;
+using Vendo.OrderManagement.Application.Common;
+using Vendo.OrderManagement.Application.DTOs;
+using Vendo.OrderManagement.Domain.Enums;
 
-namespace Vendo.Order.Application.Commands.UpdateOrder;
+namespace Vendo.OrderManagement.Application.Commands.UpdateOrder;
 
 public class UpdateOrderCommand : IRequest<Result<OrderDto>>
 {

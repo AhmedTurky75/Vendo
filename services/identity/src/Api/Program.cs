@@ -2,12 +2,12 @@ using System.Reflection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Vendo.Identity.Api.Middleware;
-using Vendo.Identity.Application;
-using Vendo.Identity.Infrastructure;
-using Vendo.Identity.Infrastructure.Persistence;
-using Vendo.Identity.Application.Common.Interfaces;
-using Vendo.Identity.Domain.Repositories;
+using Vendo.IdentityManagement.Api.Middleware;
+using Vendo.IdentityManagement.Application;
+using Vendo.IdentityManagement.Infrastructure;
+using Vendo.IdentityManagement.Infrastructure.Persistence;
+using Vendo.IdentityManagement.Application.Common.Interfaces;
+using Vendo.IdentityManagement.Domain.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 

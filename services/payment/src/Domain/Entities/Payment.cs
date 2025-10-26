@@ -1,6 +1,6 @@
-using Vendo.Payment.Domain.Enums;
+using Vendo.PaymentManagement.Domain.Enums;
 
-namespace Vendo.Payment.Domain.Entities;
+namespace Vendo.PaymentManagement.Domain.Entities;
 
 /// <summary>
 /// Represents a payment transaction in the system.

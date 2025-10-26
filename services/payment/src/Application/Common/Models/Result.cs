@@ -1,4 +1,4 @@
-namespace Vendo.Payment.Application.Common.Models;
+namespace Vendo.PaymentManagement.Application.Common.Models;
 
 /// <summary>
 /// Generic result wrapper for application operations.

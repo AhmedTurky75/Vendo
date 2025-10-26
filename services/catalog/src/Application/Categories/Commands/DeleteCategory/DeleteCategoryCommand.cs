@@ -1,7 +1,7 @@
 using MediatR;
-using Vendo.Catalog.Application.Common;
+using Vendo.CatalogManagement.Application.Common;
 
-namespace Vendo.Catalog.Application.Categories.Commands.DeleteCategory;
+namespace Vendo.CatalogManagement.Application.Categories.Commands.DeleteCategory;
 
 /// <summary>
 /// Command to delete a category.

@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Vendo.Order.Application.Commands.CreateOrder;
+namespace Vendo.OrderManagement.Application.Commands.CreateOrder;
 
 public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
 {

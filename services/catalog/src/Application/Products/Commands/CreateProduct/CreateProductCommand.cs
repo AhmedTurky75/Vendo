@@ -1,9 +1,9 @@
 using MediatR;
-using Vendo.Catalog.Application.Common;
-using Vendo.Catalog.Application.Products.DTOs;
-using Vendo.Catalog.Domain.Enums;
+using Vendo.CatalogManagement.Application.Common;
+using Vendo.CatalogManagement.Application.Products.DTOs;
+using Vendo.CatalogManagement.Domain.Enums;
 
-namespace Vendo.Catalog.Application.Products.Commands.CreateProduct;
+namespace Vendo.CatalogManagement.Application.Products.Commands.CreateProduct;
 
 /// <summary>
 /// Command to create a new product.

@@ -1,7 +1,7 @@
 using MediatR;
-using Vendo.Identity.Application.Common.Models;
+using Vendo.IdentityManagement.Application.Common.Models;
 
-namespace Vendo.Identity.Application.Commands.ForgotPassword;
+namespace Vendo.IdentityManagement.Application.Commands.ForgotPassword;
 
 /// <summary>
 /// Command to initiate password reset process

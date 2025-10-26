@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using Vendo.Order.Domain.Entities;
+using Vendo.OrderManagement.Domain.Entities;
 
-namespace Vendo.Order.Infrastructure.Persistence;
+namespace Vendo.OrderManagement.Infrastructure.Persistence;
 
 public class OrderDbContext : DbContext
 {

@@ -1,8 +1,8 @@
 using MediatR;
-using Vendo.Identity.Application.Common.Models;
-using Vendo.Identity.Domain.Repositories;
+using Vendo.IdentityManagement.Application.Common.Models;
+using Vendo.IdentityManagement.Domain.Repositories;
 
-namespace Vendo.Identity.Application.Commands.ActivateUser;
+namespace Vendo.IdentityManagement.Application.Commands.ActivateUser;
 
 /// <summary>
 /// Handler for ActivateUserCommand

@@ -1,11 +1,11 @@
 using MediatR;
-using Vendo.Identity.Application.Common.Interfaces;
-using Vendo.Identity.Application.Common.Models;
-using Vendo.Identity.Domain.Exceptions;
-using Vendo.Identity.Domain.Repositories;
-using Vendo.Identity.Domain.ValueObjects;
+using Vendo.IdentityManagement.Application.Common.Interfaces;
+using Vendo.IdentityManagement.Application.Common.Models;
+using Vendo.IdentityManagement.Domain.Exceptions;
+using Vendo.IdentityManagement.Domain.Repositories;
+using Vendo.IdentityManagement.Domain.ValueObjects;
 
-namespace Vendo.Identity.Application.Commands.ChangePassword;
+namespace Vendo.IdentityManagement.Application.Commands.ChangePassword;
 
 /// <summary>
 /// Handler for ChangePasswordCommand

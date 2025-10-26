@@ -1,4 +1,4 @@
-namespace Vendo.Order.Domain.Enums;
+namespace Vendo.OrderManagement.Domain.Enums;
 
 public enum PaymentStatus
 {

@@ -1,14 +1,14 @@
 using AutoMapper;
 using MediatR;
-using Vendo.Identity.Application.Common.Interfaces;
-using Vendo.Identity.Application.Common.Models;
-using Vendo.Identity.Application.DTOs;
-using Vendo.Identity.Domain.Entities;
-using Vendo.Identity.Domain.Exceptions;
-using Vendo.Identity.Domain.Repositories;
-using Vendo.Identity.Domain.ValueObjects;
+using Vendo.IdentityManagement.Application.Common.Interfaces;
+using Vendo.IdentityManagement.Application.Common.Models;
+using Vendo.IdentityManagement.Application.DTOs;
+using Vendo.IdentityManagement.Domain.Entities;
+using Vendo.IdentityManagement.Domain.Exceptions;
+using Vendo.IdentityManagement.Domain.Repositories;
+using Vendo.IdentityManagement.Domain.ValueObjects;
 
-namespace Vendo.Identity.Application.Commands.RegisterUser;
+namespace Vendo.IdentityManagement.Application.Commands.RegisterUser;
 
 /// <summary>
 /// Handler for RegisterUserCommand

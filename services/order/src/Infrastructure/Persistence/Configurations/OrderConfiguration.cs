@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Vendo.Order.Infrastructure.Persistence.Configurations;
+namespace Vendo.OrderManagement.Infrastructure.Persistence.Configurations;
 
 public class OrderConfiguration : IEntityTypeConfiguration<Domain.Entities.Order>
 {

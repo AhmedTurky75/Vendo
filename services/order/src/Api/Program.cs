@@ -1,8 +1,8 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using Vendo.Order.Application.Commands.CreateOrder;
-using Vendo.Order.Infrastructure;
-using Vendo.Order.Infrastructure.Persistence;
+using Vendo.OrderManagement.Application.Commands.CreateOrder;
+using Vendo.OrderManagement.Infrastructure;
+using Vendo.OrderManagement.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,14 +30,6 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// Configure Kestrel to use specific port
-builder.WebHost.ConfigureKestrel(serverOptions =>
-{
-    serverOptions.ListenAnyIP(5003, listenOptions =>
-    {
-        listenOptions.UseHttps();
-    });
-});
 
 var app = builder.Build();
 
@@ -48,6 +40,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Vendo Order Service API V1");
+        c.RoutePrefix = string.Empty; // Serve Swagger UI at root
     });
 }
 
@@ -73,7 +66,8 @@ using (var scope = app.Services.CreateScope())
 
         // Seed initial data
         logger.LogInformation("Starting database seeding...");
-        var seeder = new DataSeeder(context, services.GetRequiredService<ILogger<DataSeeder>>());
+        var configuration = services.GetRequiredService<IConfiguration>();
+        var seeder = new DataSeeder(context, services.GetRequiredService<ILogger<DataSeeder>>(), configuration);
         await seeder.SeedAsync();
         logger.LogInformation("Database seeding completed successfully.");
     }

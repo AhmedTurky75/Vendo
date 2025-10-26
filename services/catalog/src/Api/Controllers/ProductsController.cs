@@ -1,14 +1,14 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Vendo.Catalog.Application.Products.Commands.CreateProduct;
-using Vendo.Catalog.Application.Products.Commands.DeleteProduct;
-using Vendo.Catalog.Application.Products.Commands.UpdateProduct;
-using Vendo.Catalog.Application.Products.Queries.GetProduct;
-using Vendo.Catalog.Application.Products.Queries.GetProducts;
-using Vendo.Catalog.Application.Products.Queries.GetProductsByCategory;
-using Vendo.Catalog.Application.Products.Queries.SearchProducts;
+using Vendo.CatalogManagement.Application.Products.Commands.CreateProduct;
+using Vendo.CatalogManagement.Application.Products.Commands.DeleteProduct;
+using Vendo.CatalogManagement.Application.Products.Commands.UpdateProduct;
+using Vendo.CatalogManagement.Application.Products.Queries.GetProduct;
+using Vendo.CatalogManagement.Application.Products.Queries.GetProducts;
+using Vendo.CatalogManagement.Application.Products.Queries.GetProductsByCategory;
+using Vendo.CatalogManagement.Application.Products.Queries.SearchProducts;
 
-namespace Vendo.Catalog.Api.Controllers;
+namespace Vendo.CatalogManagement.Api.Controllers;
 
 /// <summary>
 /// Products management endpoints.

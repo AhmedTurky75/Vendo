@@ -1,13 +1,13 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Vendo.Catalog.Application.Categories.Commands.CreateCategory;
-using Vendo.Catalog.Application.Categories.Commands.DeleteCategory;
-using Vendo.Catalog.Application.Categories.Commands.UpdateCategory;
-using Vendo.Catalog.Application.Categories.Queries.GetCategories;
-using Vendo.Catalog.Application.Categories.Queries.GetCategory;
-using Vendo.Catalog.Application.Categories.Queries.GetCategoryWithProducts;
+using Vendo.CatalogManagement.Application.Categories.Commands.CreateCategory;
+using Vendo.CatalogManagement.Application.Categories.Commands.DeleteCategory;
+using Vendo.CatalogManagement.Application.Categories.Commands.UpdateCategory;
+using Vendo.CatalogManagement.Application.Categories.Queries.GetCategories;
+using Vendo.CatalogManagement.Application.Categories.Queries.GetCategory;
+using Vendo.CatalogManagement.Application.Categories.Queries.GetCategoryWithProducts;
 
-namespace Vendo.Catalog.Api.Controllers;
+namespace Vendo.CatalogManagement.Api.Controllers;
 
 /// <summary>
 /// Categories management endpoints.

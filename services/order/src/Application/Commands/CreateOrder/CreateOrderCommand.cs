@@ -1,8 +1,8 @@
 using MediatR;
-using Vendo.Order.Application.Common;
-using Vendo.Order.Application.DTOs;
+using Vendo.OrderManagement.Application.Common;
+using Vendo.OrderManagement.Application.DTOs;
 
-namespace Vendo.Order.Application.Commands.CreateOrder;
+namespace Vendo.OrderManagement.Application.Commands.CreateOrder;
 
 public class CreateOrderCommand : IRequest<Result<OrderDto>>
 {

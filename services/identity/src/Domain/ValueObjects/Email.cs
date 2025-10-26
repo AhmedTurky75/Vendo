@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
-using Vendo.Identity.Domain.Exceptions;
+using Vendo.IdentityManagement.Domain.Exceptions;
 
-namespace Vendo.Identity.Domain.ValueObjects;
+namespace Vendo.IdentityManagement.Domain.ValueObjects;
 
 /// <summary>
 /// Value object representing an email address with validation

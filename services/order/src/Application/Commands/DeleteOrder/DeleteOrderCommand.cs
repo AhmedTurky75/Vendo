@@ -1,7 +1,7 @@
 using MediatR;
-using Vendo.Order.Application.Common;
+using Vendo.OrderManagement.Application.Common;
 
-namespace Vendo.Order.Application.Commands.DeleteOrder;
+namespace Vendo.OrderManagement.Application.Commands.DeleteOrder;
 
 public class DeleteOrderCommand : IRequest<Result<bool>>
 {

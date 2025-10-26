@@ -1,13 +1,13 @@
 using Microsoft.Extensions.DependencyInjection;
-using Vendo.Identity.Application.Common.Interfaces;
-using Vendo.Identity.Domain.Repositories;
-using Vendo.Identity.Infrastructure.Identity.Configuration;
-using Vendo.Identity.Infrastructure.Identity.ProfileService;
-using Vendo.Identity.Infrastructure.Persistence.Repositories;
-using Vendo.Identity.Infrastructure.Services;
+using Vendo.IdentityManagement.Application.Common.Interfaces;
+using Vendo.IdentityManagement.Domain.Repositories;
+using Vendo.IdentityManagement.Infrastructure.Identity.Configuration;
+using Vendo.IdentityManagement.Infrastructure.Identity.ProfileService;
+using Vendo.IdentityManagement.Infrastructure.Persistence.Repositories;
+using Vendo.IdentityManagement.Infrastructure.Services;
 using Duende.IdentityServer.Services;
 
-namespace Vendo.Identity.Infrastructure;
+namespace Vendo.IdentityManagement.Infrastructure;
 
 /// <summary>
 /// Extension methods for configuring Infrastructure layer services

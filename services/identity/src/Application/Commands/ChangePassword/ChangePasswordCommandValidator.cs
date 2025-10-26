@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Vendo.Identity.Application.Commands.ChangePassword;
+namespace Vendo.IdentityManagement.Application.Commands.ChangePassword;
 
 /// <summary>
 /// Validator for ChangePasswordCommand

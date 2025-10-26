@@ -1,20 +1,11 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using Vendo.Payment.Application;
-using Vendo.Payment.Application.Commands.CreatePayment;
-using Vendo.Payment.Infrastructure;
-using Vendo.Payment.Infrastructure.Persistence;
+using Vendo.PaymentManagement.Application;
+using Vendo.PaymentManagement.Application.Commands.CreatePayment;
+using Vendo.PaymentManagement.Infrastructure;
+using Vendo.PaymentManagement.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Configure Kestrel to use specific port
-builder.WebHost.ConfigureKestrel(serverOptions =>
-{
-    serverOptions.ListenAnyIP(5004, listenOptions =>
-    {
-        listenOptions.UseHttps();
-    });
-});
 
 // Add services to the container
 builder.Services.AddControllers();
@@ -89,7 +80,8 @@ using (var scope = app.Services.CreateScope())
 
         // Seed initial data
         logger.LogInformation("Starting database seeding...");
-        var seeder = new DataSeeder(context, services.GetRequiredService<ILogger<DataSeeder>>());
+        var configuration = services.GetRequiredService<IConfiguration>();
+        var seeder = new DataSeeder(context, services.GetRequiredService<ILogger<DataSeeder>>(), configuration);
         await seeder.SeedAsync();
         logger.LogInformation("Database seeding completed successfully.");
     }

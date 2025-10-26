@@ -1,9 +1,9 @@
 using MediatR;
-using Vendo.Catalog.Application.Common;
-using Vendo.Catalog.Application.Products.DTOs;
-using Vendo.Catalog.Domain.Enums;
+using Vendo.CatalogManagement.Application.Common;
+using Vendo.CatalogManagement.Application.Products.DTOs;
+using Vendo.CatalogManagement.Domain.Enums;
 
-namespace Vendo.Catalog.Application.Products.Commands.UpdateProduct;
+namespace Vendo.CatalogManagement.Application.Products.Commands.UpdateProduct;
 
 /// <summary>
 /// Command to update an existing product.

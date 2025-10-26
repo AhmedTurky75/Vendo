@@ -1,10 +1,12 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
-using Vendo.Order.Domain.Entities;
-using Vendo.Order.Domain.Enums;
+using System.Text.Json.Serialization;
+using Vendo.OrderManagement.Domain.Entities;
+using Vendo.OrderManagement.Domain.Enums;
 
-namespace Vendo.Order.Infrastructure.Persistence;
+namespace Vendo.OrderManagement.Infrastructure.Persistence;
 
 /// <summary>
 /// Seeds initial data into the Order database from JSON files.
@@ -15,14 +17,18 @@ public class DataSeeder
     private readonly ILogger<DataSeeder> _logger;
     private readonly string _dataPath;
 
-    public DataSeeder(OrderDbContext context, ILogger<DataSeeder> logger)
+    public DataSeeder(OrderDbContext context, ILogger<DataSeeder> logger, IConfiguration configuration)
     {
         _context = context;
         _logger = logger;
 
-        // Get the data directory path (goes up from bin/Debug/net9.0 to project root, then to Data/SeedData)
-        var assemblyLocation = AppContext.BaseDirectory;
-        _dataPath = Path.Combine(assemblyLocation, "..", "..", "..", "..", "Data", "SeedData");
+        // Get the data directory path from configuration
+        var configuredPath = configuration["SeedDataSettings:DataPath"] ?? "Infrastructure/Persistence/SeedData";
+        var baseDirectory = AppContext.BaseDirectory;
+
+        // Navigate up from bin/Debug/net9.0 to the src folder, then to the configured path
+        var srcRoot = Path.Combine(baseDirectory, "..", "..", "..", "..");
+        _dataPath = Path.GetFullPath(Path.Combine(srcRoot, configuredPath));
     }
 
     public async Task SeedAsync()
@@ -63,7 +69,8 @@ public class DataSeeder
         var ordersJson = await File.ReadAllTextAsync(ordersFilePath);
         var orderDtos = JsonSerializer.Deserialize<List<OrderSeedDto>>(ordersJson, new JsonSerializerOptions
         {
-            PropertyNameCaseInsensitive = true
+            PropertyNameCaseInsensitive = true,
+            Converters = { new JsonStringEnumConverter() }
         });
 
         if (orderDtos == null || !orderDtos.Any())

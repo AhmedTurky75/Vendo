@@ -1,8 +1,8 @@
 using MediatR;
-using Vendo.Order.Application.Common;
-using Vendo.Order.Domain.Repositories;
+using Vendo.OrderManagement.Application.Common;
+using Vendo.OrderManagement.Domain.Repositories;
 
-namespace Vendo.Order.Application.Commands.DeleteOrder;
+namespace Vendo.OrderManagement.Application.Commands.DeleteOrder;
 
 public class DeleteOrderCommandHandler : IRequestHandler<DeleteOrderCommand, Result<bool>>
 {

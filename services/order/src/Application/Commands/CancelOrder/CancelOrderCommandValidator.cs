@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Vendo.Order.Application.Commands.CancelOrder;
+namespace Vendo.OrderManagement.Application.Commands.CancelOrder;
 
 public class CancelOrderCommandValidator : AbstractValidator<CancelOrderCommand>
 {

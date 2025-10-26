@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Vendo.Catalog.Application.Products.Commands.CreateProduct;
+namespace Vendo.CatalogManagement.Application.Products.Commands.CreateProduct;
 
 /// <summary>
 /// Validator for CreateProductCommand.

@@ -1,4 +1,4 @@
-namespace Vendo.Catalog.Domain.Enums;
+namespace Vendo.CatalogManagement.Domain.Enums;
 
 /// <summary>
 /// Product availability status.

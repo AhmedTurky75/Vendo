@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\Domain\Vendo.Catalog.Domain.csproj" />
-    <ProjectReference Include="..\Application\Vendo.Catalog.Application.csproj" />
+    <ProjectReference Include="..\Domain\Vendo.CatalogManagement.Domain.csproj" />
+    <ProjectReference Include="..\Application\Vendo.CatalogManagement.Application.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

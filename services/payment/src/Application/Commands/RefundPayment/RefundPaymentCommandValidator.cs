@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Vendo.Payment.Application.Commands.RefundPayment;
+namespace Vendo.PaymentManagement.Application.Commands.RefundPayment;
 
 /// <summary>
 /// Validator for RefundPaymentCommand.

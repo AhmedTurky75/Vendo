@@ -1,4 +1,4 @@
-namespace Vendo.Identity.Domain.Events;
+namespace Vendo.IdentityManagement.Domain.Events;
 
 /// <summary>
 /// Domain event raised when a user's password is changed

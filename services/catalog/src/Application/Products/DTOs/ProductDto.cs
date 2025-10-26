@@ -1,6 +1,6 @@
-using Vendo.Catalog.Domain.Enums;
+using Vendo.CatalogManagement.Domain.Enums;
 
-namespace Vendo.Catalog.Application.Products.DTOs;
+namespace Vendo.CatalogManagement.Application.Products.DTOs;
 
 /// <summary>
 /// Product data transfer object.

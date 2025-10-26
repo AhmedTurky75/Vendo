@@ -1,9 +1,9 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Vendo.Payment.Application.Queries.GetTransactionHistory;
-using Vendo.Payment.Application.DTOs;
+using Vendo.PaymentManagement.Application.Queries.GetTransactionHistory;
+using Vendo.PaymentManagement.Application.DTOs;
 
-namespace Vendo.Payment.Api.Controllers;
+namespace Vendo.PaymentManagement.Api.Controllers;
 
 /// <summary>
 /// API controller for managing transactions.

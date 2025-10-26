@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Vendo.Catalog.Application.Categories.Commands.CreateCategory;
+namespace Vendo.CatalogManagement.Application.Categories.Commands.CreateCategory;
 
 /// <summary>
 /// Validator for CreateCategoryCommand.

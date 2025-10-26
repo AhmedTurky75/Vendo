@@ -1,8 +1,8 @@
 using MediatR;
-using Vendo.Catalog.Application.Categories.DTOs;
-using Vendo.Catalog.Application.Common;
+using Vendo.CatalogManagement.Application.Categories.DTOs;
+using Vendo.CatalogManagement.Application.Common;
 
-namespace Vendo.Catalog.Application.Categories.Commands.CreateCategory;
+namespace Vendo.CatalogManagement.Application.Categories.Commands.CreateCategory;
 
 /// <summary>
 /// Command to create a new category.

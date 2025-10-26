@@ -1,6 +1,6 @@
-using Vendo.Catalog.Application.Products.DTOs;
+using Vendo.CatalogManagement.Application.Products.DTOs;
 
-namespace Vendo.Catalog.Application.Categories.DTOs;
+namespace Vendo.CatalogManagement.Application.Categories.DTOs;
 
 /// <summary>
 /// Category with products data transfer object.

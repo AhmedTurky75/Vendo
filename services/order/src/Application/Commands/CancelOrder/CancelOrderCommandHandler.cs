@@ -1,10 +1,10 @@
 using MediatR;
-using Vendo.Order.Application.Common;
-using Vendo.Order.Application.DTOs;
-using Vendo.Order.Domain.Enums;
-using Vendo.Order.Domain.Repositories;
+using Vendo.OrderManagement.Application.Common;
+using Vendo.OrderManagement.Application.DTOs;
+using Vendo.OrderManagement.Domain.Enums;
+using Vendo.OrderManagement.Domain.Repositories;
 
-namespace Vendo.Order.Application.Commands.CancelOrder;
+namespace Vendo.OrderManagement.Application.Commands.CancelOrder;
 
 public class CancelOrderCommandHandler : IRequestHandler<CancelOrderCommand, Result<OrderDto>>
 {

@@ -1,7 +1,7 @@
-using Vendo.Identity.Application.Common.Interfaces;
+using Vendo.IdentityManagement.Application.Common.Interfaces;
 using BCrypt.Net;
 
-namespace Vendo.Identity.Infrastructure.Services;
+namespace Vendo.IdentityManagement.Infrastructure.Services;
 
 /// <summary>
 /// BCrypt implementation of IPasswordHasher

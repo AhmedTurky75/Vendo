@@ -2,9 +2,9 @@ using System.Security.Claims;
 using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;
 using Microsoft.Extensions.Logging;
-using Vendo.Identity.Domain.Repositories;
+using Vendo.IdentityManagement.Domain.Repositories;
 
-namespace Vendo.Identity.Infrastructure.Identity.ProfileService;
+namespace Vendo.IdentityManagement.Infrastructure.Identity.ProfileService;
 
 /// <summary>
 /// Custom profile service for IdentityServer to include user claims

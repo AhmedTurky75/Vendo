@@ -1,8 +1,8 @@
 using MediatR;
-using Vendo.Identity.Application.Common.Models;
-using Vendo.Identity.Application.DTOs;
+using Vendo.IdentityManagement.Application.Common.Models;
+using Vendo.IdentityManagement.Application.DTOs;
 
-namespace Vendo.Identity.Application.Queries.GetUsers;
+namespace Vendo.IdentityManagement.Application.Queries.GetUsers;
 
 /// <summary>
 /// Query to get all users with optional filtering
