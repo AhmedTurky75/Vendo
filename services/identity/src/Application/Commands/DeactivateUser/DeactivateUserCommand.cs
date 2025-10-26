@@ -6,7 +6,7 @@ namespace Vendo.IdentityManagement.Application.Commands.DeactivateUser;
 /// <summary>
 /// Command to deactivate a user account
 /// </summary>
-public class DeactivateUserCommand : IRequest<Result>
+public class DeactivateUserCommand : IRequest<Result<bool>>
 {
     public Guid UserId { get; set; }
 }

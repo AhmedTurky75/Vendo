@@ -5,10 +5,9 @@ namespace Vendo.IdentityManagement.Application.DTOs;
 /// </summary>
 public class AuthenticationResultDto
 {
-    public bool IsAuthenticated { get; set; }
-    public UserDto? User { get; set; }
-    public string? AccessToken { get; set; }
-    public string? RefreshToken { get; set; }
-    public int? ExpiresIn { get; set; }
-    public string? Message { get; set; }
+    public string Token { get; set; } = string.Empty;
+    public Guid UserId { get; set; }
+    public string Username { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public List<string> Roles { get; set; } = new();
 }

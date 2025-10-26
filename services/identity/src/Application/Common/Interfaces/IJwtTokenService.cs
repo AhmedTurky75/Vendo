@@ -1,5 +1,3 @@
-using Vendo.IdentityManagement.Domain.Entities;
-
 namespace Vendo.IdentityManagement.Application.Common.Interfaces;
 
 /// <summary>
@@ -10,15 +8,11 @@ public interface IJwtTokenService
     /// <summary>
     /// Generates a JWT access token for a user
     /// </summary>
-    /// <param name="user">The user to generate token for</param>
+    /// <param name="userId">The user ID</param>
+    /// <param name="username">The username</param>
+    /// <param name="roles">The user's roles</param>
     /// <returns>JWT access token</returns>
-    string GenerateAccessToken(User user);
-
-    /// <summary>
-    /// Generates a refresh token for a user
-    /// </summary>
-    /// <returns>Refresh token</returns>
-    string GenerateRefreshToken();
+    string GenerateToken(Guid userId, string username, List<string> roles);
 
     /// <summary>
     /// Gets the token expiration time in seconds

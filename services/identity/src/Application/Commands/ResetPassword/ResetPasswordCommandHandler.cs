@@ -1,88 +1,50 @@
 using MediatR;
-using Microsoft.Extensions.Logging;
-using Vendo.IdentityManagement.Application.Common.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Vendo.IdentityManagement.Application.Common.Models;
-using Vendo.IdentityManagement.Domain.Exceptions;
-using Vendo.IdentityManagement.Domain.Repositories;
-using Vendo.IdentityManagement.Domain.ValueObjects;
+using Vendo.IdentityManagement.Domain.Entities;
 
 namespace Vendo.IdentityManagement.Application.Commands.ResetPassword;
 
 /// <summary>
 /// Handler for ResetPasswordCommand
 /// </summary>
-public class ResetPasswordCommandHandler : IRequestHandler<ResetPasswordCommand, Result>
+public class ResetPasswordCommandHandler : IRequestHandler<ResetPasswordCommand, Result<bool>>
 {
-    private readonly IUserRepository _userRepository;
-    private readonly IPasswordHasher _passwordHasher;
-    private readonly ILogger<ResetPasswordCommandHandler> _logger;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public ResetPasswordCommandHandler(
-        IUserRepository userRepository,
-        IPasswordHasher passwordHasher,
-        ILogger<ResetPasswordCommandHandler> logger)
+    public ResetPasswordCommandHandler(UserManager<ApplicationUser> userManager)
     {
-        _userRepository = userRepository;
-        _passwordHasher = passwordHasher;
-        _logger = logger;
+        _userManager = userManager;
     }
 
-    public async Task<Result> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
+    public async Task<Result<bool>> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
     {
         try
         {
-            // Create and validate email
-            var email = Email.Create(request.Email);
-
-            // Find user by email
-            var user = await _userRepository.GetByEmailAsync(email, cancellationToken);
-
+            var user = await _userManager.FindByEmailAsync(request.Email);
+            
             if (user == null)
             {
-                _logger.LogWarning("Password reset attempted for non-existent email: {Email}", request.Email);
-                return Result.Failure("Invalid or expired reset token");
+                return Result<bool>.Failure("Invalid password reset request");
             }
 
-            if (!user.IsActive)
+            // Reset password using the token
+            var result = await _userManager.ResetPasswordAsync(user, request.Token, request.NewPassword);
+
+            if (!result.Succeeded)
             {
-                _logger.LogWarning("Password reset attempted for inactive user: {UserId}", user.Id);
-                return Result.Failure("Invalid or expired reset token");
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                return Result<bool>.Failure($"Failed to reset password: {errors}");
             }
 
-            // Validate and reset password with token
-            try
-            {
-                // Validate new password
-                var password = Password.Create(request.NewPassword);
+            user.UpdatedAt = DateTime.UtcNow;
+            await _userManager.UpdateAsync(user);
 
-                // Hash the new password
-                var newPasswordHash = _passwordHasher.HashPassword(password.Value);
-
-                // Reset password using the token
-                user.ResetPasswordWithToken(request.Token, newPasswordHash);
-
-                // Save the updated user
-                await _userRepository.UpdateAsync(user, cancellationToken);
-
-                _logger.LogInformation("Password successfully reset for user: {UserId}", user.Id);
-
-                return Result.Success();
-            }
-            catch (InvalidOperationException ex)
-            {
-                _logger.LogWarning("Password reset failed for user {UserId}: {Error}", user.Id, ex.Message);
-                return Result.Failure("Invalid or expired reset token");
-            }
-        }
-        catch (DomainValidationException ex)
-        {
-            _logger.LogWarning("Password reset validation failed: {Error}", ex.Message);
-            return Result.Failure(ex.Message);
+            return Result<bool>.Success(true);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error processing password reset for email: {Email}", request.Email);
-            return Result.Failure("An error occurred while resetting password");
+            return Result<bool>.Failure($"An error occurred while resetting password: {ex.Message}");
         }
     }
 }

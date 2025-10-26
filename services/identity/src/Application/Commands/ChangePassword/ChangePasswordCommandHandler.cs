@@ -1,61 +1,50 @@
 using MediatR;
-using Vendo.IdentityManagement.Application.Common.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Vendo.IdentityManagement.Application.Common.Models;
-using Vendo.IdentityManagement.Domain.Exceptions;
-using Vendo.IdentityManagement.Domain.Repositories;
-using Vendo.IdentityManagement.Domain.ValueObjects;
+using Vendo.IdentityManagement.Domain.Entities;
 
 namespace Vendo.IdentityManagement.Application.Commands.ChangePassword;
 
 /// <summary>
 /// Handler for ChangePasswordCommand
 /// </summary>
-public class ChangePasswordCommandHandler : IRequestHandler<ChangePasswordCommand, Result>
+public class ChangePasswordCommandHandler : IRequestHandler<ChangePasswordCommand, Result<bool>>
 {
-    private readonly IUserRepository _userRepository;
-    private readonly IPasswordHasher _passwordHasher;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public ChangePasswordCommandHandler(IUserRepository userRepository, IPasswordHasher passwordHasher)
+    public ChangePasswordCommandHandler(UserManager<ApplicationUser> userManager)
     {
-        _userRepository = userRepository;
-        _passwordHasher = passwordHasher;
+        _userManager = userManager;
     }
 
-    public async Task<Result> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
+    public async Task<Result<bool>> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
     {
         try
         {
-            var user = await _userRepository.GetByIdAsync(request.UserId, cancellationToken);
+            var user = await _userManager.FindByIdAsync(request.UserId.ToString());
+            
             if (user == null)
             {
-                return Result.Failure("User not found");
+                return Result<bool>.Failure($"User with ID '{request.UserId}' not found");
             }
 
-            // Verify current password
-            if (!_passwordHasher.VerifyPassword(request.CurrentPassword, user.PasswordHash))
+            // Change password using UserManager
+            var result = await _userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
+
+            if (!result.Succeeded)
             {
-                return Result.Failure("Current password is incorrect");
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                return Result<bool>.Failure($"Failed to change password: {errors}");
             }
 
-            // Validate new password
-            var newPassword = Password.Create(request.NewPassword);
+            user.UpdatedAt = DateTime.UtcNow;
+            await _userManager.UpdateAsync(user);
 
-            // Hash new password
-            var newPasswordHash = _passwordHasher.HashPassword(newPassword.Value);
-
-            // Update password
-            user.ChangePassword(newPasswordHash);
-            await _userRepository.UpdateAsync(user, cancellationToken);
-
-            return Result.Success();
-        }
-        catch (DomainValidationException ex)
-        {
-            return Result.Failure(ex.Message);
+            return Result<bool>.Success(true);
         }
         catch (Exception ex)
         {
-            return Result.Failure($"An error occurred while changing password: {ex.Message}");
+            return Result<bool>.Failure($"An error occurred while changing password: {ex.Message}");
         }
     }
 }

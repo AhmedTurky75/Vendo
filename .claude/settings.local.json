@@ -124,7 +124,11 @@
       "Bash(tree:*)",
       "Bash(dotnet build:*)",
       "Bash(mv:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(xargs cat:*)",
+      "Bash(dotnet ef migrations add:*)",
+      "Bash(cat:*)",
+      "Bash(dotnet remove:*)"
     ],
     "deny": [],
     "ask": []

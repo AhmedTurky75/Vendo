@@ -1,8 +1,10 @@
 using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Vendo.IdentityManagement.Application.Common.Models;
 using Vendo.IdentityManagement.Application.DTOs;
-using Vendo.IdentityManagement.Domain.Repositories;
+using Vendo.IdentityManagement.Domain.Entities;
 
 namespace Vendo.IdentityManagement.Application.Queries.GetUsers;
 
@@ -11,12 +13,14 @@ namespace Vendo.IdentityManagement.Application.Queries.GetUsers;
 /// </summary>
 public class GetUsersQueryHandler : IRequestHandler<GetUsersQuery, Result<List<UserDto>>>
 {
-    private readonly IUserRepository _userRepository;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly IMapper _mapper;
 
-    public GetUsersQueryHandler(IUserRepository userRepository, IMapper mapper)
+    public GetUsersQueryHandler(
+        UserManager<ApplicationUser> userManager,
+        IMapper mapper)
     {
-        _userRepository = userRepository;
+        _userManager = userManager;
         _mapper = mapper;
     }
 
@@ -24,8 +28,25 @@ public class GetUsersQueryHandler : IRequestHandler<GetUsersQuery, Result<List<U
     {
         try
         {
-            var users = await _userRepository.GetAllAsync(request.IsActive, cancellationToken);
-            var userDtos = _mapper.Map<List<UserDto>>(users);
+            var query = _userManager.Users.AsQueryable();
+
+            // Apply filters if needed
+            if (request.IsActive.HasValue)
+            {
+                query = query.Where(u => u.IsActive == request.IsActive.Value);
+            }
+
+            var users = await query.ToListAsync(cancellationToken);
+            var userDtos = new List<UserDto>();
+
+            foreach (var user in users)
+            {
+                var userDto = _mapper.Map<UserDto>(user);
+                var roles = await _userManager.GetRolesAsync(user);
+                userDto.Roles = roles.ToList();
+                userDtos.Add(userDto);
+            }
+
             return Result<List<UserDto>>.Success(userDtos);
         }
         catch (Exception ex)

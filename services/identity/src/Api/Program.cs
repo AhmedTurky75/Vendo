@@ -5,9 +5,8 @@ using Microsoft.OpenApi.Models;
 using Vendo.IdentityManagement.Api.Middleware;
 using Vendo.IdentityManagement.Application;
 using Vendo.IdentityManagement.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using Vendo.IdentityManagement.Infrastructure.Persistence;
-using Vendo.IdentityManagement.Application.Common.Interfaces;
-using Vendo.IdentityManagement.Domain.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +18,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddApplicationServices();
 
 // Configure Infrastructure layer services (includes IdentityServer)
-builder.Services.AddInfrastructureServices();
+builder.Services.AddInfrastructureServices(builder.Configuration);
 
 // Configure JWT Bearer authentication for API endpoints
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -151,12 +150,26 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Seed initial data
+// Apply migrations and seed data
 using (var scope = app.Services.CreateScope())
 {
-    var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
-    var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
-    await SeedData.SeedUsersAsync(userRepository, passwordHasher);
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationIdentityDbContext>();
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+
+    try
+    {
+        logger.LogInformation("Applying database migrations...");
+        await context.Database.MigrateAsync();
+
+        logger.LogInformation("Seeding database...");
+        var seeder = scope.ServiceProvider.GetRequiredService<DataSeeder>();
+        await seeder.SeedAsync();
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "An error occurred while migrating or seeding the database.");
+        throw;
+    }
 }
 
 // Configure the HTTP request pipeline
@@ -169,6 +182,7 @@ if (app.Environment.IsDevelopment())
         options.OAuthClientId("swagger");
         options.OAuthAppName("Swagger UI");
         options.OAuthUsePkce();
+        options.RoutePrefix = string.Empty;
     });
 }
 

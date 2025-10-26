@@ -1,6 +1,6 @@
 [
   {
-    "id": "role1111-1111-1111-1111-111111111111",
+    "id": "a00e1111-1111-1111-1111-111111111111",
     "name": "SuperAdmin",
     "normalizedName": "SUPERADMIN",
     "description": "Platform super administrator with full access to all features",
@@ -20,7 +20,7 @@
     "createdAt": "2024-01-01T00:00:00Z"
   },
   {
-    "id": "role2222-2222-2222-2222-222222222222",
+    "id": "a00e2222-2222-2222-2222-222222222222",
     "name": "PlatformAdmin",
     "normalizedName": "PLATFORMADMIN",
     "description": "Platform administrator with limited administrative access",
@@ -34,7 +34,7 @@
     "createdAt": "2024-01-01T00:00:00Z"
   },
   {
-    "id": "role3333-3333-3333-3333-333333333333",
+    "id": "a00e3333-3333-3333-3333-333333333333",
     "name": "Merchant",
     "normalizedName": "MERCHANT",
     "description": "Store merchant with access to their store management",
@@ -59,7 +59,7 @@
     "createdAt": "2024-01-01T00:00:00Z"
   },
   {
-    "id": "role4444-4444-4444-4444-444444444444",
+    "id": "a00e4444-4444-4444-4444-444444444444",
     "name": "StoreOwner",
     "normalizedName": "STOREOWNER",
     "description": "Store owner with full access to their store",
@@ -82,7 +82,7 @@
     "createdAt": "2024-01-01T00:00:00Z"
   },
   {
-    "id": "role5555-5555-5555-5555-555555555555",
+    "id": "a00e5555-5555-5555-5555-555555555555",
     "name": "StoreManager",
     "normalizedName": "STOREMANAGER",
     "description": "Store manager with operational access",
@@ -103,7 +103,7 @@
     "createdAt": "2024-01-01T00:00:00Z"
   },
   {
-    "id": "role6666-6666-6666-6666-666666666666",
+    "id": "a00e6666-6666-6666-6666-666666666666",
     "name": "StoreStaff",
     "normalizedName": "STORESTAFF",
     "description": "Store staff with limited operational access",
@@ -118,7 +118,7 @@
     "createdAt": "2024-01-01T00:00:00Z"
   },
   {
-    "id": "role7777-7777-7777-7777-777777777777",
+    "id": "a00e7777-7777-7777-7777-777777777777",
     "name": "Customer",
     "normalizedName": "CUSTOMER",
     "description": "Regular customer with shopping capabilities",
@@ -137,7 +137,7 @@
     "createdAt": "2024-01-01T00:00:00Z"
   },
   {
-    "id": "role8888-8888-8888-8888-888888888888",
+    "id": "a00e8888-8888-8888-8888-888888888888",
     "name": "VIP",
     "normalizedName": "VIP",
     "description": "VIP customer with special privileges",
@@ -159,7 +159,7 @@
     "createdAt": "2024-01-01T00:00:00Z"
   },
   {
-    "id": "role9999-9999-9999-9999-999999999999",
+    "id": "a00e9999-9999-9999-9999-999999999999",
     "name": "Guest",
     "normalizedName": "GUEST",
     "description": "Guest user with read-only access",
