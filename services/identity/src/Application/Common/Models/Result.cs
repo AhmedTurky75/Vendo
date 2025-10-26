@@ -1,4 +1,4 @@
-namespace Vendo.Identity.Application.Common.Models;
+namespace Vendo.IdentityManagement.Application.Common.Models;
 
 /// <summary>
 /// Generic result wrapper for application operations

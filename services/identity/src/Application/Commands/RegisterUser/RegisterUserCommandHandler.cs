@@ -1,31 +1,25 @@
 using AutoMapper;
 using MediatR;
-using Vendo.Identity.Application.Common.Interfaces;
-using Vendo.Identity.Application.Common.Models;
-using Vendo.Identity.Application.DTOs;
-using Vendo.Identity.Domain.Entities;
-using Vendo.Identity.Domain.Exceptions;
-using Vendo.Identity.Domain.Repositories;
-using Vendo.Identity.Domain.ValueObjects;
+using Microsoft.AspNetCore.Identity;
+using Vendo.IdentityManagement.Application.Common.Models;
+using Vendo.IdentityManagement.Application.DTOs;
+using Vendo.IdentityManagement.Domain.Entities;
 
-namespace Vendo.Identity.Application.Commands.RegisterUser;
+namespace Vendo.IdentityManagement.Application.Commands.RegisterUser;
 
 /// <summary>
 /// Handler for RegisterUserCommand
 /// </summary>
 public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, Result<UserDto>>
 {
-    private readonly IUserRepository _userRepository;
-    private readonly IPasswordHasher _passwordHasher;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly IMapper _mapper;
 
     public RegisterUserCommandHandler(
-        IUserRepository userRepository,
-        IPasswordHasher passwordHasher,
+        UserManager<ApplicationUser> userManager,
         IMapper mapper)
     {
-        _userRepository = userRepository;
-        _passwordHasher = passwordHasher;
+        _userManager = userManager;
         _mapper = mapper;
     }
 
@@ -34,45 +28,55 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, R
         try
         {
             // Check if username already exists
-            if (await _userRepository.UsernameExistsAsync(request.Username, cancellationToken))
+            var existingUserByUsername = await _userManager.FindByNameAsync(request.Username);
+            if (existingUserByUsername != null)
             {
                 return Result<UserDto>.Failure($"Username '{request.Username}' is already taken");
             }
 
-            // Create and validate email
-            var email = Email.Create(request.Email);
-
             // Check if email already exists
-            if (await _userRepository.EmailExistsAsync(email, cancellationToken))
+            var existingUserByEmail = await _userManager.FindByEmailAsync(request.Email);
+            if (existingUserByEmail != null)
             {
                 return Result<UserDto>.Failure($"Email '{request.Email}' is already registered");
             }
 
-            // Validate password
-            var password = Password.Create(request.Password);
-
-            // Hash password
-            var passwordHash = _passwordHasher.HashPassword(password.Value);
-
             // Create user entity
-            var user = User.Create(
-                request.Username,
-                email,
-                passwordHash,
-                request.FirstName,
-                request.LastName,
-                request.Roles ?? new List<string> { "User" });
+            var user = new ApplicationUser
+            {
+                UserName = request.Username,
+                Email = request.Email,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                EmailConfirmed = false,
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
 
-            // Save to repository
-            await _userRepository.AddAsync(user, cancellationToken);
+            // Create user with password
+            var result = await _userManager.CreateAsync(user, request.Password);
+
+            if (!result.Succeeded)
+            {
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                return Result<UserDto>.Failure($"Failed to create user: {errors}");
+            }
+
+            // Assign roles
+            var roles = request.Roles ?? new List<string> { "Customer" };
+            var roleResult = await _userManager.AddToRolesAsync(user, roles);
+
+            if (!roleResult.Succeeded)
+            {
+                var errors = string.Join(", ", roleResult.Errors.Select(e => e.Description));
+                return Result<UserDto>.Failure($"User created but failed to assign roles: {errors}");
+            }
 
             // Map to DTO and return
             var userDto = _mapper.Map<UserDto>(user);
+            userDto.Roles = roles;
             return Result<UserDto>.Success(userDto);
-        }
-        catch (DomainValidationException ex)
-        {
-            return Result<UserDto>.Failure(ex.Message);
         }
         catch (Exception ex)
         {

@@ -1,41 +1,81 @@
+using FluentValidation;
+using Microsoft.EntityFrameworkCore;
+using Vendo.OrderManagement.Application.Commands.CreateOrder;
+using Vendo.OrderManagement.Infrastructure;
+using Vendo.OrderManagement.Infrastructure.Persistence;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+// Add services to the container
+builder.Services.AddControllers();
+
+// Add MediatR
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateOrderCommand).Assembly));
+
+// Add FluentValidation
+builder.Services.AddValidatorsFromAssembly(typeof(CreateOrderCommand).Assembly);
+
+// Add Infrastructure services
+builder.Services.AddInfrastructure(builder.Configuration);
+
+// Add Swagger
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "Vendo Order Service API",
+        Version = "v1",
+        Description = "Order management service for Vendo platform"
+    });
+});
+
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Vendo Order Service API V1");
+        c.RoutePrefix = string.Empty; // Serve Swagger UI at root
+    });
 }
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+app.UseAuthorization();
 
-app.MapGet("/weatherforecast", () =>
+app.MapControllers();
+
+// Apply migrations and seed data on startup
+using (var scope = app.Services.CreateScope())
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+    var services = scope.ServiceProvider;
+    var logger = services.GetRequiredService<ILogger<Program>>();
+
+    try
+    {
+        // Apply pending migrations automatically
+        var context = services.GetRequiredService<OrderDbContext>();
+        logger.LogInformation("Applying database migrations...");
+        await context.Database.MigrateAsync();
+        logger.LogInformation("Database migrations applied successfully.");
+
+        // Seed initial data
+        logger.LogInformation("Starting database seeding...");
+        var configuration = services.GetRequiredService<IConfiguration>();
+        var seeder = new DataSeeder(context, services.GetRequiredService<ILogger<DataSeeder>>(), configuration);
+        await seeder.SeedAsync();
+        logger.LogInformation("Database seeding completed successfully.");
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "An error occurred while migrating or seeding the database.");
+        // Don't throw - allow the application to start even if seeding fails
+    }
+}
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

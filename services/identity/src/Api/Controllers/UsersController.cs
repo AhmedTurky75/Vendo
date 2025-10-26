@@ -1,13 +1,13 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Vendo.Identity.Api.Models;
-using Vendo.Identity.Application.Commands.ActivateUser;
-using Vendo.Identity.Application.Commands.DeactivateUser;
-using Vendo.Identity.Application.Queries.GetUser;
-using Vendo.Identity.Application.Queries.GetUsers;
+using Vendo.IdentityManagement.Api.Models;
+using Vendo.IdentityManagement.Application.Commands.ActivateUser;
+using Vendo.IdentityManagement.Application.Commands.DeactivateUser;
+using Vendo.IdentityManagement.Application.Queries.GetUser;
+using Vendo.IdentityManagement.Application.Queries.GetUsers;
 
-namespace Vendo.Identity.Api.Controllers;
+namespace Vendo.IdentityManagement.Api.Controllers;
 
 /// <summary>
 /// Administrative operations for managing users

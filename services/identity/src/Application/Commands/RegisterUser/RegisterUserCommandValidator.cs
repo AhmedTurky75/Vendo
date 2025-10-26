@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Vendo.Identity.Application.Commands.RegisterUser;
+namespace Vendo.IdentityManagement.Application.Commands.RegisterUser;
 
 /// <summary>
 /// Validator for RegisterUserCommand

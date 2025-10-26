@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Vendo.TenantManagement.Application.Stores.Commands.CreateStore;
 using Vendo.TenantManagement.Application.Stores.Commands.UpdateStore;
+using Vendo.TenantManagement.Application.Stores.Commands.DeleteStore;
 using Vendo.TenantManagement.Application.Stores.Queries.GetStore;
 using Vendo.TenantManagement.Application.Stores.Queries.GetStoresByMerchant;
 
@@ -178,5 +179,33 @@ public class StoresController : ControllerBase
         }
 
         return Ok(result.Value);
+    }
+
+    /// <summary>
+    /// Deletes a store.
+    /// </summary>
+    /// <param name="id">The store ID.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>No content if successful.</returns>
+    /// <response code="204">Store deleted successfully.</response>
+    /// <response code="404">Store not found.</response>
+    [HttpDelete("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeleteStore(
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Deleting store with ID: {StoreId}", id);
+
+        var command = new DeleteStoreCommand { Id = id };
+        var result = await _mediator.Send(command, cancellationToken);
+
+        if (result.IsFailure)
+        {
+            return NotFound(new { error = result.Error });
+        }
+
+        return NoContent();
     }
 }

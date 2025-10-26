@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Vendo.Identity.Application.Commands.ForgotPassword;
+namespace Vendo.IdentityManagement.Application.Commands.ForgotPassword;
 
 /// <summary>
 /// Validator for ForgotPasswordCommand

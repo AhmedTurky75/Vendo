@@ -1,39 +1,54 @@
 using MediatR;
-using Vendo.Identity.Application.Common.Models;
-using Vendo.Identity.Domain.Repositories;
+using Microsoft.AspNetCore.Identity;
+using Vendo.IdentityManagement.Application.Common.Models;
+using Vendo.IdentityManagement.Domain.Entities;
 
-namespace Vendo.Identity.Application.Commands.DeactivateUser;
+namespace Vendo.IdentityManagement.Application.Commands.DeactivateUser;
 
 /// <summary>
 /// Handler for DeactivateUserCommand
 /// </summary>
-public class DeactivateUserCommandHandler : IRequestHandler<DeactivateUserCommand, Result>
+public class DeactivateUserCommandHandler : IRequestHandler<DeactivateUserCommand, Result<bool>>
 {
-    private readonly IUserRepository _userRepository;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public DeactivateUserCommandHandler(IUserRepository userRepository)
+    public DeactivateUserCommandHandler(UserManager<ApplicationUser> userManager)
     {
-        _userRepository = userRepository;
+        _userManager = userManager;
     }
 
-    public async Task<Result> Handle(DeactivateUserCommand request, CancellationToken cancellationToken)
+    public async Task<Result<bool>> Handle(DeactivateUserCommand request, CancellationToken cancellationToken)
     {
         try
         {
-            var user = await _userRepository.GetByIdAsync(request.UserId, cancellationToken);
+            var user = await _userManager.FindByIdAsync(request.UserId.ToString());
+            
             if (user == null)
             {
-                return Result.Failure("User not found");
+                return Result<bool>.Failure($"User with ID '{request.UserId}' not found");
             }
 
-            user.Deactivate();
-            await _userRepository.UpdateAsync(user, cancellationToken);
+            if (!user.IsActive)
+            {
+                return Result<bool>.Failure("User is already inactive");
+            }
 
-            return Result.Success();
+            user.IsActive = false;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            var result = await _userManager.UpdateAsync(user);
+
+            if (!result.Succeeded)
+            {
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                return Result<bool>.Failure($"Failed to deactivate user: {errors}");
+            }
+
+            return Result<bool>.Success(true);
         }
         catch (Exception ex)
         {
-            return Result.Failure($"An error occurred while deactivating user: {ex.Message}");
+            return Result<bool>.Failure($"An error occurred while deactivating user: {ex.Message}");
         }
     }
 }

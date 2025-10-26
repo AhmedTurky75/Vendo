@@ -1,4 +1,4 @@
-﻿namespace Vendo.Catalog.Domain;
+﻿namespace Vendo.CatalogManagement.Domain;
 
 public class Class1
 {

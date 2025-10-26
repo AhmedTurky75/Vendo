@@ -1,0 +1,66 @@
+using MediatR;
+using Microsoft.Extensions.Logging;
+using Vendo.PaymentManagement.Application.Common.Models;
+using Vendo.PaymentManagement.Application.DTOs;
+using Vendo.PaymentManagement.Domain.Repositories;
+
+namespace Vendo.PaymentManagement.Application.Queries.GetPayments;
+
+/// <summary>
+/// Handler for GetPaymentsQuery.
+/// </summary>
+public class GetPaymentsQueryHandler : IRequestHandler<GetPaymentsQuery, Result<List<PaymentDto>>>
+{
+    private readonly IPaymentRepository _paymentRepository;
+    private readonly ILogger<GetPaymentsQueryHandler> _logger;
+
+    public GetPaymentsQueryHandler(
+        IPaymentRepository paymentRepository,
+        ILogger<GetPaymentsQueryHandler> logger)
+    {
+        _paymentRepository = paymentRepository;
+        _logger = logger;
+    }
+
+    public async Task<Result<List<PaymentDto>>> Handle(GetPaymentsQuery request, CancellationToken cancellationToken)
+    {
+        try
+        {
+            _logger.LogInformation("Getting payments: Skip={Skip}, Take={Take}", request.Skip, request.Take);
+
+            var payments = await _paymentRepository.GetAllAsync(request.Skip, request.Take, cancellationToken);
+            var paymentDtos = payments.Select(MapToDto).ToList();
+
+            return Result<List<PaymentDto>>.Success(paymentDtos);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting payments");
+            return Result<List<PaymentDto>>.Failure("An error occurred while retrieving payments");
+        }
+    }
+
+    private static PaymentDto MapToDto(Domain.Entities.Payment payment)
+    {
+        return new PaymentDto
+        {
+            Id = payment.Id,
+            TenantId = payment.TenantId,
+            OrderId = payment.OrderId,
+            CustomerId = payment.CustomerId,
+            Amount = payment.Amount,
+            Currency = payment.Currency,
+            PaymentMethod = payment.PaymentMethod.ToString(),
+            Status = payment.Status.ToString(),
+            PaymentDate = payment.PaymentDate,
+            TransactionId = payment.TransactionId,
+            GatewayResponse = payment.GatewayResponse,
+            RefundAmount = payment.RefundAmount,
+            RefundReason = payment.RefundReason,
+            RefundDate = payment.RefundDate,
+            Metadata = payment.Metadata,
+            CreatedAt = payment.CreatedAt,
+            UpdatedAt = payment.UpdatedAt
+        };
+    }
+}

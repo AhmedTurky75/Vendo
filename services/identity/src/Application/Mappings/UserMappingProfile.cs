@@ -1,8 +1,8 @@
 using AutoMapper;
-using Vendo.Identity.Application.DTOs;
-using Vendo.Identity.Domain.Entities;
+using Vendo.IdentityManagement.Application.DTOs;
+using Vendo.IdentityManagement.Domain.Entities;
 
-namespace Vendo.Identity.Application.Mappings;
+namespace Vendo.IdentityManagement.Application.Mappings;
 
 /// <summary>
 /// AutoMapper profile for User entity mappings
@@ -11,8 +11,8 @@ public class UserMappingProfile : Profile
 {
     public UserMappingProfile()
     {
-        CreateMap<User, UserDto>()
-            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email.Value))
-            .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => src.Roles.ToList()));
+        CreateMap<ApplicationUser, UserDto>()
+            .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.UserName))
+            .ForMember(dest => dest.Roles, opt => opt.Ignore()); // Roles are populated separately in handlers
     }
 }

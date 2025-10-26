@@ -1,24 +1,25 @@
 using AutoMapper;
 using MediatR;
-using Vendo.Identity.Application.Common.Models;
-using Vendo.Identity.Application.DTOs;
-using Vendo.Identity.Domain.Exceptions;
-using Vendo.Identity.Domain.Repositories;
-using Vendo.Identity.Domain.ValueObjects;
+using Microsoft.AspNetCore.Identity;
+using Vendo.IdentityManagement.Application.Common.Models;
+using Vendo.IdentityManagement.Application.DTOs;
+using Vendo.IdentityManagement.Domain.Entities;
 
-namespace Vendo.Identity.Application.Commands.UpdateUser;
+namespace Vendo.IdentityManagement.Application.Commands.UpdateUser;
 
 /// <summary>
 /// Handler for UpdateUserCommand
 /// </summary>
 public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Result<UserDto>>
 {
-    private readonly IUserRepository _userRepository;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly IMapper _mapper;
 
-    public UpdateUserCommandHandler(IUserRepository userRepository, IMapper mapper)
+    public UpdateUserCommandHandler(
+        UserManager<ApplicationUser> userManager,
+        IMapper mapper)
     {
-        _userRepository = userRepository;
+        _userManager = userManager;
         _mapper = mapper;
     }
 
@@ -26,32 +27,53 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Resul
     {
         try
         {
-            var user = await _userRepository.GetByIdAsync(request.UserId, cancellationToken);
+            var user = await _userManager.FindByIdAsync(request.UserId.ToString());
+            
             if (user == null)
             {
-                return Result<UserDto>.Failure("User not found");
+                return Result<UserDto>.Failure($"User with ID '{request.UserId}' not found");
             }
 
-            var email = Email.Create(request.Email);
+            // Update user properties
+            if (!string.IsNullOrWhiteSpace(request.FirstName))
+                user.FirstName = request.FirstName;
+            
+            if (!string.IsNullOrWhiteSpace(request.LastName))
+                user.LastName = request.LastName;
+            
+            if (!string.IsNullOrWhiteSpace(request.Email))
+                user.Email = request.Email;
+            
+            if (!string.IsNullOrWhiteSpace(request.PhoneNumber))
+                user.PhoneNumber = request.PhoneNumber;
 
-            // Check if email is being changed and if it's already taken
-            if (user.Email.Value != email.Value)
+            if (request.ProfilePictureUrl != null)
+                user.ProfilePictureUrl = request.ProfilePictureUrl;
+
+            if (request.DateOfBirth.HasValue)
+                user.DateOfBirth = request.DateOfBirth;
+
+            if (request.StoreId.HasValue)
+                user.StoreId = request.StoreId;
+
+            if (request.Address != null)
+                user.Address = request.Address;
+
+            if (request.Preferences != null)
+                user.Preferences = request.Preferences;
+
+            user.UpdatedAt = DateTime.UtcNow;
+
+            var result = await _userManager.UpdateAsync(user);
+
+            if (!result.Succeeded)
             {
-                if (await _userRepository.EmailExistsAsync(email, cancellationToken))
-                {
-                    return Result<UserDto>.Failure($"Email '{request.Email}' is already registered");
-                }
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                return Result<UserDto>.Failure($"Failed to update user: {errors}");
             }
-
-            user.UpdateProfile(request.FirstName, request.LastName, email);
-            await _userRepository.UpdateAsync(user, cancellationToken);
 
             var userDto = _mapper.Map<UserDto>(user);
             return Result<UserDto>.Success(userDto);
-        }
-        catch (DomainValidationException ex)
-        {
-            return Result<UserDto>.Failure(ex.Message);
         }
         catch (Exception ex)
         {

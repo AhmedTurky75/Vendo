@@ -1,9 +1,9 @@
 using System.Net;
 using System.Text.Json;
-using Vendo.Identity.Api.Models;
-using Vendo.Identity.Domain.Exceptions;
+using Vendo.IdentityManagement.Api.Models;
+using Vendo.IdentityManagement.Domain.Exceptions;
 
-namespace Vendo.Identity.Api.Middleware;
+namespace Vendo.IdentityManagement.Api.Middleware;
 
 /// <summary>
 /// Global exception handling middleware

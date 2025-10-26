@@ -1,12 +1,12 @@
 using MediatR;
-using Vendo.Identity.Application.Common.Models;
+using Vendo.IdentityManagement.Application.Common.Models;
 
-namespace Vendo.Identity.Application.Commands.ChangePassword;
+namespace Vendo.IdentityManagement.Application.Commands.ChangePassword;
 
 /// <summary>
 /// Command to change user password
 /// </summary>
-public class ChangePasswordCommand : IRequest<Result>
+public class ChangePasswordCommand : IRequest<Result<bool>>
 {
     public Guid UserId { get; set; }
     public string CurrentPassword { get; set; } = string.Empty;

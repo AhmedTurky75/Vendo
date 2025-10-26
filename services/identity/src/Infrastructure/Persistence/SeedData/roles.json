@@ -1,0 +1,173 @@
+[
+  {
+    "id": "a00e1111-1111-1111-1111-111111111111",
+    "name": "SuperAdmin",
+    "normalizedName": "SUPERADMIN",
+    "description": "Platform super administrator with full access to all features",
+    "permissions": [
+      "platform.manage",
+      "tenants.create",
+      "tenants.update",
+      "tenants.delete",
+      "tenants.view",
+      "users.manage",
+      "roles.manage",
+      "settings.manage",
+      "reports.view",
+      "audit.view"
+    ],
+    "isSystemRole": true,
+    "createdAt": "2024-01-01T00:00:00Z"
+  },
+  {
+    "id": "a00e2222-2222-2222-2222-222222222222",
+    "name": "PlatformAdmin",
+    "normalizedName": "PLATFORMADMIN",
+    "description": "Platform administrator with limited administrative access",
+    "permissions": [
+      "tenants.view",
+      "users.view",
+      "reports.view",
+      "support.manage"
+    ],
+    "isSystemRole": true,
+    "createdAt": "2024-01-01T00:00:00Z"
+  },
+  {
+    "id": "a00e3333-3333-3333-3333-333333333333",
+    "name": "Merchant",
+    "normalizedName": "MERCHANT",
+    "description": "Store merchant with access to their store management",
+    "permissions": [
+      "store.view",
+      "store.update",
+      "products.create",
+      "products.update",
+      "products.delete",
+      "products.view",
+      "categories.create",
+      "categories.update",
+      "categories.delete",
+      "categories.view",
+      "orders.view",
+      "orders.update",
+      "customers.view",
+      "reports.view",
+      "settings.update"
+    ],
+    "isSystemRole": true,
+    "createdAt": "2024-01-01T00:00:00Z"
+  },
+  {
+    "id": "a00e4444-4444-4444-4444-444444444444",
+    "name": "StoreOwner",
+    "normalizedName": "STOREOWNER",
+    "description": "Store owner with full access to their store",
+    "permissions": [
+      "store.manage",
+      "store.view",
+      "store.update",
+      "store.delete",
+      "products.manage",
+      "categories.manage",
+      "orders.manage",
+      "customers.manage",
+      "staff.manage",
+      "reports.view",
+      "settings.manage",
+      "billing.manage",
+      "subscription.manage"
+    ],
+    "isSystemRole": true,
+    "createdAt": "2024-01-01T00:00:00Z"
+  },
+  {
+    "id": "a00e5555-5555-5555-5555-555555555555",
+    "name": "StoreManager",
+    "normalizedName": "STOREMANAGER",
+    "description": "Store manager with operational access",
+    "permissions": [
+      "store.view",
+      "products.create",
+      "products.update",
+      "products.view",
+      "categories.create",
+      "categories.update",
+      "categories.view",
+      "orders.view",
+      "orders.update",
+      "customers.view",
+      "reports.view"
+    ],
+    "isSystemRole": true,
+    "createdAt": "2024-01-01T00:00:00Z"
+  },
+  {
+    "id": "a00e6666-6666-6666-6666-666666666666",
+    "name": "StoreStaff",
+    "normalizedName": "STORESTAFF",
+    "description": "Store staff with limited operational access",
+    "permissions": [
+      "products.view",
+      "categories.view",
+      "orders.view",
+      "orders.update",
+      "customers.view"
+    ],
+    "isSystemRole": true,
+    "createdAt": "2024-01-01T00:00:00Z"
+  },
+  {
+    "id": "a00e7777-7777-7777-7777-777777777777",
+    "name": "Customer",
+    "normalizedName": "CUSTOMER",
+    "description": "Regular customer with shopping capabilities",
+    "permissions": [
+      "products.view",
+      "categories.view",
+      "cart.manage",
+      "orders.create",
+      "orders.view.own",
+      "profile.manage",
+      "addresses.manage",
+      "wishlist.manage",
+      "reviews.create"
+    ],
+    "isSystemRole": true,
+    "createdAt": "2024-01-01T00:00:00Z"
+  },
+  {
+    "id": "a00e8888-8888-8888-8888-888888888888",
+    "name": "VIP",
+    "normalizedName": "VIP",
+    "description": "VIP customer with special privileges",
+    "permissions": [
+      "products.view",
+      "categories.view",
+      "cart.manage",
+      "orders.create",
+      "orders.view.own",
+      "profile.manage",
+      "addresses.manage",
+      "wishlist.manage",
+      "reviews.create",
+      "vip.earlyAccess",
+      "vip.specialDiscounts",
+      "vip.prioritySupport"
+    ],
+    "isSystemRole": true,
+    "createdAt": "2024-01-01T00:00:00Z"
+  },
+  {
+    "id": "a00e9999-9999-9999-9999-999999999999",
+    "name": "Guest",
+    "normalizedName": "GUEST",
+    "description": "Guest user with read-only access",
+    "permissions": [
+      "products.view",
+      "categories.view"
+    ],
+    "isSystemRole": true,
+    "createdAt": "2024-01-01T00:00:00Z"
+  }
+]

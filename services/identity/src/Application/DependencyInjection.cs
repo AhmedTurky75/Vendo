@@ -2,7 +2,7 @@ using System.Reflection;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Vendo.Identity.Application;
+namespace Vendo.IdentityManagement.Application;
 
 /// <summary>
 /// Extension methods for configuring Application layer services

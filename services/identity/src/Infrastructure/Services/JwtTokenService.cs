@@ -1,13 +1,11 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Vendo.Identity.Application.Common.Interfaces;
-using Vendo.Identity.Domain.Entities;
+using Vendo.IdentityManagement.Application.Common.Interfaces;
 
-namespace Vendo.Identity.Infrastructure.Services;
+namespace Vendo.IdentityManagement.Infrastructure.Services;
 
 /// <summary>
 /// JWT token service implementation
@@ -35,23 +33,20 @@ public class JwtTokenService : IJwtTokenService
         }
     }
 
-    public string GenerateAccessToken(User user)
+    public string GenerateToken(Guid userId, string username, List<string> roles)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.UTF8.GetBytes(_secret);
 
         var claims = new List<Claim>
         {
-            new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-            new(JwtRegisteredClaimNames.Email, user.Email.Value),
-            new(JwtRegisteredClaimNames.Name, user.Username),
-            new(JwtRegisteredClaimNames.GivenName, user.FirstName),
-            new(JwtRegisteredClaimNames.FamilyName, user.LastName),
+            new(JwtRegisteredClaimNames.Sub, userId.ToString()),
+            new(JwtRegisteredClaimNames.Name, username),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
         // Add roles as claims
-        foreach (var role in user.Roles)
+        foreach (var role in roles)
         {
             claims.Add(new Claim(ClaimTypes.Role, role));
         }
@@ -69,14 +64,6 @@ public class JwtTokenService : IJwtTokenService
 
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
-    }
-
-    public string GenerateRefreshToken()
-    {
-        var randomNumber = new byte[32];
-        using var rng = RandomNumberGenerator.Create();
-        rng.GetBytes(randomNumber);
-        return Convert.ToBase64String(randomNumber);
     }
 
     public int GetTokenExpirationInSeconds()

@@ -1,98 +1,72 @@
-using AutoMapper;
 using MediatR;
-using Vendo.Identity.Application.Common.Interfaces;
-using Vendo.Identity.Application.Common.Models;
-using Vendo.Identity.Application.DTOs;
-using Vendo.Identity.Domain.Repositories;
+using Microsoft.AspNetCore.Identity;
+using Vendo.IdentityManagement.Application.Common.Interfaces;
+using Vendo.IdentityManagement.Application.Common.Models;
+using Vendo.IdentityManagement.Application.DTOs;
+using Vendo.IdentityManagement.Domain.Entities;
 
-namespace Vendo.Identity.Application.Queries.AuthenticateUser;
+namespace Vendo.IdentityManagement.Application.Queries.AuthenticateUser;
 
 /// <summary>
 /// Handler for AuthenticateUserQuery
 /// </summary>
 public class AuthenticateUserQueryHandler : IRequestHandler<AuthenticateUserQuery, Result<AuthenticationResultDto>>
 {
-    private readonly IUserRepository _userRepository;
-    private readonly IPasswordHasher _passwordHasher;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly IJwtTokenService _jwtTokenService;
-    private readonly IMapper _mapper;
 
     public AuthenticateUserQueryHandler(
-        IUserRepository userRepository,
-        IPasswordHasher passwordHasher,
-        IJwtTokenService jwtTokenService,
-        IMapper mapper)
+        UserManager<ApplicationUser> userManager,
+        IJwtTokenService jwtTokenService)
     {
-        _userRepository = userRepository;
-        _passwordHasher = passwordHasher;
+        _userManager = userManager;
         _jwtTokenService = jwtTokenService;
-        _mapper = mapper;
     }
 
     public async Task<Result<AuthenticationResultDto>> Handle(AuthenticateUserQuery request, CancellationToken cancellationToken)
     {
         try
         {
-            var user = await _userRepository.GetByUsernameAsync(request.Username, cancellationToken);
-
+            var user = await _userManager.FindByNameAsync(request.Username);
+            
             if (user == null)
             {
-                return Result<AuthenticationResultDto>.Success(new AuthenticationResultDto
-                {
-                    IsAuthenticated = false,
-                    Message = "Invalid username or password"
-                });
+                return Result<AuthenticationResultDto>.Failure("Invalid username or password");
             }
 
             if (!user.IsActive)
             {
-                return Result<AuthenticationResultDto>.Success(new AuthenticationResultDto
-                {
-                    IsAuthenticated = false,
-                    Message = "Account is deactivated"
-                });
+                return Result<AuthenticationResultDto>.Failure("User account is not active");
             }
 
-            var isPasswordValid = _passwordHasher.VerifyPassword(request.Password, user.PasswordHash);
+            // Check password
+            var isPasswordValid = await _userManager.CheckPasswordAsync(user, request.Password);
 
             if (!isPasswordValid)
             {
-                return Result<AuthenticationResultDto>.Success(new AuthenticationResultDto
-                {
-                    IsAuthenticated = false,
-                    Message = "Invalid username or password"
-                });
+                return Result<AuthenticationResultDto>.Failure("Invalid username or password");
             }
 
-            // If a specific role is requested, verify the user has that role
-            if (!string.IsNullOrEmpty(request.Role))
+            // Update last login time
+            user.LastLoginAt = DateTime.UtcNow;
+            await _userManager.UpdateAsync(user);
+
+            // Get user roles
+            var roles = await _userManager.GetRolesAsync(user);
+
+            // Generate JWT token
+            var token = _jwtTokenService.GenerateToken(user.Id, user.UserName!, roles.ToList());
+
+            var authResult = new AuthenticationResultDto
             {
-                if (!user.Roles.Any(r => r.Equals(request.Role, StringComparison.OrdinalIgnoreCase)))
-                {
-                    return Result<AuthenticationResultDto>.Success(new AuthenticationResultDto
-                    {
-                        IsAuthenticated = false,
-                        Message = $"User does not have the required role: {request.Role}"
-                    });
-                }
-            }
+                Token = token,
+                UserId = user.Id,
+                Username = user.UserName!,
+                Email = user.Email!,
+                Roles = roles.ToList()
+            };
 
-            // Generate JWT tokens
-            var accessToken = _jwtTokenService.GenerateAccessToken(user);
-            var refreshToken = _jwtTokenService.GenerateRefreshToken();
-            var expiresIn = _jwtTokenService.GetTokenExpirationInSeconds();
-
-            var userDto = _mapper.Map<UserDto>(user);
-
-            return Result<AuthenticationResultDto>.Success(new AuthenticationResultDto
-            {
-                IsAuthenticated = true,
-                User = userDto,
-                AccessToken = accessToken,
-                RefreshToken = refreshToken,
-                ExpiresIn = expiresIn,
-                Message = "Authentication successful"
-            });
+            return Result<AuthenticationResultDto>.Success(authResult);
         }
         catch (Exception ex)
         {

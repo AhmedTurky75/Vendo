@@ -1,23 +1,29 @@
 using System.Security.Claims;
 using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
-using Vendo.Identity.Domain.Repositories;
+using Vendo.IdentityManagement.Domain.Entities;
 
-namespace Vendo.Identity.Infrastructure.Identity.ProfileService;
+namespace Vendo.IdentityManagement.Infrastructure.Identity.ProfileService;
 
 /// <summary>
 /// Custom profile service for IdentityServer to include user claims
-/// Includes tenant information for multi-tenancy support
+/// Includes tenant information and role permissions for multi-tenancy support
 /// </summary>
 public class CustomProfileService : IProfileService
 {
-    private readonly IUserRepository _userRepository;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly RoleManager<ApplicationRole> _roleManager;
     private readonly ILogger<CustomProfileService> _logger;
 
-    public CustomProfileService(IUserRepository userRepository, ILogger<CustomProfileService> logger)
+    public CustomProfileService(
+        UserManager<ApplicationUser> userManager,
+        RoleManager<ApplicationRole> roleManager,
+        ILogger<CustomProfileService> logger)
     {
-        _userRepository = userRepository;
+        _userManager = userManager;
+        _roleManager = roleManager;
         _logger = logger;
     }
 
@@ -31,16 +37,16 @@ public class CustomProfileService : IProfileService
         }
 
         var subjectId = subject.FindFirst("sub")?.Value;
-        if (string.IsNullOrEmpty(subjectId) || !Guid.TryParse(subjectId, out var userId))
+        if (string.IsNullOrEmpty(subjectId))
         {
             _logger.LogWarning("Profile data requested with invalid subject ID: {SubjectId}", subjectId);
             return;
         }
 
-        var user = await _userRepository.GetByIdAsync(userId);
+        var user = await _userManager.FindByIdAsync(subjectId);
         if (user == null)
         {
-            _logger.LogWarning("User not found for profile data request: {UserId}", userId);
+            _logger.LogWarning("User not found for profile data request: {UserId}", subjectId);
             return;
         }
 
@@ -50,32 +56,54 @@ public class CustomProfileService : IProfileService
             new Claim("name", $"{user.FirstName} {user.LastName}"),
             new Claim("given_name", user.FirstName),
             new Claim("family_name", user.LastName),
-            new Claim("email", user.Email.Value),
-            new Claim("email_verified", "true"), // Assuming email is verified
-            new Claim("username", user.Username),
+            new Claim("email", user.Email ?? string.Empty),
+            new Claim("email_verified", user.EmailConfirmed.ToString().ToLower()),
+            new Claim("username", user.UserName ?? string.Empty),
             new Claim("updated_at", user.UpdatedAt.ToString("O"))
         };
 
+        // Add phone number if available
+        if (!string.IsNullOrEmpty(user.PhoneNumber))
+        {
+            claims.Add(new Claim("phone_number", user.PhoneNumber));
+            claims.Add(new Claim("phone_number_verified", user.PhoneNumberConfirmed.ToString().ToLower()));
+        }
+
         // Add roles - IdentityServer requires proper role claim type
-        foreach (var role in user.Roles)
+        var roles = await _userManager.GetRolesAsync(user);
+        foreach (var role in roles)
         {
             claims.Add(new Claim("role", role));
+
+            // Add permissions for this role
+            var roleEntity = await _roleManager.FindByNameAsync(role);
+            if (roleEntity != null && roleEntity.Permissions.Any())
+            {
+                foreach (var permission in roleEntity.Permissions)
+                {
+                    claims.Add(new Claim("permission", permission));
+                }
+            }
+        }
+
+        // Add store-specific claims for merchant users
+        if (user.StoreId.HasValue)
+        {
+            claims.Add(new Claim("store_id", user.StoreId.Value.ToString()));
         }
 
         // Add tenant claims for multi-tenancy support
-        // TODO: Once User entity has TenantId, retrieve from user object
-        // For now, add placeholder tenant claim if tenant scope is requested
+        // For now using a default tenant - can be extended based on user properties
         if (context.RequestedClaimTypes.Contains("tenant_id") ||
             context.RequestedResources?.ParsedScopes?.Any(s => s.ParsedName == "tenant") == true)
         {
-            // Default tenant for MVP - will be replaced with actual tenant from User entity
             claims.Add(new Claim("tenant_id", "default"));
             claims.Add(new Claim("tenant_name", "Default Tenant"));
         }
 
         // Log successful profile data retrieval
         _logger.LogInformation("Profile data retrieved for user {UserId} with {ClaimCount} claims",
-            userId, claims.Count);
+            user.Id, claims.Count);
 
         context.IssuedClaims.AddRange(claims);
     }
@@ -91,17 +119,17 @@ public class CustomProfileService : IProfileService
         }
 
         var subjectId = subject.FindFirst("sub")?.Value;
-        if (string.IsNullOrEmpty(subjectId) || !Guid.TryParse(subjectId, out var userId))
+        if (string.IsNullOrEmpty(subjectId))
         {
             _logger.LogWarning("IsActive check requested with invalid subject ID: {SubjectId}", subjectId);
             context.IsActive = false;
             return;
         }
 
-        var user = await _userRepository.GetByIdAsync(userId);
+        var user = await _userManager.FindByIdAsync(subjectId);
         var isActive = user?.IsActive ?? false;
 
-        _logger.LogInformation("IsActive check for user {UserId}: {IsActive}", userId, isActive);
+        _logger.LogInformation("IsActive check for user {UserId}: {IsActive}", subjectId, isActive);
 
         context.IsActive = isActive;
     }

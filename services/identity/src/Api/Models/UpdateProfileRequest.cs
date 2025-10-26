@@ -1,4 +1,4 @@
-namespace Vendo.Identity.Api.Models;
+namespace Vendo.IdentityManagement.Api.Models;
 
 /// <summary>
 /// Request model for updating user profile

@@ -1,0 +1,20 @@
+using MediatR;
+using Vendo.CatalogManagement.Application.Categories.DTOs;
+using Vendo.CatalogManagement.Application.Common;
+
+namespace Vendo.CatalogManagement.Application.Categories.Commands.UpdateCategory;
+
+/// <summary>
+/// Command to update an existing category.
+/// </summary>
+public class UpdateCategoryCommand : IRequest<Result<CategoryDto>>
+{
+    public Guid Id { get; set; }
+    public Guid TenantId { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string? Description { get; set; }
+    public Guid? ParentCategoryId { get; set; }
+    public int DisplayOrder { get; set; }
+    public bool IsActive { get; set; }
+    public string? ImageUrl { get; set; }
+}
