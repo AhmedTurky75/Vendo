@@ -79,4 +79,19 @@ public class StoreDto
     /// Gets or sets when the store was last updated.
     /// </summary>
     public DateTime? UpdatedAt { get; set; }
+
+    /// <summary>
+    /// Gets or sets the custom HTML content for the store header section.
+    /// </summary>
+    public string? HeaderHtml { get; set; }
+
+    /// <summary>
+    /// Gets or sets the custom HTML content for the store main content section.
+    /// </summary>
+    public string? ContentHtml { get; set; }
+
+    /// <summary>
+    /// Gets or sets the custom HTML content for the store footer section.
+    /// </summary>
+    public string? FooterHtml { get; set; }
 }

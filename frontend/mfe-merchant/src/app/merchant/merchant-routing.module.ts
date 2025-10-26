@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { StoreCreationComponent } from './store-creation/store-creation.component';
 import { StoreListComponent } from './store-list/store-list.component';
 import { StoreSettingsComponent } from './store-settings/store-settings.component';
+import { StoreViewComponent } from './store-view/store-view.component';
 
 const routes: Routes = [
   {
@@ -19,6 +20,10 @@ const routes: Routes = [
       {
         path: 'stores/:id/settings',
         component: StoreSettingsComponent
+      },
+      {
+        path: 'stores/:id/view',
+        component: StoreViewComponent
       },
       {
         path: '',

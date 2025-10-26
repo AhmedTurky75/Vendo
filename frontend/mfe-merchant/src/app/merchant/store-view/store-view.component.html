@@ -1,0 +1,236 @@
+<!-- Loading State -->
+@if (isLoading()) {
+  <div class="flex items-center justify-center min-h-screen bg-gray-50">
+    <div class="text-center">
+      <svg class="animate-spin h-12 w-12 text-blue-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <p class="text-gray-600">Loading store...</p>
+    </div>
+  </div>
+}
+
+<!-- Error State -->
+@if (!isLoading() && errorMessage()) {
+  <div class="flex items-center justify-center min-h-screen bg-gray-50">
+    <div class="text-center max-w-md p-8">
+      <div class="bg-red-50 border border-red-200 rounded-lg p-6 mb-6">
+        <svg class="w-12 h-12 text-red-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <p class="text-red-600">{{ errorMessage() }}</p>
+      </div>
+      <button
+        (click)="goBack()"
+        class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200"
+      >
+        Go Back
+      </button>
+    </div>
+  </div>
+}
+
+<!-- Store View -->
+@if (!isLoading() && !errorMessage() && store()) {
+  <div class="min-h-screen bg-gray-50">
+    <!-- Top Action Bar (sticky) -->
+    <div class="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+      <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+        <button
+          (click)="goBack()"
+          class="flex items-center text-gray-600 hover:text-gray-900 font-medium transition duration-200"
+        >
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+          Back to Dashboard
+        </button>
+
+        <div class="flex items-center space-x-4">
+          <span class="text-sm text-gray-600">Viewing: <strong>{{ store()?.name }}</strong></span>
+          <button
+            (click)="editStore()"
+            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200 text-sm font-medium"
+          >
+            Edit Store
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Store Content Container -->
+    <div class="store-display-container">
+      <style>
+        /* Default styles for store sections */
+        .store-display-container {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 40px 20px;
+        }
+
+        /* Header Section Styles */
+        .store-header {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          padding: 60px 40px;
+          border-radius: 12px;
+          margin-bottom: 30px;
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+          text-align: center;
+        }
+
+        .store-header h1 {
+          font-size: 3rem;
+          font-weight: bold;
+          margin: 0;
+          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .store-header h2 {
+          font-size: 2rem;
+          font-weight: 600;
+          margin: 10px 0;
+        }
+
+        .store-header p {
+          font-size: 1.25rem;
+          margin: 10px 0;
+          opacity: 0.9;
+        }
+
+        /* Content Section Styles */
+        .store-content {
+          background: white;
+          padding: 50px 40px;
+          border-radius: 12px;
+          margin-bottom: 30px;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+          min-height: 400px;
+        }
+
+        .store-content h1 {
+          font-size: 2.5rem;
+          color: #333;
+          margin-bottom: 20px;
+          font-weight: bold;
+        }
+
+        .store-content h2 {
+          font-size: 2rem;
+          color: #444;
+          margin: 30px 0 15px 0;
+          font-weight: 600;
+        }
+
+        .store-content h3 {
+          font-size: 1.5rem;
+          color: #555;
+          margin: 20px 0 10px 0;
+          font-weight: 600;
+        }
+
+        .store-content p {
+          font-size: 1.125rem;
+          line-height: 1.8;
+          color: #666;
+          margin-bottom: 15px;
+        }
+
+        .store-content ul, .store-content ol {
+          margin: 20px 0;
+          padding-left: 30px;
+        }
+
+        .store-content li {
+          font-size: 1.125rem;
+          line-height: 1.8;
+          color: #666;
+          margin-bottom: 10px;
+        }
+
+        .store-content a {
+          color: #667eea;
+          text-decoration: underline;
+          transition: color 0.2s;
+        }
+
+        .store-content a:hover {
+          color: #764ba2;
+        }
+
+        .store-content img {
+          max-width: 100%;
+          height: auto;
+          border-radius: 8px;
+          margin: 20px 0;
+        }
+
+        /* Footer Section Styles */
+        .store-footer {
+          background: #2d3748;
+          color: white;
+          padding: 40px;
+          border-radius: 12px;
+          text-align: center;
+          box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .store-footer p {
+          margin: 10px 0;
+          font-size: 1rem;
+        }
+
+        .store-footer a {
+          color: #90cdf4;
+          text-decoration: none;
+          transition: color 0.2s;
+        }
+
+        .store-footer a:hover {
+          color: #63b3ed;
+          text-decoration: underline;
+        }
+
+        /* Empty section message */
+        .empty-section {
+          padding: 40px;
+          text-align: center;
+          color: #999;
+          font-style: italic;
+          background: #f9fafb;
+          border: 2px dashed #ddd;
+          border-radius: 8px;
+          margin: 20px 0;
+        }
+      </style>
+
+      <!-- Header HTML -->
+      @if (safeHeaderHtml()) {
+        <div [innerHTML]="safeHeaderHtml()"></div>
+      } @else {
+        <div class="empty-section">
+          <p>No header content configured</p>
+        </div>
+      }
+
+      <!-- Content HTML -->
+      @if (safeContentHtml()) {
+        <div [innerHTML]="safeContentHtml()"></div>
+      } @else {
+        <div class="empty-section">
+          <p>No main content configured</p>
+        </div>
+      }
+
+      <!-- Footer HTML -->
+      @if (safeFooterHtml()) {
+        <div [innerHTML]="safeFooterHtml()"></div>
+      } @else {
+        <div class="empty-section">
+          <p>No footer content configured</p>
+        </div>
+      }
+    </div>
+  </div>
+}

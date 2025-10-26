@@ -7,12 +7,14 @@ import { MerchantRoutingModule } from './merchant-routing.module';
 import { StoreCreationComponent } from './store-creation/store-creation.component';
 import { StoreListComponent } from './store-list/store-list.component';
 import { StoreSettingsComponent } from './store-settings/store-settings.component';
+import { StoreViewComponent } from './store-view/store-view.component';
 
 @NgModule({
   declarations: [
     StoreCreationComponent,
     StoreListComponent,
-    StoreSettingsComponent
+    StoreSettingsComponent,
+    StoreViewComponent
   ],
   imports: [
     CommonModule,

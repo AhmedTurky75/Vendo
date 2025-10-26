@@ -45,6 +45,21 @@ public sealed class StoreSettings
     /// </summary>
     public string? LogoUrl { get; private set; }
 
+    /// <summary>
+    /// Gets the custom HTML content for the store header section.
+    /// </summary>
+    public string? HeaderHtml { get; private set; }
+
+    /// <summary>
+    /// Gets the custom HTML content for the store main content section.
+    /// </summary>
+    public string? ContentHtml { get; private set; }
+
+    /// <summary>
+    /// Gets the custom HTML content for the store footer section.
+    /// </summary>
+    public string? FooterHtml { get; private set; }
+
     private StoreSettings() { }
 
     private StoreSettings(
@@ -55,7 +70,10 @@ public sealed class StoreSettings
         bool taxEnabled,
         string? primaryColor,
         string? accentColor,
-        string? logoUrl)
+        string? logoUrl,
+        string? headerHtml,
+        string? contentHtml,
+        string? footerHtml)
     {
         Currency = currency;
         Timezone = timezone;
@@ -65,6 +83,9 @@ public sealed class StoreSettings
         PrimaryColor = primaryColor;
         AccentColor = accentColor;
         LogoUrl = logoUrl;
+        HeaderHtml = headerHtml;
+        ContentHtml = contentHtml;
+        FooterHtml = footerHtml;
     }
 
     /// <summary>
@@ -80,7 +101,10 @@ public sealed class StoreSettings
             taxEnabled: false,
             primaryColor: null,
             accentColor: null,
-            logoUrl: null
+            logoUrl: null,
+            headerHtml: null,
+            contentHtml: null,
+            footerHtml: null
         );
     }
 
@@ -95,12 +119,15 @@ public sealed class StoreSettings
         bool taxEnabled,
         string? primaryColor = null,
         string? accentColor = null,
-        string? logoUrl = null)
+        string? logoUrl = null,
+        string? headerHtml = null,
+        string? contentHtml = null,
+        string? footerHtml = null)
     {
         if (taxRate < 0 || taxRate > 100)
             throw new ArgumentException("Tax rate must be between 0 and 100", nameof(taxRate));
 
-        return new StoreSettings(currency, timezone, language, taxRate, taxEnabled, primaryColor, accentColor, logoUrl);
+        return new StoreSettings(currency, timezone, language, taxRate, taxEnabled, primaryColor, accentColor, logoUrl, headerHtml, contentHtml, footerHtml);
     }
 
     /// <summary>
@@ -134,5 +161,15 @@ public sealed class StoreSettings
         PrimaryColor = primaryColor;
         AccentColor = accentColor;
         LogoUrl = logoUrl;
+    }
+
+    /// <summary>
+    /// Updates the custom HTML content sections.
+    /// </summary>
+    public void UpdateHtmlContent(string? headerHtml, string? contentHtml, string? footerHtml)
+    {
+        HeaderHtml = headerHtml;
+        ContentHtml = contentHtml;
+        FooterHtml = footerHtml;
     }
 }

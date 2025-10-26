@@ -73,11 +73,10 @@ export class StoreListComponent implements OnInit {
   }
 
   /**
-   * Open store in new tab (placeholder - actual URL will be implemented later)
+   * View store in a new page
    */
-  visitStore(subdomain: string): void {
-    const storeUrl = `${window.location.origin}/stores/${subdomain}`;
-    window.open(storeUrl, '_blank');
+  visitStore(storeId: string): void {
+    this.router.navigate(['/merchant/stores', storeId, 'view']);
   }
 
   /**

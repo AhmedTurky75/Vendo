@@ -10,6 +10,10 @@ export interface Store {
   isActive: boolean;
   createdAt: string;
   updatedAt?: string;
+  // HTML Content fields for store customization
+  headerHtml?: string;
+  contentHtml?: string;
+  footerHtml?: string;
 }
 
 export interface CreateStoreRequest {
@@ -18,6 +22,10 @@ export interface CreateStoreRequest {
   businessName?: string;
   email: string;
   phone?: string;
+  // HTML Content fields for store customization
+  headerHtml?: string;
+  contentHtml?: string;
+  footerHtml?: string;
 }
 
 export interface UpdateStoreRequest {
