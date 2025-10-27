@@ -5,12 +5,14 @@ using Duende.IdentityServer.Services;
 using Duende.IdentityServer.Stores;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
-using Vendo.Identity.Domain.Repositories;
-using Vendo.Identity.Application.Common.Interfaces;
+using Vendo.IdentityManagement.Domain.Entities;
+
 
 namespace Vendo.Identity.Api.Pages.Account
 {
@@ -18,23 +20,23 @@ namespace Vendo.Identity.Api.Pages.Account
     [SecurityHeaders]
     public class LoginModel : PageModel
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IPasswordHasher _passwordHasher;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IEventService _events;
         private readonly IAuthenticationSchemeProvider _schemeProvider;
         private readonly IIdentityProviderStore _identityProviderStore;
 
         public LoginModel(
-            IUserRepository userRepository,
-            IPasswordHasher passwordHasher,
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
             IIdentityServerInteractionService interaction,
             IEventService events,
             IAuthenticationSchemeProvider schemeProvider,
             IIdentityProviderStore identityProviderStore)
         {
-            _userRepository = userRepository;
-            _passwordHasher = passwordHasher;
+            _userManager = userManager;
+            _signInManager = signInManager;
             _interaction = interaction;
             _events = events;
             _schemeProvider = schemeProvider;
@@ -78,18 +80,29 @@ namespace Vendo.Identity.Api.Pages.Account
                 return Page();
             }
 
-            // Validate credentials
-            var user = await _userRepository.GetByEmailAsync(Username);
+            // Validate credentials - try by email first, then by username
+            var user = await _userManager.FindByEmailAsync(Username);
             if (user == null)
             {
                 // Try by username if email lookup failed
-                user = await _userRepository.GetByUsernameAsync(Username);
+                user = await _userManager.FindByNameAsync(Username);
             }
 
-            if (user == null || !_passwordHasher.VerifyPassword(Password, user.PasswordHash))
+            if (user == null)
             {
                 await _events.RaiseAsync(new UserLoginFailureEvent(Username, "invalid credentials"));
                 ErrorMessage = "Invalid username or password";
+                return Page();
+            }
+
+            // Check password
+            var result = await _signInManager.CheckPasswordSignInAsync(user, Password, lockoutOnFailure: true);
+            if (!result.Succeeded)
+            {
+                await _events.RaiseAsync(new UserLoginFailureEvent(Username, "invalid credentials"));
+                ErrorMessage = result.IsLockedOut
+                    ? "Your account has been locked due to multiple failed login attempts. Please try again later."
+                    : "Invalid username or password";
                 return Page();
             }
 
@@ -104,27 +117,28 @@ namespace Vendo.Identity.Api.Pages.Account
             var claims = new List<Claim>
             {
                 new Claim("sub", user.Id.ToString()),
-                new Claim("name", user.Username),
-                new Claim("email", user.Email.Value),
+                new Claim("name", user.UserName ?? string.Empty),
+                new Claim("email", user.Email ?? string.Empty),
                 new Claim("given_name", user.FirstName ?? string.Empty),
                 new Claim("family_name", user.LastName ?? string.Empty)
             };
 
             // Add role claims
-            foreach (var role in user.Roles)
+            var roles = await _userManager.GetRolesAsync(user);
+            foreach (var role in roles)
             {
                 claims.Add(new Claim("role", role));
             }
 
-            // Add tenant claim if available
-            if (user.TenantId.HasValue)
+            // Add store claim if available (for merchant users)
+            if (user.StoreId.HasValue)
             {
-                claims.Add(new Claim("tenant_id", user.TenantId.Value.ToString()));
+                claims.Add(new Claim("store_id", user.StoreId.Value.ToString()));
             }
 
             var isuser = new IdentityServerUser(user.Id.ToString())
             {
-                DisplayName = user.Username,
+                DisplayName = user.UserName ?? string.Empty,
                 AdditionalClaims = claims
             };
 
@@ -134,7 +148,7 @@ namespace Vendo.Identity.Api.Pages.Account
                 ExpiresUtc = RememberLogin ? DateTimeOffset.UtcNow.AddDays(30) : DateTimeOffset.UtcNow.AddHours(2)
             });
 
-            await _events.RaiseAsync(new UserLoginSuccessEvent(user.Username, user.Id.ToString(), user.Username));
+            await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id.ToString(), user.UserName));
 
             if (context != null)
             {
