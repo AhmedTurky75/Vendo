@@ -66,9 +66,4 @@ public interface IProductRepository
     /// Deletes a product.
     /// </summary>
     void Delete(Product product);
-
-    /// <summary>
-    /// Saves all pending changes.
-    /// </summary>
-    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

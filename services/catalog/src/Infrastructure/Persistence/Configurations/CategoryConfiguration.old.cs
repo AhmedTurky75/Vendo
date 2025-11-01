@@ -5,7 +5,7 @@ using Vendo.CatalogManagement.Domain.Entities;
 namespace Vendo.CatalogManagement.Infrastructure.Persistence.Configurations;
 
 /// <summary>
-/// Entity configuration for Category aggregate root.
+/// Entity configuration for Category.
 /// </summary>
 public class CategoryConfiguration : IEntityTypeConfiguration<Category>
 {
@@ -23,24 +23,11 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
             .HasMaxLength(100);
 
         builder.Property(c => c.Description)
-            .HasMaxLength(1000);
+            .HasMaxLength(500);
 
-        // Configure Slug value object
-        builder.OwnsOne(c => c.Slug, slug =>
-        {
-            slug.Property(s => s.Value)
-                .HasColumnName("Slug")
-                .IsRequired()
-                .HasMaxLength(150);
-        });
-
-        builder.Property(c => c.ParentCategoryId);
-
-        builder.Property(c => c.DisplayOrder)
-            .IsRequired();
-
-        builder.Property(c => c.IsActive)
-            .IsRequired();
+        builder.Property(c => c.Slug)
+            .IsRequired()
+            .HasMaxLength(150);
 
         builder.Property(c => c.ImageUrl)
             .HasMaxLength(500);
@@ -52,15 +39,6 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
         builder.Property(c => c.UpdatedBy)
             .HasMaxLength(100);
 
-        builder.Property(c => c.CreatedAt)
-            .IsRequired();
-
-        builder.Property(c => c.UpdatedAt)
-            .IsRequired();
-
-        // Ignore domain events (not persisted)
-        builder.Ignore(c => c.DomainEvents);
-
         // Self-referencing relationship for hierarchical categories
         builder.HasOne(c => c.ParentCategory)
             .WithMany(c => c.ChildCategories)
@@ -68,13 +46,13 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
             .OnDelete(DeleteBehavior.Restrict);
 
         // Indexes
-        builder.HasIndex(c => c.TenantId)
-            .HasDatabaseName("IX_Categories_TenantId");
+        builder.HasIndex(c => new { c.TenantId, c.Slug })
+            .IsUnique();
 
-        builder.HasIndex(c => c.ParentCategoryId)
-            .HasDatabaseName("IX_Categories_ParentCategoryId");
+        builder.HasIndex(c => c.ParentCategoryId);
 
-        builder.HasIndex(c => c.IsActive)
-            .HasDatabaseName("IX_Categories_IsActive");
+        builder.HasIndex(c => c.IsActive);
+
+        builder.HasIndex(c => c.DisplayOrder);
     }
 }

@@ -56,9 +56,4 @@ public interface ICategoryRepository
     /// Deletes a category.
     /// </summary>
     void Delete(Category category);
-
-    /// <summary>
-    /// Saves all pending changes.
-    /// </summary>
-    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
