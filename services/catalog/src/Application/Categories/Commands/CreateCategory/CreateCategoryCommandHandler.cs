@@ -2,24 +2,23 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Vendo.CatalogManagement.Application.Categories.DTOs;
 using Vendo.CatalogManagement.Application.Common;
-using Vendo.CatalogManagement.Domain.Entities;
 using Vendo.CatalogManagement.Domain.Interfaces;
 
 namespace Vendo.CatalogManagement.Application.Categories.Commands.CreateCategory;
 
 /// <summary>
-/// Handler for creating a new category.
+/// Handler for creating a new category using DDD domain model.
 /// </summary>
 public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryCommand, Result<CategoryDto>>
 {
-    private readonly ICategoryRepository _categoryRepository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<CreateCategoryCommandHandler> _logger;
 
     public CreateCategoryCommandHandler(
-        ICategoryRepository categoryRepository,
+        IUnitOfWork unitOfWork,
         ILogger<CreateCategoryCommandHandler> logger)
     {
-        _categoryRepository = categoryRepository;
+        _unitOfWork = unitOfWork;
         _logger = logger;
     }
 
@@ -30,7 +29,7 @@ public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryComman
         // Validate parent category if specified
         if (request.ParentCategoryId.HasValue)
         {
-            var parentCategory = await _categoryRepository.GetByIdAsync(request.ParentCategoryId.Value, cancellationToken);
+            var parentCategory = await _unitOfWork.Categories.GetByIdAsync(request.ParentCategoryId.Value, cancellationToken);
             if (parentCategory == null)
             {
                 return Result<CategoryDto>.Failure("Parent category not found");
@@ -42,35 +41,42 @@ public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryComman
             }
         }
 
-        // Generate slug
-        var slug = GenerateSlug(request.Name);
+        // Use factory method to create category
+        var category = Domain.Entities.Category.Create(
+            request.TenantId,
+            request.Name,
+            request.Description,
+            request.ParentCategoryId,
+            "system" // TODO: Get from auth context
+        );
 
-        // Check if slug already exists
-        if (await _categoryRepository.SlugExistsAsync(slug, request.TenantId, null, cancellationToken))
+        // Set display order
+        category.SetDisplayOrder(request.DisplayOrder, "system");
+
+        // Set active status
+        if (!request.IsActive)
         {
-            return Result<CategoryDto>.Failure($"Category with slug '{slug}' already exists");
+            category.Deactivate("system");
         }
 
-        // Create category entity
-        var category = new Category
+        // Set image if provided
+        if (!string.IsNullOrWhiteSpace(request.ImageUrl))
         {
-            Id = Guid.NewGuid(),
-            TenantId = request.TenantId,
-            Name = request.Name,
-            Description = request.Description,
-            Slug = slug,
-            ParentCategoryId = request.ParentCategoryId,
-            DisplayOrder = request.DisplayOrder,
-            IsActive = request.IsActive,
-            ImageUrl = request.ImageUrl,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow,
-            CreatedBy = "system", // TODO: Get from auth context
-            UpdatedBy = "system"
-        };
+            try
+            {
+                category.SetImage(request.ImageUrl, "system");
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Invalid image URL");
+            }
+        }
 
-        await _categoryRepository.AddAsync(category, cancellationToken);
-        await _categoryRepository.SaveChangesAsync(cancellationToken);
+        // Add to repository
+        await _unitOfWork.Categories.AddAsync(category, cancellationToken);
+
+        // Save changes (will dispatch domain events)
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         _logger.LogInformation("Category created successfully with ID: {CategoryId}", category.Id);
 
@@ -81,7 +87,7 @@ public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryComman
             TenantId = category.TenantId,
             Name = category.Name,
             Description = category.Description,
-            Slug = category.Slug,
+            Slug = category.Slug.Value,
             ParentCategoryId = category.ParentCategoryId,
             DisplayOrder = category.DisplayOrder,
             IsActive = category.IsActive,
@@ -92,14 +98,5 @@ public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryComman
         };
 
         return Result<CategoryDto>.Success(categoryDto);
-    }
-
-    private static string GenerateSlug(string name)
-    {
-        return name.ToLowerInvariant()
-            .Replace(" ", "-")
-            .Replace("&", "and")
-            .Replace("'", "")
-            .Replace("\"", "");
     }
 }

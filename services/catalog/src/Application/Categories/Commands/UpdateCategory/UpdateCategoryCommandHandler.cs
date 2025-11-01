@@ -7,18 +7,18 @@ using Vendo.CatalogManagement.Domain.Interfaces;
 namespace Vendo.CatalogManagement.Application.Categories.Commands.UpdateCategory;
 
 /// <summary>
-/// Handler for updating an existing category.
+/// Handler for updating an existing category using DDD domain model.
 /// </summary>
 public class UpdateCategoryCommandHandler : IRequestHandler<UpdateCategoryCommand, Result<CategoryDto>>
 {
-    private readonly ICategoryRepository _categoryRepository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<UpdateCategoryCommandHandler> _logger;
 
     public UpdateCategoryCommandHandler(
-        ICategoryRepository categoryRepository,
+        IUnitOfWork unitOfWork,
         ILogger<UpdateCategoryCommandHandler> logger)
     {
-        _categoryRepository = categoryRepository;
+        _unitOfWork = unitOfWork;
         _logger = logger;
     }
 
@@ -27,7 +27,7 @@ public class UpdateCategoryCommandHandler : IRequestHandler<UpdateCategoryComman
         _logger.LogInformation("Updating category with ID: {CategoryId} for tenant: {TenantId}", request.Id, request.TenantId);
 
         // Get existing category
-        var category = await _categoryRepository.GetByIdAsync(request.Id, cancellationToken);
+        var category = await _unitOfWork.Categories.GetByIdAsync(request.Id, cancellationToken);
         if (category == null)
         {
             return Result<CategoryDto>.Failure("Category not found");
@@ -39,16 +39,10 @@ public class UpdateCategoryCommandHandler : IRequestHandler<UpdateCategoryComman
             return Result<CategoryDto>.Failure("Category does not belong to this tenant");
         }
 
-        // Validate parent category if specified
+        // Validate parent category if changing
         if (request.ParentCategoryId.HasValue)
         {
-            // Prevent circular reference
-            if (request.ParentCategoryId.Value == request.Id)
-            {
-                return Result<CategoryDto>.Failure("Category cannot be its own parent");
-            }
-
-            var parentCategory = await _categoryRepository.GetByIdAsync(request.ParentCategoryId.Value, cancellationToken);
+            var parentCategory = await _unitOfWork.Categories.GetByIdAsync(request.ParentCategoryId.Value, cancellationToken);
             if (parentCategory == null)
             {
                 return Result<CategoryDto>.Failure("Parent category not found");
@@ -60,28 +54,50 @@ public class UpdateCategoryCommandHandler : IRequestHandler<UpdateCategoryComman
             }
         }
 
-        // Generate slug
-        var slug = GenerateSlug(request.Name);
+        // Update information
+        category.UpdateInformation(request.Name, request.Description, "system");
 
-        // Check if slug already exists for another category
-        if (await _categoryRepository.SlugExistsAsync(slug, request.TenantId, request.Id, cancellationToken))
+        // Change parent if needed
+        if (category.ParentCategoryId != request.ParentCategoryId)
         {
-            return Result<CategoryDto>.Failure($"Category with slug '{slug}' already exists");
+            try
+            {
+                category.ChangeParent(request.ParentCategoryId, "system");
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Result<CategoryDto>.Failure(ex.Message);
+            }
         }
 
-        // Update category entity
-        category.Name = request.Name;
-        category.Description = request.Description;
-        category.Slug = slug;
-        category.ParentCategoryId = request.ParentCategoryId;
-        category.DisplayOrder = request.DisplayOrder;
-        category.IsActive = request.IsActive;
-        category.ImageUrl = request.ImageUrl;
-        category.UpdatedAt = DateTime.UtcNow;
-        category.UpdatedBy = "system"; // TODO: Get from auth context
+        // Update active status
+        if (request.IsActive && !category.IsActive)
+        {
+            category.Activate("system");
+        }
+        else if (!request.IsActive && category.IsActive)
+        {
+            category.Deactivate("system");
+        }
 
-        _categoryRepository.Update(category);
-        await _categoryRepository.SaveChangesAsync(cancellationToken);
+        // Update image
+        try
+        {
+            category.SetImage(request.ImageUrl, "system");
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogWarning(ex, "Invalid image URL");
+        }
+
+        // Update display order
+        category.SetDisplayOrder(request.DisplayOrder, "system");
+
+        // Mark as updated
+        _unitOfWork.Categories.Update(category);
+
+        // Save changes (will dispatch domain events)
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         _logger.LogInformation("Category updated successfully with ID: {CategoryId}", category.Id);
 
@@ -92,25 +108,16 @@ public class UpdateCategoryCommandHandler : IRequestHandler<UpdateCategoryComman
             TenantId = category.TenantId,
             Name = category.Name,
             Description = category.Description,
-            Slug = category.Slug,
+            Slug = category.Slug.Value,
             ParentCategoryId = category.ParentCategoryId,
             DisplayOrder = category.DisplayOrder,
             IsActive = category.IsActive,
             ImageUrl = category.ImageUrl,
-            ProductCount = category.Products?.Count ?? 0,
+            ProductCount = category.Products.Count,
             CreatedAt = category.CreatedAt,
             UpdatedAt = category.UpdatedAt
         };
 
         return Result<CategoryDto>.Success(categoryDto);
-    }
-
-    private static string GenerateSlug(string name)
-    {
-        return name.ToLowerInvariant()
-            .Replace(" ", "-")
-            .Replace("&", "and")
-            .Replace("'", "")
-            .Replace("\"", "");
     }
 }
