@@ -6,18 +6,18 @@ using Vendo.CatalogManagement.Domain.Interfaces;
 namespace Vendo.CatalogManagement.Application.Categories.Commands.DeleteCategory;
 
 /// <summary>
-/// Handler for deleting a category.
+/// Handler for deleting a category using DDD domain model.
 /// </summary>
 public class DeleteCategoryCommandHandler : IRequestHandler<DeleteCategoryCommand, Result<bool>>
 {
-    private readonly ICategoryRepository _categoryRepository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<DeleteCategoryCommandHandler> _logger;
 
     public DeleteCategoryCommandHandler(
-        ICategoryRepository categoryRepository,
+        IUnitOfWork unitOfWork,
         ILogger<DeleteCategoryCommandHandler> logger)
     {
-        _categoryRepository = categoryRepository;
+        _unitOfWork = unitOfWork;
         _logger = logger;
     }
 
@@ -25,8 +25,8 @@ public class DeleteCategoryCommandHandler : IRequestHandler<DeleteCategoryComman
     {
         _logger.LogInformation("Deleting category with ID: {CategoryId} for tenant: {TenantId}", request.Id, request.TenantId);
 
-        // Get existing category with products
-        var category = await _categoryRepository.GetWithProductsAsync(request.Id, cancellationToken);
+        // Get existing category
+        var category = await _unitOfWork.Categories.GetByIdAsync(request.Id, cancellationToken);
         if (category == null)
         {
             return Result<bool>.Failure("Category not found");
@@ -38,21 +38,14 @@ public class DeleteCategoryCommandHandler : IRequestHandler<DeleteCategoryComman
             return Result<bool>.Failure("Category does not belong to this tenant");
         }
 
-        // Check if category has products
-        if (category.Products?.Any() == true)
+        // Use domain method to validate if can be deleted
+        if (!category.CanBeDeleted())
         {
-            return Result<bool>.Failure("Cannot delete category with existing products. Please reassign or delete products first.");
+            return Result<bool>.Failure("Category cannot be deleted because it has products or child categories");
         }
 
-        // Check if category has child categories
-        var childCategories = await _categoryRepository.GetChildCategoriesAsync(request.Id, cancellationToken);
-        if (childCategories.Any())
-        {
-            return Result<bool>.Failure("Cannot delete category with child categories. Please delete or reassign child categories first.");
-        }
-
-        _categoryRepository.Delete(category);
-        await _categoryRepository.SaveChangesAsync(cancellationToken);
+        _unitOfWork.Categories.Delete(category);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         _logger.LogInformation("Category deleted successfully with ID: {CategoryId}", request.Id);
 
