@@ -70,7 +70,10 @@ public static class IdentityServerConfig
                 AllowedGrantTypes = GrantTypes.Code,
                 RequirePkce = true,
                 RequireClientSecret = false,
-                RedirectUris = { "https://localhost:5001/swagger/oauth2-redirect.html" },
+                RedirectUris = {
+                    "https://localhost:5001/oauth2-redirect.html",
+                    "https://localhost:5001/swagger/oauth2-redirect.html"
+                },
                 AllowedCorsOrigins = { "https://localhost:5001" },
                 AllowedScopes =
                 {

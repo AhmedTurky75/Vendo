@@ -64,6 +64,11 @@ public static class DependencyInjection
             options.Events.RaiseFailureEvents = true;
             options.Events.RaiseSuccessEvents = true;
             options.EmitStaticAudienceClaim = true;
+
+            // Configure user interaction paths
+            options.UserInteraction.ErrorUrl = "/Account/Error";
+            options.UserInteraction.LoginUrl = "/Account/Login";
+            options.UserInteraction.LogoutUrl = "/Account/Logout";
         })
         .AddInMemoryIdentityResources(IdentityServerConfig.IdentityResources)
         .AddInMemoryApiResources(IdentityServerConfig.ApiResources)
